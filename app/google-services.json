@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "35008376670",
+    "project_id": "sergeyprotfolioapp",
+    "storage_bucket": "sergeyprotfolioapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35008376670:android:83b4fd98a6ebb6f37069cf",
+        "android_client_info": {
+          "package_name": "com.example.sergeyportfolioapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "35008376670-o99pnrc7bgt6ooiu58hpckmur67cbfeq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sergeyportfolioapp",
+            "certificate_hash": "ac98817076a89c3b5df6c6d7438d0eca6f56773e"
+          }
+        },
+        {
+          "client_id": "35008376670-mle2u685d5d6hnn8ckgk0aigqb2j7jsd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS4InuB63jdKuiHg3UtioB_e8c_1XEiII"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "35008376670-mle2u685d5d6hnn8ckgk0aigqb2j7jsd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
