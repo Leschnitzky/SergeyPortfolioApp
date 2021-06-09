@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SergeyPortfolioApp">
         <activity
+            android:windowSoftInputMode="adjustResize"
             android:name="com.example.sergeyportfolioapp.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.SergeyPortfolioApp.NoActionBar">

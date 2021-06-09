@@ -14,4 +14,7 @@
     <string name="emailInput">Email</string>
     <string name="passwordInput">Password</string>
     <string name="loginText">Login</string>
+    <string name="forgot_password_string">Did you forget password?</string>
+    <string name="register_string">create an account</string>
+    <string name="greeting_text">Welcome to DailyShiba</string>
 </resources>
