@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
@@ -32,8 +33,10 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 @AndroidEntryPoint
 class LoginFragment : Fragment(){
     private val TAG = "LoginFragment"
-    private val homeViewModel: UserViewModel by viewModels()
-    private lateinit var button : Button
+    private val userViewModel: UserViewModel by viewModels()
+    private lateinit var loginButton : Button
+    private lateinit var passForgetButton : Button
+    private lateinit var registerButton : Button
     private lateinit var guideline: Guideline
     private lateinit var emailEditLayout : TextInputLayout
     private lateinit var passwordEditLayout : TextInputLayout
@@ -48,8 +51,6 @@ class LoginFragment : Fragment(){
         val root = inflater.inflate(R.layout.fragment_login, container, false)
 
         setupUI(root)
-        observeViewModel()
-        setupClicks()
         return root
     }
 
@@ -58,6 +59,8 @@ class LoginFragment : Fragment(){
     private fun setupUI(root: View){
         initiateViewFields(root)
         setKeyboardListener()
+        observeViewModel()
+        setupClicks()
 
 
     }
@@ -65,7 +68,9 @@ class LoginFragment : Fragment(){
     private fun initiateViewFields(root: View) {
         greetingAnimation = root.findViewById(R.id.greetingAnimation)
         guideline = root.findViewById(R.id.loginSectionGuideline)
-        button = root.findViewById(R.id.button)
+        loginButton = root.findViewById(R.id.button)
+        passForgetButton = root.findViewById(R.id.button3)
+        registerButton = root.findViewById(R.id.register)
         emailEditLayout = root.findViewById(R.id.emailInput)
         passwordEditLayout = root.findViewById(R.id.passwordInput)
         loadingView = root.findViewById(R.id.animationView)
@@ -111,13 +116,13 @@ class LoginFragment : Fragment(){
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            homeViewModel.state.collect {
+            userViewModel.state.collect {
                 when (it) {
                     is LoginViewState.Idle -> {
 
                     }
                     is LoginViewState.Loading -> {
-                        button.isEnabled = false
+                        loginButton.isEnabled = false
                         emailEditLayout.isErrorEnabled = true
                         emailEditLayout.isEnabled = false
                         passwordEditLayout.isEnabled = false
@@ -127,7 +132,7 @@ class LoginFragment : Fragment(){
 
                     is LoginViewState.LoggedIn -> {
                         Log.d(TAG, "observeViewModel: Got name")
-                        button.isEnabled = true
+                        loginButton.isEnabled = true
                         emailEditLayout.isEnabled = true
                         passwordEditLayout.isEnabled = true
                         emailEditLayout.isErrorEnabled = false
@@ -136,7 +141,7 @@ class LoginFragment : Fragment(){
 
                     }
                     is LoginViewState.Error -> {
-                        button.isEnabled = true
+                        loginButton.isEnabled = true
                         emailEditLayout.isEnabled = true
                         passwordEditLayout.isEnabled = true
                         loadingView.visibility = View.GONE;
@@ -150,11 +155,22 @@ class LoginFragment : Fragment(){
 
 
     private fun setupClicks() {
-        button.setOnClickListener {
+        loginButton.setOnClickListener {
             lifecycleScope.launch {
-                homeViewModel.userIntent.send(LoginIntent.Login(
+                userViewModel.userIntent.send(LoginIntent.Login(
                     emailEditLayout.editText?.text.toString(),
                     passwordEditLayout.editText?.text.toString()
+                ))
+            }
+        }
+        registerButton.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_login_to_registerFragment)
+        }
+
+        passForgetButton.setOnClickListener {
+            lifecycleScope.launch {
+                userViewModel.userIntent.send(LoginIntent.ForgotPass(
+                    emailEditLayout.editText?.text.toString()
                 ))
             }
         }

@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">אפליקציית פורטפוליו של סרגיי</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">%1$s</string>
+    <string name="nav_header_subtitle">לחץ על עמוד על מנת לעבוד אליו</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">הגדרות</string>
+
+    <string name="menu_login">כניסה</string>
+    <string name="menu_register">יצירת משתמש</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="welcome_message">ברוך הבא, %1$s!</string>
+    <string name="emailInput">אימייל</string>
+    <string name="passwordInput">ססמא</string>
+    <string name="loginText">כניסה</string>
+    <string name="forgot_password_string">האם שכחת ססמא?</string>
+    <string name="register_string">צור משתמש</string>
+    <string name="greeting_text">ברוכים הבאים לDailyShiba</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="guest_string">אורח</string>
+</resources>

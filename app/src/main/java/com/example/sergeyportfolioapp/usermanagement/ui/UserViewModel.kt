@@ -1,8 +1,10 @@
 package com.example.sergeyportfolioapp.usermanagement.ui
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
 import com.example.sergeyportfolioapp.usermanagement.ui.login.intent.LoginIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
@@ -21,11 +23,15 @@ import javax.inject.Inject
 @HiltViewModel
 @ExperimentalCoroutinesApi
 class UserViewModel @Inject constructor(
-    var repo: Repository
+    var repo: Repository,
+    var resourcesProvider: ResourcesProvider
 ): ViewModel() {
     private val TAG = "UserViewModel"
     val userIntent = Channel<LoginIntent>(Channel.UNLIMITED)
     private val _state = MutableStateFlow<LoginViewState>(LoginViewState.Idle)
+    private var _userTitle = MutableStateFlow<String>(resourcesProvider.getString(R.string.guest_string))
+    val userTitle: StateFlow<String>
+        get() = _userTitle
 
     val state: StateFlow<LoginViewState>
         get() = _state
@@ -65,4 +71,5 @@ class UserViewModel @Inject constructor(
         }
 
     }
+
 }

@@ -9,6 +9,7 @@ import com.example.sergeyportfolioapp.usermanagement.repository.RepositoryImpl
 
 import com.example.sergeyportfolioapp.usermanagement.room.LocalUserDatabase
 import com.example.sergeyportfolioapp.usermanagement.room.UserDao
+import com.example.sergeyportfolioapp.usermanagement.ui.ResourcesProvider
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -21,7 +22,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 internal object UserManagementModule{
     private const val BASE_URL = "https://www.countryflags.io/"
-
 
     @Provides
     fun provideFirebaseDatabaseReference(): FirebaseAuth{

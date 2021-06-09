@@ -2,13 +2,13 @@
     <string name="app_name">SergeyPortfolioApp</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Sergey\'s App</string>
-    <string name="nav_header_subtitle">leschinskysergey@gmail.com</string>
+    <string name="nav_header_title">%1$s</string>
+    <string name="nav_header_subtitle">Click an option to navigate to that page</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
+    <string name="menu_login">Login</string>
+    <string name="menu_register">Register User</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="welcome_message">Hello, %1$s!</string>
     <string name="emailInput">Email</string>
@@ -17,4 +17,7 @@
     <string name="forgot_password_string">Did you forget password?</string>
     <string name="register_string">create an account</string>
     <string name="greeting_text">Welcome to DailyShiba</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="guest_string">Guest</string>
 </resources>
