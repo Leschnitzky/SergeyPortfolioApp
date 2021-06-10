@@ -1,14 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".usermanagement.ui.register.RegisterFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/register_page_loading_animation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_anim" />
 
-</FrameLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/register_page_guideline_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/register_page_guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/register_page_accountdetails_seperator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3515732" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/register_page_thirdparty_seperator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
+
+    <TextView
+        android:id="@+id/register_greeting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_register"
+        android:textAppearance="@style/TitleText"
+        android:textSize="@dimen/big_title_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/register_page_thirdparty_seperator"
+        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/register_page_name_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/email_subtext">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_page_name_layout_edit_text"
+            android:inputType="textPersonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rounded_corner_rad_10"
+            android:hint="@string/full_name_hint" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/register_page_email_layout"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/register_page_name_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_page_email_layout_input_text"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rounded_corner_rad_10"
+            android:hint="@string/emailInput" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/register_page_password_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_rounded_corner_rad_10"
+        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/register_page_email_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:inputType="textPassword"
+            android:id="@+id/register_page_password_layout_edit_text"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rounded_corner_rad_10"
+            android:hint="@string/passwordInput" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/email_subtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/normal_email_suggestion"
+        android:textAppearance="@style/SubtitleText"
+        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toTopOf="@+id/register_page_accountdetails_seperator" />
+
+    <RadioButton
+        android:id="@+id/radioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/terms_and_conditions_text"
+        android:textAppearance="@style/SubtitleText"
+        android:textColor="?colorPrimary"
+        android:textSize="@dimen/radio_button_text_size"
+        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/register_page_password_layout" />
+
+    <Button
+        android:id="@+id/register_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/register_complete_button"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/radioButton" />
+
+    <LinearLayout
+        android:elevation="6dp"
+        android:layout_width="0dp"
+        android:padding="10dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/shape_card_includer"
+        app:layout_constraintBottom_toTopOf="@+id/register_page_accountdetails_seperator"
+        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
+        app:layout_constraintTop_toTopOf="@+id/register_page_thirdparty_seperator">
+
+        <ImageButton
+            android:layout_weight="0.5"
+            android:id="@+id/google_sign_up"
+            android:layout_width="@dimen/register_page_circular_view"
+            android:layout_height="@dimen/register_page_circular_view"
+            android:background="?colorBackgroundFloating"
+
+            android:src="@drawable/button_press_facebook" />
+
+        <ImageButton
+            android:layout_weight="0.5"
+            android:layout_marginRight="10dp"
+            android:id="@+id/facebook_sign_up"
+            android:layout_width="@dimen/register_page_circular_view"
+            android:layout_height="@dimen/register_page_circular_view"
+            android:background="?colorBackgroundFloating"
+
+            android:src="@drawable/button_press_google"/>
+
+    </LinearLayout>
+
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.97
+" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

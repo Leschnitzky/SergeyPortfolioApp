@@ -9,16 +9,13 @@ import com.example.sergeyportfolioapp.usermanagement.room.model.User
 @Dao
 interface UserDao {
 
-    @Query("SELECT * FROM users WHERE emailPass LIKE :emailAndPassword LIMIT 1")
-    suspend fun getTokenByEmailAndPassword(emailAndPassword: String) : List<User>
+    @Query("SELECT * FROM users WHERE email LIKE :email LIMIT 1")
+    suspend fun getDisplayNameByEmail(email: String) : List<User>
 
     @Insert
     suspend fun insertUser(user: User)
 
     @Delete
     suspend fun deleteUser(user: User)
-
-    @Query("UPDATE users SET userToken = :token WHERE emailPass =:emailPass")
-    fun updateTokenForUser(token: String, emailPass: String)
 
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SergeyPortfolioApp</string>
+    <string name="app_name">ShibaDaily</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">%1$s</string>
@@ -20,4 +20,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="guest_string">Guest</string>
+    <string name="normal_email_suggestion">Or use your email for registration</string>
+    <string name="full_name_hint">Full name</string>
+    <string name="terms_and_conditions_text">I agree to the terms and conditions</string>
+    <string name="register_complete_button">Register</string>
 </resources>

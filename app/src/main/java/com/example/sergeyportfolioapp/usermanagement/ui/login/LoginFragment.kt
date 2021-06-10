@@ -20,8 +20,9 @@ import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
-import com.example.sergeyportfolioapp.usermanagement.ui.login.intent.LoginIntent
+import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
+import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -116,14 +117,17 @@ class LoginFragment : Fragment(){
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            userViewModel.state.collect {
+            userViewModel.stateLoginPage.collect {
                 when (it) {
                     is LoginViewState.Idle -> {
 
                     }
                     is LoginViewState.Loading -> {
                         loginButton.isEnabled = false
+
                         emailEditLayout.isErrorEnabled = true
+                        passwordEditLayout.isErrorEnabled = true
+
                         emailEditLayout.isEnabled = false
                         passwordEditLayout.isEnabled = false
                         loadingView.visibility = View.VISIBLE;
@@ -135,7 +139,10 @@ class LoginFragment : Fragment(){
                         loginButton.isEnabled = true
                         emailEditLayout.isEnabled = true
                         passwordEditLayout.isEnabled = true
+
                         emailEditLayout.isErrorEnabled = false
+                        passwordEditLayout.isErrorEnabled = false
+
                         loadingView.visibility = View.GONE;
                         Toast.makeText(context, String.format(resources.getString(R.string.welcome_message),it.name), Toast.LENGTH_LONG).show()
 
@@ -146,7 +153,27 @@ class LoginFragment : Fragment(){
                         passwordEditLayout.isEnabled = true
                         loadingView.visibility = View.GONE;
 
-                        emailEditLayout.error = it.error
+                        when(it.error_code.value){
+                            LoginViewState.LoginErrorCode.EMPTY_EMAIL.value -> {
+                                emailEditLayout.error = it.error
+                                passwordEditLayout.isErrorEnabled = false;
+                            }
+                            LoginViewState.LoginErrorCode.EMPTY_PASSWORD.value -> {
+                                emailEditLayout.isErrorEnabled = false;
+                                passwordEditLayout.error = it.error
+                            }
+                            LoginViewState.LoginErrorCode.INVALID_EMAIL.value -> {
+                                emailEditLayout.error = it.error
+                                passwordEditLayout.isErrorEnabled = false;
+                            }
+                            LoginViewState.LoginErrorCode.FIREBASE_ERROR.value -> {
+                                emailEditLayout.error = it.error
+                                passwordEditLayout.isErrorEnabled = false;
+
+                            }
+
+
+                        }
                     }
                 }
             }
@@ -157,7 +184,8 @@ class LoginFragment : Fragment(){
     private fun setupClicks() {
         loginButton.setOnClickListener {
             lifecycleScope.launch {
-                userViewModel.userIntent.send(LoginIntent.Login(
+                userViewModel.userIntent.send(
+                    UserIntent.Login(
                     emailEditLayout.editText?.text.toString(),
                     passwordEditLayout.editText?.text.toString()
                 ))
@@ -169,7 +197,8 @@ class LoginFragment : Fragment(){
 
         passForgetButton.setOnClickListener {
             lifecycleScope.launch {
-                userViewModel.userIntent.send(LoginIntent.ForgotPass(
+                userViewModel.userIntent.send(
+                    UserIntent.ForgotPass(
                     emailEditLayout.editText?.text.toString()
                 ))
             }

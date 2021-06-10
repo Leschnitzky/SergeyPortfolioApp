@@ -1,6 +1,7 @@
 package com.example.sergeyportfolioapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.widget.TextView
@@ -16,13 +17,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
     private val userViewModel: UserViewModel by viewModels()
 
 
@@ -38,15 +44,18 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         lifecycleScope.launch {
-            userViewModel.userTitle.collect(){
+            userViewModel.userTitle.collect {
+                Log.d(TAG, "onCreate: Got $it")
                 navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_title).text = it
             }
         }
+
+
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_login
+            R.id.nav_login,R.id.nav_register
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)

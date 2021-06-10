@@ -12,8 +12,8 @@ import kotlin.math.log
 class FirebaseRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth)
     : FirebaseRepository {
     private val TAG = "FirebaseRepositoryImpl"
-    override suspend fun createUser(userForFirebase: UserForFirebase): AuthResult? {
-        return firebaseAuth.createUserWithEmailAndPassword(
+    override suspend fun createUser(userForFirebase: UserForFirebase) {
+        firebaseAuth.createUserWithEmailAndPassword(
                 userForFirebase.email,
                 userForFirebase.password
         ).await()

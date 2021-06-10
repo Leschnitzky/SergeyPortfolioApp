@@ -7,7 +7,6 @@ import com.example.sergeyportfolioapp.usermanagement.room.UserDao
 import com.example.sergeyportfolioapp.usermanagement.room.model.User
 import com.google.firebase.auth.FirebaseAuthException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -20,55 +19,37 @@ class RepositoryImpl @Inject constructor(
         val user = UserForFirebase(email,password)
         Log.d(TAG, "loginUserAndReturnName: $user")
         try {
-            val userTokenList = userDao.getTokenByEmailAndPassword(email + password)
-            return if (userTokenList.isNotEmpty()){
-                logUserWithTokenAndGetName(userTokenList.first().token)
-            } else {
-                logWithANewUserAndGetName(user);
-            }
+            return logWithANewUserAndGetName(user);
         } catch (e: FirebaseAuthException){
 
             Log.e(TAG, "loginUserAndReturnName: caughtError: ${e.errorCode}")
             Log.e(TAG, "loginUserAndReturnName: caughtError: ${e.message}")
 
-            if(e.errorCode.equals("ERROR_INVALID_CUSTOM_TOKEN")){
-                return updateTokenAndGetName(user);
-            } else {
-                throw e
-            }
         }
+        return "BADSTRING"
     }
 
-
-    private suspend fun logUserWithTokenAndGetName(token: String): String {
-        Log.d(TAG, "logUserWithTokenAndGetName: $token")
-        database.logToUser(token).let {
-            return database.getUserDisplayName()
+    override suspend fun createUser(email: String, password: String, name: String): String {
+        database.createUser(UserForFirebase(email,password)).let {
+            userDao.insertUser(User(email,name))
         }
+        return name;
     }
+
 
     private suspend fun logWithANewUserAndGetName(user: UserForFirebase): String {
         database.logToUser(user).let {
-            database.getCurrentUser()?.getIdToken(false)?.await().let {
-                Log.d(TAG, "loginUserAndReturnName: insert UserPass: ${user.email}$${user.password}" +
-                        " and Token: ${it?.token}")
-                userDao.insertUser(User("${user.email}\$${user.password}",it?.token!!))
-                return database.getUserDisplayName()
+                val userEmail = database.getCurrentUser()?.email!!
+                val userDisplayNameEntry = userDao.getDisplayNameByEmail(userEmail)
+            return if(userDisplayNameEntry.isEmpty()) {
+                val firebaseDisplayName = database.getUserDisplayName()
+                userDao.insertUser(User(userEmail,firebaseDisplayName))
+                firebaseDisplayName
+            } else {
+                userDisplayNameEntry.first().displayName
+            }
             }
         }
-    }
-
-    private suspend fun updateTokenAndGetName(user: UserForFirebase): String {
-        database.logToUser(user).let {
-            database.getCurrentUser()?.getIdToken(false)?.await().let {
-                Log.d(TAG, "loginUserAndReturnName: insert UserPass: ${user.email}$${user.password}" +
-                        " and Token: ${it?.token}")
-                withContext(Dispatchers.IO){
-                    userDao.updateTokenForUser(it?.token!!,"${user.email}\$${user.password}")
-                }
-                return database.getUserDisplayName()
-            }
-        }
-    }
-
 }
+
+

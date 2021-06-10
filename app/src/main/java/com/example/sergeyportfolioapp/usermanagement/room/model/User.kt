@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "users")
 data class User(
-    @ColumnInfo(name = "emailPass") val email_pass : String,
-    @ColumnInfo(name = "userToken") val token: String){
+    @ColumnInfo(name = "email") val email : String,
+    @ColumnInfo(name = "displayName") val displayName: String){
 
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 

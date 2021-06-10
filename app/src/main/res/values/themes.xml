@@ -11,6 +11,7 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:layoutDirection">ltr</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -20,6 +21,24 @@
     </style>
 
     <style name="Theme.SergeyPortfolioApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="Theme.SergeyPortfolioApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="TitleText" parent="TextAppearance.AppCompat.Display1">
+
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:textSize">@dimen/title_text_size</item>
+        <item name="android:fontFamily">cursive</item>
+
+    </style>
+
+    <style name="SubtitleText" parent="TextAppearance.AppCompat.Display1">
+
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:textSize">@dimen/subtitle_textSize</item>
+        <item name="android:fontFamily">sans-serif</item>
+
+    </style>
+
+
+    <dimen name="title_text_size">30sp</dimen>
 </resources>

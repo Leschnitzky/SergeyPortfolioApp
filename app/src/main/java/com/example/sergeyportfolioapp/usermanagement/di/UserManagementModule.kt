@@ -43,7 +43,8 @@ internal object UserManagementModule{
         return Room.databaseBuilder(
             context,
             LocalUserDatabase::class.java, "userDB"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
