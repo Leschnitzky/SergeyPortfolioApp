@@ -36,6 +36,22 @@ class RepositoryImpl @Inject constructor(
         return name;
     }
 
+    override fun logoutUser() {
+        Log.d(TAG, "logoutUser: ")
+        database.logOffFromCurrentUser()
+    }
+
+    override fun getCurrentUserEmail(): String? {
+        return database.getCurrentUser()?.email
+    }
+
+    override suspend fun getCurrentUserDisplayName(): String? {
+        if(database.getCurrentUser() == null){
+            return null
+        }
+        return userDao.getDisplayNameByEmail(database.getCurrentUser()!!.email!!).first().displayName
+    }
+
 
     private suspend fun logWithANewUserAndGetName(user: UserForFirebase): String {
         database.logToUser(user).let {

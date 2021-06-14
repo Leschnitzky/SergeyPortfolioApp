@@ -14,6 +14,7 @@ sealed class RegisterViewState{
 
     object Idle : RegisterViewState()
     object Loading : RegisterViewState()
+    object LoggedOut : RegisterViewState()
     data class Registered(val name: String) : RegisterViewState()
     data class Error(val error: String?, val error_code: RegisterErrorCode) : RegisterViewState()
 

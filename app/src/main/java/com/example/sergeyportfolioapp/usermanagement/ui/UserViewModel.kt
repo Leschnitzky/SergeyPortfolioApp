@@ -3,21 +3,18 @@ package com.example.sergeyportfolioapp.usermanagement.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
+import com.example.sergeyportfolioapp.usermanagement.room.model.User
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
 import com.example.sergeyportfolioapp.utils.isValidEmail
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.math.log
+
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -25,19 +22,31 @@ class UserViewModel @Inject constructor(
     var repo: Repository,
     var resourcesProvider: ResourcesProvider
 ): ViewModel() {
+
+    enum class FragmentDisplayNumber(val number: Int){
+        LoginFragment(1),
+        RegisterFragment(2)
+    }
+
     private val TAG = "UserViewModel"
+
     val userIntent = Channel<UserIntent>(Channel.UNLIMITED)
 
     private val _stateLoginPage = MutableStateFlow<LoginViewState>(LoginViewState.Idle)
     private val _stateRegisterPage = MutableStateFlow<RegisterViewState>(RegisterViewState.Idle)
-    private var _userTitle = MutableStateFlow<String>(resourcesProvider.getString(R.string.guest_string))
 
-    val userTitle: StateFlow<String>
+    private val _userTitle = MutableSharedFlow<UserTitleState>()
+
+    val userTitle : SharedFlow<UserTitleState>
         get() = _userTitle
+
     val stateLoginPage: StateFlow<LoginViewState>
         get() = _stateLoginPage
     val stateRegisterPage: StateFlow<RegisterViewState>
         get() = _stateRegisterPage
+
+
+    var currentFragmentNumber : Int = FragmentDisplayNumber.LoginFragment.number
 
     init {
         handleIntent()
@@ -51,11 +60,11 @@ class UserViewModel @Inject constructor(
                     is UserIntent.Register -> registerUser(it.name,it.email,it.password,it.selected)
                 }
             }
-
         }
     }
 
     private fun logUser(email: String, password: String) {
+
         viewModelScope.launch {
             _stateLoginPage.value = LoginViewState.Loading
             _stateLoginPage.value = try {
@@ -63,10 +72,7 @@ class UserViewModel @Inject constructor(
                     if(isValidEmail(email)){
                         LoginViewState.LoggedIn(
                             repo.loginUserAndReturnName(email,password).also {
-                                withContext(Dispatchers.Default){
-                                    Log.d(TAG, "Got user display name: $it")
-                                    _userTitle.value = it
-                                }
+                                _userTitle.emit(UserTitleState.Member(it))
                             }
                         )
                     } else {
@@ -96,7 +102,7 @@ class UserViewModel @Inject constructor(
                         if(selected){
                             RegisterViewState.Registered(
                                 repo.createUser(email,password,name).also {
-                                    _userTitle.value = it
+                                        _userTitle.emit(UserTitleState.Member(it))
                                 })
                         } else {
                             RegisterViewState.Error("Terms and conditions are not checked" ,
@@ -120,5 +126,43 @@ class UserViewModel @Inject constructor(
             }
         }
     }
+
+    fun logoutUser() {
+        Log.d(TAG, "logoutUser: ")
+                    repo.logoutUser()
+        viewModelScope.launch{
+            Log.d(TAG, "logoutUser: Sending Guest")
+            _userTitle.emit(UserTitleState.Guest)
+        }
+    }
+
+    override fun onCleared() {
+        Log.d(TAG, "onCleared:")
+        super.onCleared()
+    }
+
+
+    fun getCurrentUserEmail() : String{
+        val email = repo.getCurrentUserEmail()
+        if(email == null){
+            return "Unsigned"
+        } else {
+            return email
+        }
+    }
+
+    fun checkIfUserLoggedIn() {
+        viewModelScope.launch {
+           repo.getCurrentUserDisplayName().let {
+                if(it == null){
+                    _userTitle.emit(UserTitleState.Guest)
+                } else {
+                    _userTitle.emit(UserTitleState.Member(it))
+                }
+           }
+        }
+
+    }
+
 
 }

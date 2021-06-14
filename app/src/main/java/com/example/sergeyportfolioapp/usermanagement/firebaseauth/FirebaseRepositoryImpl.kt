@@ -39,6 +39,7 @@ class FirebaseRepositoryImpl @Inject constructor(private val firebaseAuth: Fireb
     }
 
     override fun logOffFromCurrentUser() {
+        Log.d(TAG, "logOffFromCurrentUser: ")
         firebaseAuth.signOut()
     }
 

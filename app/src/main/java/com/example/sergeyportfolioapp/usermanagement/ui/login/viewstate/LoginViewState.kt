@@ -13,6 +13,7 @@ sealed class LoginViewState {
     object Idle : LoginViewState()
     object Loading : LoginViewState()
     data class LoggedIn(val name: String) : LoginViewState()
+    object LoggedOut : LoginViewState()
     data class Error(val error: String?, val error_code: LoginErrorCode) : LoginViewState()
 
 }

@@ -3,6 +3,7 @@ package com.example.sergeyportfolioapp.usermanagement.ui.register
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,20 +14,27 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
+import com.example.sergeyportfolioapp.usermanagement.ui.UserTitleState
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
+import com.example.sergeyportfolioapp.usermanagement.ui.login.LoginFragment
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
+    private val TAG = "RegisterFragment"
 
 
     private val userViewModel: UserViewModel by viewModels()
@@ -57,10 +65,21 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setupUI(root: View) {
+        createFragmentListener()
         initiateViewFields(root)
         setKeyboardListener()
         observeViewModel()
         setupIntents()
+    }
+
+    private fun createFragmentListener() {
+        parentFragmentManager.addFragmentOnAttachListener { _, fragment ->
+            if(fragment is RegisterFragment) {
+                Log.d(TAG, "createFragmentListener: ")
+                userViewModel.currentFragmentNumber =
+                    UserViewModel.FragmentDisplayNumber.RegisterFragment.number
+            }
+        }
     }
 
     private fun setupIntents() {
@@ -77,6 +96,32 @@ class RegisterFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+
+        lifecycleScope.launch {
+            userViewModel.userTitle.collect {
+                Log.d(TAG, "onCreate: Got $it")
+                when(it){
+                    is UserTitleState.Member -> {
+                        activity?.findViewById<NavigationView>(R.id.nav_view)
+                            ?.getHeaderView(0)
+                            ?.findViewById<TextView>(R.id.drawer_title)
+                            ?.text = it.name
+
+                        findNavController().navigate(R.id.action_nav_register_to_nav_shiba)
+
+                    }
+                    is UserTitleState.Guest -> {
+                        activity?.findViewById<NavigationView>(R.id.nav_view)
+                            ?.getHeaderView(0)
+                            ?.findViewById<TextView>(R.id.drawer_title)
+                            ?.text = resources.getString(R.string.initial_user_title)
+                    }
+                    is UserTitleState.InitState -> {}
+                }
+
+
+            }
+        }
             lifecycleScope.launch {
                 userViewModel.stateRegisterPage.collect {
                     when (it) {

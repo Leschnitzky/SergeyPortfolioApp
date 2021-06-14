@@ -10,22 +10,34 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
+import com.example.sergeyportfolioapp.usermanagement.ui.UserTitleState
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
@@ -50,20 +62,30 @@ class LoginFragment : Fragment(){
     ): View? {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         val root = inflater.inflate(R.layout.fragment_login, container, false)
-
         setupUI(root)
         return root
     }
 
 
-
     private fun setupUI(root: View){
+        createFragmentListener()
         initiateViewFields(root)
         setKeyboardListener()
         observeViewModel()
         setupClicks()
 
 
+    }
+
+    private fun createFragmentListener() {
+        parentFragmentManager.addFragmentOnAttachListener { _, fragment ->
+                if(fragment is LoginFragment) {
+                    Log.d(TAG, "createFragmentListener: ")
+
+                    userViewModel.currentFragmentNumber =
+                        UserViewModel.FragmentDisplayNumber.LoginFragment.number
+                }
+        }
     }
 
     private fun initiateViewFields(root: View) {
@@ -116,6 +138,41 @@ class LoginFragment : Fragment(){
     }
 
     private fun observeViewModel() {
+
+        lifecycleScope.launchWhenStarted {
+            userViewModel.userTitle.collect {
+                val navView = activity?.findViewById<NavigationView>(R.id.nav_view)
+                Log.d(TAG, "onCreate: Got $it")
+                when(it){
+                    is UserTitleState.Member -> {
+
+                        navView
+                            ?.getHeaderView(0)
+                            ?.findViewById<TextView>(R.id.drawer_title)
+                            ?.text = it.name
+
+                        navView!!.menu.setGroupVisible(R.id.member,true)
+                        navView!!.menu.setGroupVisible(R.id.unsigned,false)
+                        activity?.findNavController(R.id.nav_host_fragment)?.graph?.startDestination = R.id.nav_shiba
+                        activity?.findNavController(R.id.nav_host_fragment)?.navigate(R.id.nav_shiba)
+
+
+                    }
+                    is UserTitleState.Guest -> {
+                        navView
+                            ?.getHeaderView(0)
+                            ?.findViewById<TextView>(R.id.drawer_title)
+                            ?.text = resources.getString(R.string.initial_user_title)
+
+                        navView!!.menu.setGroupVisible(R.id.unsigned,true)
+                        navView!!.menu.setGroupVisible(R.id.member,false)
+                    }
+                    is UserTitleState.InitState -> {}
+                }
+
+
+            }
+        }
         lifecycleScope.launch {
             userViewModel.stateLoginPage.collect {
                 when (it) {
@@ -144,7 +201,6 @@ class LoginFragment : Fragment(){
                         passwordEditLayout.isErrorEnabled = false
 
                         loadingView.visibility = View.GONE;
-                        Toast.makeText(context, String.format(resources.getString(R.string.welcome_message),it.name), Toast.LENGTH_LONG).show()
 
                     }
                     is LoginViewState.Error -> {

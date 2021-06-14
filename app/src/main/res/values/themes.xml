@@ -40,5 +40,6 @@
     </style>
 
 
+
     <dimen name="title_text_size">30sp</dimen>
 </resources>
