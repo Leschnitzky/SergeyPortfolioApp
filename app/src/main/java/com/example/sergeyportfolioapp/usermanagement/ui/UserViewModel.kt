@@ -151,6 +151,10 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    suspend fun getUserDisplayName() : String? {
+        return repo.getCurrentUserDisplayName()
+    }
+
     fun checkIfUserLoggedIn() {
         viewModelScope.launch {
            repo.getCurrentUserDisplayName().let {

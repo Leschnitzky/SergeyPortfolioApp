@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".shibaphotodisplay.ui.ShibaFragment">
+    tools:context=".shibaphotodisplay.ui.main.ShibaFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/shiba_loading_animation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_anim" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/shiba_welcome"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="@string/welcoming_shiba"
+        android:textAppearance="@style/TitleText"
+        app:layout_constraintBottom_toTopOf="@+id/shiba_page_imageList_seperator"
+        app:layout_constraintEnd_toStartOf="@+id/shiba_page_margin_right"
+        app:layout_constraintStart_toStartOf="@+id/shiba_page_margin_left"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/shiba_page_imageList_seperator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20
+" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/shiba_page_margin_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/shiba_page_margin_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <Button
+        android:id="@+id/get_more_photos_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/get_more_photos"
+        app:layout_constraintBottom_toTopOf="@+id/shiba_page_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/shiba_page_margin_right"
+        app:layout_constraintStart_toStartOf="@+id/shiba_page_margin_left"
+        app:layout_constraintTop_toTopOf="@+id/shiba_page_ui_seperator" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/shiba_page_ui_seperator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70
+" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/shiba_page_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90
+
+" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shiba_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/shiba_page_ui_seperator"
+        app:layout_constraintEnd_toStartOf="@+id/shiba_page_margin_right"
+        app:layout_constraintStart_toStartOf="@+id/shiba_page_margin_left"
+        app:layout_constraintTop_toBottomOf="@+id/shiba_welcome" />
+</androidx.constraintlayout.widget.ConstraintLayout>

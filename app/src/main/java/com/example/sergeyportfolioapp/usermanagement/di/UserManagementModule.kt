@@ -21,7 +21,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal object UserManagementModule{
-    private const val BASE_URL = "https://www.countryflags.io/"
 
     @Provides
     fun provideFirebaseDatabaseReference(): FirebaseAuth{

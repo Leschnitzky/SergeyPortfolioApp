@@ -40,6 +40,17 @@
     </style>
 
 
+    <style name="CardStyle">
+        <item name="strokeColor">?colorSecondary</item>
+        <item name="strokeWidth">10dp</item>
+    </style>
+
+    <style name="CardShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+
 
     <dimen name="title_text_size">30sp</dimen>
 </resources>

@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -154,7 +155,10 @@ class LoginFragment : Fragment(){
                         navView!!.menu.setGroupVisible(R.id.member,true)
                         navView!!.menu.setGroupVisible(R.id.unsigned,false)
                         activity?.findNavController(R.id.nav_host_fragment)?.graph?.startDestination = R.id.nav_shiba
-                        activity?.findNavController(R.id.nav_host_fragment)?.navigate(R.id.nav_shiba)
+                        activity?.findNavController(R.id.nav_host_fragment)?.navigate(
+                            R.id.nav_shiba,
+                            bundleOf("name" to it.name)
+                        )
 
 
                     }

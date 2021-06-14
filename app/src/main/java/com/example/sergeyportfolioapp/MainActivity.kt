@@ -1,5 +1,6 @@
 package com.example.sergeyportfolioapp
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -7,6 +8,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -42,6 +44,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: ")
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_main)
 
         mJob = Job()
@@ -99,7 +102,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                         navView!!.menu.setGroupVisible(R.id.member,true)
                         navView!!.menu.setGroupVisible(R.id.unsigned,false)
                         navController.graph.startDestination = R.id.nav_shiba
-                        navController.navigate(R.id.nav_shiba)
+                        navController.navigate(
+                            R.id.nav_shiba,
+                            bundleOf("name" to it.name)
+                        )
 
                     }
                     is UserTitleState.Guest -> {

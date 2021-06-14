@@ -12,8 +12,10 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
@@ -96,18 +98,27 @@ class RegisterFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        val navView = activity?.findViewById<NavigationView>(R.id.nav_view)
 
         lifecycleScope.launch {
             userViewModel.userTitle.collect {
                 Log.d(TAG, "onCreate: Got $it")
                 when(it){
                     is UserTitleState.Member -> {
-                        activity?.findViewById<NavigationView>(R.id.nav_view)
+
+
+                        navView
                             ?.getHeaderView(0)
                             ?.findViewById<TextView>(R.id.drawer_title)
                             ?.text = it.name
 
-                        findNavController().navigate(R.id.action_nav_register_to_nav_shiba)
+                        navView!!.menu.setGroupVisible(R.id.member,true)
+                        navView!!.menu.setGroupVisible(R.id.unsigned,false)
+                        activity?.findNavController(R.id.nav_host_fragment)?.graph?.startDestination = R.id.nav_shiba
+                        activity?.findNavController(R.id.nav_host_fragment)?.navigate(
+                            R.id.nav_shiba,
+                            bundleOf("name" to it.name)
+                        )
 
                     }
                     is UserTitleState.Guest -> {
