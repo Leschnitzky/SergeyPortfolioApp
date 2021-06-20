@@ -4,13 +4,17 @@ import android.content.Context
 import androidx.room.Room
 import com.example.sergeyportfolioapp.usermanagement.firebaseauth.FirebaseRepository
 import com.example.sergeyportfolioapp.usermanagement.firebaseauth.FirebaseRepositoryImpl
+import com.example.sergeyportfolioapp.usermanagement.firestore.FirestoreRepository
+import com.example.sergeyportfolioapp.usermanagement.firestore.FirestoreRepositoryImpl
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
 import com.example.sergeyportfolioapp.usermanagement.repository.RepositoryImpl
 
 import com.example.sergeyportfolioapp.usermanagement.room.LocalUserDatabase
 import com.example.sergeyportfolioapp.usermanagement.room.UserDao
+import com.example.sergeyportfolioapp.usermanagement.room.model.UserTypeConverter
 import com.example.sergeyportfolioapp.usermanagement.ui.ResourcesProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,8 +37,18 @@ internal object UserManagementModule{
     }
 
     @Provides
+    fun provideFirestoreRepository(): FirestoreRepository{
+        return FirestoreRepositoryImpl(provideFirestoreInstance())
+    }
+
+    @Provides
+    fun provideFirestoreInstance(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
+
+    @Provides
     fun provideRepository(@ApplicationContext context: Context) : Repository{
-        return RepositoryImpl(provideUserDao(context), provideFirebaseRepository())
+        return RepositoryImpl(provideUserDao(context), provideFirebaseRepository(), provideFirestoreRepository())
     }
 
     @Provides
@@ -42,7 +56,9 @@ internal object UserManagementModule{
         return Room.databaseBuilder(
             context,
             LocalUserDatabase::class.java, "userDB"
-        ).fallbackToDestructiveMigration()
+        )
+            .addTypeConverter(UserTypeConverter())
+            .fallbackToDestructiveMigration()
             .build()
     }
 

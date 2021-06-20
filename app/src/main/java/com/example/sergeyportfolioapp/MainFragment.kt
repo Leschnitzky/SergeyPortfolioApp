@@ -1,8 +1,12 @@
 package com.example.sergeyportfolioapp
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -38,13 +42,16 @@ class MainFragment : Fragment() {
 
         } else {
             MainScope().launch {
-                findNavController().navigate(
-                    R.id.nav_shiba,
-                    bundleOf("name" to userViewModel.getUserDisplayName())
-                )
+                userViewModel.getUserDisplayName().let {
+                    findNavController().navigate(
+                        R.id.nav_shiba,
+                        bundleOf("name" to it)
+                    )
+                }
             }
         }
         val root =  inflater.inflate(R.layout.fragment_main, container, false)
+        requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
         return root
     }
 

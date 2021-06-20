@@ -3,6 +3,7 @@ package com.example.sergeyportfolioapp.usermanagement.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sergeyportfolioapp.shibaphotodisplay.ui.main.state.ShibaViewState
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
 import com.example.sergeyportfolioapp.usermanagement.room.model.User
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
@@ -46,6 +47,18 @@ class UserViewModel @Inject constructor(
         get() = _stateRegisterPage
 
 
+    val currPhotosInDB : StateFlow<ShibaViewState>
+        get() = _currPhotosInDB
+    private val _currPhotosInDB = MutableStateFlow<ShibaViewState>(ShibaViewState.Idle)
+
+    val favoritePhotosInDB : StateFlow<ArrayList<String>>
+        get() = _favoritePhotosInDB
+    private val _favoritePhotosInDB = MutableStateFlow<ArrayList<String>>(arrayListOf())
+
+    val updatedProfilePicture : StateFlow<String>
+        get() = _updatedProfilePicture
+    private var _updatedProfilePicture = MutableStateFlow<String>("Default")
+
     var currentFragmentNumber : Int = FragmentDisplayNumber.LoginFragment.number
 
     init {
@@ -73,6 +86,10 @@ class UserViewModel @Inject constructor(
                         LoginViewState.LoggedIn(
                             repo.loginUserAndReturnName(email,password).also {
                                 _userTitle.emit(UserTitleState.Member(it))
+                            }.also {
+                                repo.getCurrentUserProfilePic().let {
+                                    _updatedProfilePicture.value = it
+                                }
                             }
                         )
                     } else {
@@ -167,6 +184,36 @@ class UserViewModel @Inject constructor(
         }
 
     }
+
+    fun getPhotosFromDB() {
+        _currPhotosInDB.value = ShibaViewState.Loading
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                repo.getCurrentUserPhotos().let {
+                    Log.d(TAG, "getPhotosFromDB: $it")
+                    _currPhotosInDB.value = ShibaViewState.GotPhotos(it)
+                }
+            }
+        }
+    }
+
+    fun updatePhotosToCurrentUserDB(list : ArrayList<String>) {
+        Log.d(TAG, "updatePhotosToCurrentUserDB: $list")
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                repo.updateCurrentUserPhotos(list)
+            }
+        }
+    }
+
+    fun updateUserProfilePicture(picture : String){
+        viewModelScope.launch {
+            repo.updateCurrentUserProfilePicture(picture).let {
+                _updatedProfilePicture.value = picture
+            }
+        }
+    }
+
 
 
 }

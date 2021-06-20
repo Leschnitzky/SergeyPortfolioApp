@@ -271,6 +271,7 @@ class RegisterFragment : Fragment() {
         passwordInputLayout = root.findViewById(R.id.register_page_password_layout)
         guideline = root.findViewById(R.id.register_page_accountdetails_seperator)
         loadingView = root.findViewById(R.id.register_page_loading_animation)
+        loadingView.bringToFront()
 
     }
 

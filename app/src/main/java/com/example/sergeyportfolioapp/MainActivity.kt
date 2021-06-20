@@ -3,29 +3,29 @@ package com.example.sergeyportfolioapp
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.sergeyportfolioapp.usermanagement.ui.UserTitleState
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.log
 
 
 @AndroidEntryPoint
@@ -56,8 +56,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
         val navController = findNavController(R.id.nav_host_fragment)
 
-
-
         navController.addOnDestinationChangedListener { _, _, _ ->
               supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_hamburger)
         }
@@ -66,12 +64,35 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_login_menu, R.id.nav_shiba
         ), drawerLayout)
 
+
+        updateForLogoutState(navView,navController,drawerLayout)
+
+        setupActionBarWithNavController(navController, drawerLayout)
+        navView.setupWithNavController(navController)
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        val navController = findNavController(R.id.nav_host_fragment)
+
+        setFlowCollectors(navView,navController,drawerLayout)
+
+    }
+
+    private fun updateForLogoutState(
+        navView: NavigationView,
+        navController: NavController,
+        drawerLayout: DrawerLayout
+    ) {
         launch {
             navView.setNavigationItemSelectedListener { item ->
                 item.isChecked = true
                 when(item.itemId) {
                     R.id.nav_logoff -> {
-                            userViewModel.logoutUser()
+                        userViewModel.logoutUser()
                         navController.graph.startDestination = R.id.nav_login_menu
                         navController.navigate(R.id.nav_login_menu)
                     }
@@ -87,6 +108,34 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             }
         }
 
+        userViewModel.checkIfUserLoggedIn()
+        if(userViewModel.getCurrentUserEmail() == "Unsigned"){
+            navView!!.menu.setGroupVisible(R.id.member,false)
+            navView!!.menu.setGroupVisible(R.id.unsigned,true)
+            navView
+                .getHeaderView(0)
+                ?.findViewById<TextView>(R.id.drawer_title)
+                ?.text = resources.getString(R.string.initial_user_title)
+            findNavController(R.id.nav_host_fragment).graph.startDestination = R.id.nav_login_menu
+            findNavController(R.id.nav_host_fragment).navigate(R.id.nav_login_menu)
+        }
+
+    }
+
+    private fun setFlowCollectors(
+        navView: NavigationView,
+        navController: NavController,
+        drawerLayout: DrawerLayout
+    ) {
+        setTitleFlowCollector(navView,navController,drawerLayout)
+//        setProfileFlowColletor(navView)
+    }
+
+    private fun setTitleFlowCollector(
+        navView: NavigationView,
+        navController: NavController,
+        drawerLayout: DrawerLayout
+    ) {
         lifecycleScope.launchWhenStarted {
 
             userViewModel.userTitle.collect() {
@@ -126,24 +175,35 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             }
 
         }
-        userViewModel.checkIfUserLoggedIn()
 
-
-        if(userViewModel.getCurrentUserEmail() == "Unsigned"){
-            navView!!.menu.setGroupVisible(R.id.member,false)
-            navView!!.menu.setGroupVisible(R.id.unsigned,true)
-            navView
-                .getHeaderView(0)
-                ?.findViewById<TextView>(R.id.drawer_title)
-                ?.text = resources.getString(R.string.initial_user_title)
-            findNavController(R.id.nav_host_fragment).graph.startDestination = R.id.nav_login_menu
-            findNavController(R.id.nav_host_fragment).navigate(R.id.nav_login_menu)
-        }
-
-        setupActionBarWithNavController(navController, drawerLayout)
-        navView.setupWithNavController(navController)
     }
 
+    private fun setProfileFlowColletor(navView: NavigationView) {
+        launch {
+            userViewModel.updatedProfilePicture.collect {
+                Log.d(TAG, "onCreate: Got new profile_pic ($it)")
+                when(it){
+                    "Default" -> {
+                        navView
+                            .findViewById<ImageView>(R.id.profile_pic)
+                            .background = ResourcesCompat.getDrawable(
+                            resources
+                            , R.drawable.ic_shiba,
+                            theme)
+                    }
+                    else -> {
+                            Glide
+                                .with(applicationContext)
+                                .asDrawable()
+                                .load(it)
+                                .into(navView.findViewById(R.id.profile_pic))
+
+
+                    }
+                }
+            }
+        }
+    }
 
 
     override fun onSupportNavigateUp(): Boolean {

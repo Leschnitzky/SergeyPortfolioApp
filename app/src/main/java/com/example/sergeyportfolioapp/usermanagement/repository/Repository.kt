@@ -6,4 +6,9 @@ interface Repository {
     fun logoutUser()
     fun getCurrentUserEmail() : String?
     suspend fun getCurrentUserDisplayName() : String?
+    suspend fun getCurrentUserPhotos(): ArrayList<String>
+    suspend fun getCurrentUserFavorites(): ArrayList<String>
+    suspend fun updateCurrentUserPhotos(list: ArrayList<String>)
+    suspend fun updateCurrentUserProfilePicture(profilePic : String)
+    suspend fun getCurrentUserProfilePic(): String
 }

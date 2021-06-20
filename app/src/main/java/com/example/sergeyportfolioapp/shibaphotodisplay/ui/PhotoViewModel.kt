@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sergeyportfolioapp.shibaphotodisplay.repository.ShibaRepository
 import com.example.sergeyportfolioapp.shibaphotodisplay.ui.main.state.ShibaViewState
-import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -41,13 +39,13 @@ class PhotoViewModel @Inject constructor(
             viewModelScope.launch {
                 userIntent.consumeAsFlow().collect {
                     when (it) {
-                        is PhotoIntent.MorePhotos -> getMorePhotos()
+                        is PhotoIntent.MorePhotos -> getNewPhotosFromServer()
                     }
                 }
             }
     }
 
-    private fun getMorePhotos() {
+    fun getNewPhotosFromServer() {
         Log.d(TAG, "getMorePhotos: Start")
         viewModelScope.launch {
             _photoLoadState.value = ShibaViewState.Loading

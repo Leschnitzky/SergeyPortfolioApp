@@ -27,4 +27,12 @@
     <string name="logoff">Logoff</string>
     <string name="welcoming_shiba">Welcome %1$s!, These are your daily shiba photos</string>
     <string name="get_more_photos">Get more photos</string>
+    <string name="shiba_more_photos_dialog_title">More photos</string>
+    <string name="shiba_more_photos_dialog_body">Watch an ad to get more awesome shiba photos?</string>
+    <string name="shiba_more_photos_dialog_button_text">Give me more shiba goodness</string>
+    <string name="shiba_more_photos_dialog_button_negative_text">I\'m fine with the current layout</string>
+    <string name="shiba_page_title">Daily Shiba Photos</string>
+    <string name="favorite_photos_title">Favorite Photos</string>
+    <string name="profile_page_title">Profile</string>
+    <string name="set_as_profile">Set this photo as a profile picture</string>
 </resources>

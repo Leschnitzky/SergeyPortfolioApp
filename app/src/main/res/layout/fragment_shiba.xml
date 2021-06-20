@@ -25,6 +25,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
         android:gravity="center"
+        android:textSize="20sp"
         android:text="@string/welcoming_shiba"
         android:textAppearance="@style/TitleText"
         app:layout_constraintBottom_toTopOf="@+id/shiba_page_imageList_seperator"
