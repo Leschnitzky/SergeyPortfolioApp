@@ -16,18 +16,15 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.UserTitleState
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
-import com.example.sergeyportfolioapp.usermanagement.ui.login.LoginFragment
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
@@ -87,7 +84,7 @@ class RegisterFragment : Fragment() {
     private fun setupIntents() {
         registerButton.setOnClickListener {
             lifecycleScope.launch {
-                userViewModel.userIntent.send(
+                userViewModel._intentChannel.send(
                     UserIntent.Register(nameInputLayout.editText?.text.toString(),
                     emailInputLayout.editText?.text.toString(),
                     passwordInputLayout.editText?.text.toString(),

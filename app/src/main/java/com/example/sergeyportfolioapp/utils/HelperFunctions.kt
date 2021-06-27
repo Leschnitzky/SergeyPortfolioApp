@@ -6,6 +6,16 @@ import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import java.io.*
 import java.nio.file.Files
 
@@ -39,3 +49,64 @@ fun getInternalFileOutstream(mcoContext: Context, sFileName: String?) :OutputStr
     return null
 
 }
+
+
+@ExperimentalCoroutinesApi
+fun CollectionReference.getQuerySnapshotFlow(): Flow<QuerySnapshot?> {
+    return callbackFlow {
+        val listenerRegistration =
+            addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (firebaseFirestoreException != null) {
+                    cancel(
+                        message = "error fetching collection data at path - $path",
+                        cause = firebaseFirestoreException
+                    )
+                    return@addSnapshotListener
+                }
+                offer(querySnapshot)
+            }
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
+}
+
+@ExperimentalCoroutinesApi
+fun <T> CollectionReference.getDataFlow(mapper: (QuerySnapshot?) -> T): Flow<T> {
+    return getQuerySnapshotFlow()
+        .map {
+            return@map mapper(it)
+        }
+}
+
+
+
+@ExperimentalCoroutinesApi
+fun DocumentReference.getQuerySnapshotFlow(): Flow<DocumentSnapshot?> {
+    return callbackFlow {
+        val listenerRegistration =
+            addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (firebaseFirestoreException != null) {
+                    cancel(
+                        message = "error fetching collection data at path - $path",
+                        cause = firebaseFirestoreException
+                    )
+                    return@addSnapshotListener
+                }
+                offer(querySnapshot)
+            }
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
+}
+
+@ExperimentalCoroutinesApi
+fun <T> DocumentReference.getDataFlow(mapper: (DocumentSnapshot?) -> T): Flow<T> {
+    return getQuerySnapshotFlow()
+        .map {
+            return@map mapper(it)
+        }
+}
+
+

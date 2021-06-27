@@ -3,41 +3,37 @@ package com.example.sergeyportfolioapp
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
+import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
+import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
+import com.example.sergeyportfolioapp.usermanagement.ui.UserProfilePicState
 import com.example.sergeyportfolioapp.usermanagement.ui.UserTitleState
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onEach
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), CoroutineScope {
-
-    private lateinit var mJob: Job
-    override val coroutineContext: CoroutineContext
-        get() = mJob + Dispatchers.Main
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val TAG = "MainActivity"
     private val userViewModel: UserViewModel by viewModels()
-
+    private lateinit var drawerLayout : DrawerLayout
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -46,12 +42,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_main)
-
-        mJob = Job()
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
@@ -61,147 +55,27 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_login_menu, R.id.nav_shiba
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_login_menu, R.id.nav_shiba,
+            R.id.nav_logoff, R.id.nav_main
         ), drawerLayout)
 
 
-        updateForLogoutState(navView,navController,drawerLayout)
-
         setupActionBarWithNavController(navController, drawerLayout)
         navView.setupWithNavController(navController)
+
+        val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
+        navigationView.setNavigationItemSelectedListener(this)
+
+        observeUserStatesForDrawer(navController,navView)
     }
 
-
-    override fun onStart() {
-        super.onStart()
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
-
-        setFlowCollectors(navView,navController,drawerLayout)
-
-    }
-
-    private fun updateForLogoutState(
-        navView: NavigationView,
-        navController: NavController,
-        drawerLayout: DrawerLayout
-    ) {
-        launch {
-            navView.setNavigationItemSelectedListener { item ->
-                item.isChecked = true
-                when(item.itemId) {
-                    R.id.nav_logoff -> {
-                        userViewModel.logoutUser()
-                        navController.graph.startDestination = R.id.nav_login_menu
-                        navController.navigate(R.id.nav_login_menu)
-                    }
-                    R.id.nav_login_menu -> {
-                        navController.navigate(R.id.nav_login_menu)
-                    }
-                    R.id.nav_register -> {
-                        navController.navigate(R.id.nav_register)
-                    }
-                }
-                drawerLayout.closeDrawers()
-                true
-            }
-        }
-
-        userViewModel.checkIfUserLoggedIn()
-        if(userViewModel.getCurrentUserEmail() == "Unsigned"){
-            navView!!.menu.setGroupVisible(R.id.member,false)
-            navView!!.menu.setGroupVisible(R.id.unsigned,true)
-            navView
-                .getHeaderView(0)
-                ?.findViewById<TextView>(R.id.drawer_title)
-                ?.text = resources.getString(R.string.initial_user_title)
-            findNavController(R.id.nav_host_fragment).graph.startDestination = R.id.nav_login_menu
-            findNavController(R.id.nav_host_fragment).navigate(R.id.nav_login_menu)
-        }
-
-    }
-
-    private fun setFlowCollectors(
-        navView: NavigationView,
-        navController: NavController,
-        drawerLayout: DrawerLayout
-    ) {
-        setTitleFlowCollector(navView,navController,drawerLayout)
-//        setProfileFlowColletor(navView)
-    }
-
-    private fun setTitleFlowCollector(
-        navView: NavigationView,
-        navController: NavController,
-        drawerLayout: DrawerLayout
-    ) {
+    private fun observeUserStatesForDrawer(navController: NavController, navView: NavigationView) {
         lifecycleScope.launchWhenStarted {
-
-            userViewModel.userTitle.collect() {
-
-                Log.d(TAG, "onCreate: Got $it")
-                when(it){
-                    is UserTitleState.Member -> {
-                        navView
-                            .getHeaderView(0)
-                            ?.findViewById<TextView>(R.id.drawer_title)
-                            ?.text = it.name
-
-                        navView!!.menu.setGroupVisible(R.id.member,true)
-                        navView!!.menu.setGroupVisible(R.id.unsigned,false)
-                        navController.graph.startDestination = R.id.nav_shiba
-                        navController.navigate(
-                            R.id.nav_shiba,
-                            bundleOf("name" to it.name)
-                        )
-
-                    }
-                    is UserTitleState.Guest -> {
-                        navView!!.menu.setGroupVisible(R.id.member,false)
-                        navView!!.menu.setGroupVisible(R.id.unsigned,true)
-                        navView
-                            .getHeaderView(0)
-                            ?.findViewById<TextView>(R.id.drawer_title)
-                            ?.text = resources.getString(R.string.initial_user_title)
-                        findNavController(R.id.nav_host_fragment).graph.startDestination = R.id.nav_login_menu
-                        findNavController(R.id.nav_host_fragment).navigate(R.id.nav_login_menu)
-                    }
-                    is UserTitleState.InitState -> { }
-                }
-
-                setupActionBarWithNavController(navController, drawerLayout)
-
-            }
-
+            observeUserTitleState(navController, navView)
         }
 
-    }
-
-    private fun setProfileFlowColletor(navView: NavigationView) {
-        launch {
-            userViewModel.updatedProfilePicture.collect {
-                Log.d(TAG, "onCreate: Got new profile_pic ($it)")
-                when(it){
-                    "Default" -> {
-                        navView
-                            .findViewById<ImageView>(R.id.profile_pic)
-                            .background = ResourcesCompat.getDrawable(
-                            resources
-                            , R.drawable.ic_shiba,
-                            theme)
-                    }
-                    else -> {
-                            Glide
-                                .with(applicationContext)
-                                .asDrawable()
-                                .load(it)
-                                .into(navView.findViewById(R.id.profile_pic))
-
-
-                    }
-                }
-            }
+        lifecycleScope.launchWhenStarted {
+            observeProfileViewState()
         }
     }
 
@@ -216,6 +90,103 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         super.onDestroy()
     }
 
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle navigation view item clicks here.
+        when (item.itemId) {
+            R.id.nav_logoff -> {
+                lifecycleScope.launch {
+                    userViewModel._intentChannel.send(UserIntent.LogoutUser)
+                }
+            }
+        }
+        //close navigation drawer
+        //close navigation drawer
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+
+    private fun observeUserTitleState(navController : NavController, navView : NavigationView) {
+        userViewModel.userTitle.onEach {
+            handleUserTitleChange(it,navView,navController)
+        }.catch {  }
+    }
+
+    private fun handleUserTitleChange(
+        it: UserTitleState,
+        navView: NavigationView,
+        navController: NavController
+    ) {
+        when (it) {
+            is UserTitleState.Member -> {
+                navView
+                    .getHeaderView(0)
+                    .findViewById<TextView>(R.id.drawer_title)
+                    .text = it.name
+
+                navView.menu.setGroupVisible(R.id.member, true)
+                navView.menu.setGroupVisible(R.id.unsigned, false)
+                navController.graph.startDestination = R.id.nav_shiba
+                Log.d(TAG, "observeUserTitleState: moving to SHIBA")
+                navController.navigate(
+                    R.id.nav_shiba,
+                    bundleOf("name" to it.name)
+                )
+
+            }
+            is UserTitleState.Guest -> {
+                navView.menu.setGroupVisible(R.id.member, false)
+                navView.menu.setGroupVisible(R.id.unsigned, true)
+                navView
+                    .getHeaderView(0)
+                    .findViewById<TextView>(R.id.drawer_title)
+                    .text = resources.getString(R.string.initial_user_title)
+                navController.graph.startDestination =
+                    R.id.nav_login_menu
+
+                Log.d(TAG, "observeUserTitleState: moving to LOGIN")
+                navController.navigate(R.id.nav_login_menu)
+            }
+            is UserTitleState.InitState -> {
+            }
+        }
+
+    }
+
+    suspend fun observeProfileViewState() {
+        userViewModel.currentProfilePicture.onEach {
+            handleProfilePictureChange(it)
+        }.catch {  }
+    }
+
+    private fun handleProfilePictureChange(it: UserProfilePicState) {
+        when(it){
+            is UserProfilePicState.DefaultPicture -> {
+                Glide
+                    .with(this)
+                    .asDrawable()
+                    .load("http://cdn.shibe.online/shibes/1dceabce914325b357fbd59e4ef829bc5ddfad6c.jpg")
+                    .override(200,200)
+                    .into(
+                        findViewById<NavigationView>(R.id.nav_view).
+                        getHeaderView(0).
+                        findViewById(R.id.drawer_profile_pic))
+
+            }
+            is UserProfilePicState.NewProfilePic -> {
+                Glide
+                    .with(this)
+                    .asDrawable()
+                    .load(it.picture)
+                    .override(200,200)
+                    .into(
+                        findViewById<NavigationView>(R.id.nav_view).
+                        getHeaderView(0).
+                        findViewById(R.id.drawer_profile_pic))
+            }
+            else -> {}
+        }
+    }
 
 
 }

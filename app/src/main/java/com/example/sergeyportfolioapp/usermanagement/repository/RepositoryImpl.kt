@@ -1,23 +1,28 @@
 package com.example.sergeyportfolioapp.usermanagement.repository
 
 import android.util.Log
-import androidx.room.TypeConverter
-import com.example.sergeyportfolioapp.usermanagement.firebaseauth.FirebaseRepository
-import com.example.sergeyportfolioapp.usermanagement.firebaseauth.model.UserForFirebase
-import com.example.sergeyportfolioapp.usermanagement.firestore.FirestoreRepository
-import com.example.sergeyportfolioapp.usermanagement.room.UserDao
-import com.example.sergeyportfolioapp.usermanagement.room.model.User
-import com.example.sergeyportfolioapp.usermanagement.room.model.UserTypeConverter
+import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.RetrofitRepository
+import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.FirebaseRepository
+import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.model.UserForFirebase
+import com.example.sergeyportfolioapp.usermanagement.repository.firestore.FirestoreRepository
+import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.UserForFirestore
+import com.example.sergeyportfolioapp.usermanagement.repository.room.UserDao
+import com.example.sergeyportfolioapp.usermanagement.repository.room.model.User
+import com.example.sergeyportfolioapp.usermanagement.repository.room.model.UserTypeConverter
+import com.example.sergeyportfolioapp.utils.GlobalTags.Companion.TAG_PROFILE_PIC
 import com.google.firebase.auth.FirebaseAuthException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.math.log
 
 class RepositoryImpl @Inject constructor(
     var userDao: UserDao,
     var database: FirebaseRepository,
     var firestoreRepo : FirestoreRepository,
+    val retrofitRepository: RetrofitRepository,
+    val applicationScope : CoroutineScope
 ) : Repository {
     private val TAG = "RepositoryImpl"
     override suspend fun loginUserAndReturnName(email: String, password: String): String {
@@ -37,7 +42,7 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun createUser(email: String, password: String, name: String): String {
         database.createUser(UserForFirebase(email,password)).let {
-            userDao.insertUser(User(email,name, arrayListOf("get"),10, arrayListOf()))
+            userDao.insertUser(User(email,name, arrayListOf(), mapOf()))
         }
         firestoreRepo.addNewUserToFirestore(email)
         return name;
@@ -60,39 +65,71 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentUserPhotos(): ArrayList<String> {
-        Log.d(TAG, "getCurrentUserPhotos: Here")
         val typeConverter = UserTypeConverter()
-        return typeConverter.StringToList(
-            userDao.getCurrentPhotosByEmail(
+        val photosUrls = arrayListOf<String>()
+        photosUrls.addAll(
+            typeConverter.StringToList(
+                userDao.getCurrentPhotosByEmail(
                 getCurrentUserEmail()!!
-            ).first())
-    }
-
-    override suspend fun getCurrentUserFavorites(): ArrayList<String> {
-        val typeConverter = UserTypeConverter()
-        return typeConverter.StringToList(
-            userDao.getFavoritePhotosByEmail(
-                getCurrentUserEmail()!!).first()
+            ).first()
+            )
         )
+
+        if(photosUrls.isEmpty()){
+            photosUrls.add("SaveLocally")
+            photosUrls.addAll(getPhotosFromServer())
+        }
+
+        return photosUrls
     }
 
-    override suspend fun updateCurrentUserPhotos(list: ArrayList<String>) {
+    override suspend fun getCurrentUserFavorites(): kotlinx.coroutines.flow.Flow<UserForFirestore> {
+        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+    }
 
-        Log.d(TAG, "updateCurrentUserPhotos: Email: ${getCurrentUserEmail()!!} ,List: $list")
+    override suspend fun updateCurrentUserPhotos(
+        list: ArrayList<String>,
+        originalUrlList: List<String>
+    ) {
+        Log.d(TAG, "updateCurrentUserPhotos: Email: ${getCurrentUserEmail()!!} ,List: $list, Original Url List: $originalUrlList")
         userDao.updateCurrentPhotosByMail(list,getCurrentUserEmail()!!)
+        val map = createURLMap(list,originalUrlList)
+        userDao.updateCurrentPhotoURLMapByMail(getCurrentUserEmail()!!,map)
+    }
+
+    private fun createURLMap(list: ArrayList<String>, originalUrlList: List<String>): Map<String,String> {
+        val map = mutableMapOf<String,String>()
+        (list zip originalUrlList).forEach {
+            map[it.first] = it.second
+        }
+        return map
     }
 
     override suspend fun updateCurrentUserProfilePicture(profilePic: String) {
         val email = getCurrentUserEmail()
         withContext(Dispatchers.IO){
-            val user = firestoreRepo.getUserFromFirestore(email!!)
-            user.profilePicURI = profilePic;
-            firestoreRepo.updateUserFromFirestore(user)
+            firestoreRepo.getUserFromFirestore(email!!).collect {
+                it.profilePicURI = profilePic;
+                firestoreRepo.updateUserFromFirestore(it)
+            }
         }
     }
 
-    override suspend fun getCurrentUserProfilePic(): String {
-        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).profilePicURI
+    override suspend fun getCurrentUserProfilePic(): kotlinx.coroutines.flow.Flow<UserForFirestore> {
+        Log.d("$TAG.$TAG_PROFILE_PIC", "getCurrentUserProfilePic: start currentProfile")
+        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+
+
+
+    }
+
+    override suspend fun getCurrentUserURLMap(): Map<String, String> {
+        val typeConverter = UserTypeConverter()
+        return typeConverter.StringToMap(userDao.getCurrentURLMapByEmail(getCurrentUserEmail()!!).first())
+    }
+
+    suspend fun getPhotosFromServer(): List<String> {
+        return retrofitRepository.get10Photos()
     }
 
 
@@ -102,13 +139,15 @@ class RepositoryImpl @Inject constructor(
                 val userDisplayNameEntry = userDao.getDisplayNameByEmail(userEmail)
             return if(userDisplayNameEntry.isEmpty()) {
                 val firebaseDisplayName = database.getUserDisplayName()
-                userDao.insertUser(User(userEmail,firebaseDisplayName, arrayListOf(),10, arrayListOf()))
+                userDao.insertUser(User(userEmail,firebaseDisplayName, arrayListOf(), mapOf()))
                 firebaseDisplayName
             } else {
                 userDisplayNameEntry.first().displayName
             }
             }
         }
+
+
 }
 
 

@@ -10,35 +10,23 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
-import androidx.core.os.bundleOf
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
-import com.example.sergeyportfolioapp.usermanagement.ui.UserTitleState
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
-import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
-import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
@@ -48,6 +36,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 class LoginFragment : Fragment(){
     private val TAG = "LoginFragment"
     private val userViewModel: UserViewModel by viewModels()
+
     private lateinit var loginButton : Button
     private lateinit var passForgetButton : Button
     private lateinit var registerButton : Button
@@ -56,6 +45,7 @@ class LoginFragment : Fragment(){
     private lateinit var passwordEditLayout : TextInputLayout
     private lateinit var loadingView : LottieAnimationView;
     private lateinit var greetingAnimation : LottieAnimationView;
+    @InternalCoroutinesApi
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -68,25 +58,12 @@ class LoginFragment : Fragment(){
     }
 
 
+    @InternalCoroutinesApi
     private fun setupUI(root: View){
-        createFragmentListener()
         initiateViewFields(root)
         setKeyboardListener()
         observeViewModel()
         setupClicks()
-
-
-    }
-
-    private fun createFragmentListener() {
-        parentFragmentManager.addFragmentOnAttachListener { _, fragment ->
-                if(fragment is LoginFragment) {
-                    Log.d(TAG, "createFragmentListener: ")
-
-                    userViewModel.currentFragmentNumber =
-                        UserViewModel.FragmentDisplayNumber.LoginFragment.number
-                }
-        }
     }
 
     private fun initiateViewFields(root: View) {
@@ -138,47 +115,19 @@ class LoginFragment : Fragment(){
             })
     }
 
+    @InternalCoroutinesApi
     private fun observeViewModel() {
 
-        lifecycleScope.launchWhenStarted {
-            userViewModel.userTitle.collect {
-                val navView = activity?.findViewById<NavigationView>(R.id.nav_view)
-                Log.d(TAG, "onCreate: Got $it")
-                when(it){
-                    is UserTitleState.Member -> {
-
-                        navView
-                            ?.getHeaderView(0)
-                            ?.findViewById<TextView>(R.id.drawer_title)
-                            ?.text = it.name
-
-                        navView!!.menu.setGroupVisible(R.id.member,true)
-                        navView!!.menu.setGroupVisible(R.id.unsigned,false)
-                        activity?.findNavController(R.id.nav_host_fragment)?.graph?.startDestination = R.id.nav_shiba
-                        activity?.findNavController(R.id.nav_host_fragment)?.navigate(
-                            R.id.nav_shiba,
-                            bundleOf("name" to it.name)
-                        )
-
-
-                    }
-                    is UserTitleState.Guest -> {
-                        navView
-                            ?.getHeaderView(0)
-                            ?.findViewById<TextView>(R.id.drawer_title)
-                            ?.text = resources.getString(R.string.initial_user_title)
-
-                        navView!!.menu.setGroupVisible(R.id.unsigned,true)
-                        navView!!.menu.setGroupVisible(R.id.member,false)
-                    }
-                    is UserTitleState.InitState -> {}
-                }
-
-
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                observeLoginViewState()
             }
         }
-        lifecycleScope.launch {
-            userViewModel.stateLoginPage.collect {
+    }
+
+    @InternalCoroutinesApi
+    private suspend fun observeLoginViewState() {
+            userViewModel.stateLoginPage.collectLatest {
                 when (it) {
                     is LoginViewState.Idle -> {
 
@@ -237,14 +186,13 @@ class LoginFragment : Fragment(){
                     }
                 }
             }
-        }
     }
 
 
     private fun setupClicks() {
         loginButton.setOnClickListener {
             lifecycleScope.launch {
-                userViewModel.userIntent.send(
+                userViewModel._intentChannel.send(
                     UserIntent.Login(
                     emailEditLayout.editText?.text.toString(),
                     passwordEditLayout.editText?.text.toString()
@@ -257,7 +205,7 @@ class LoginFragment : Fragment(){
 
         passForgetButton.setOnClickListener {
             lifecycleScope.launch {
-                userViewModel.userIntent.send(
+                userViewModel._intentChannel.send(
                     UserIntent.ForgotPass(
                     emailEditLayout.editText?.text.toString()
                 ))

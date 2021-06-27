@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_shiba"
-        android:name="com.example.sergeyportfolioapp.shibaphotodisplay.ui.main.ShibaFragment"
+        android:name="com.example.sergeyportfolioapp.usermanagement.ui.main.ShibaFragment"
         android:label="ShibaRandom"
         tools:layout="@layout/fragment_shiba" >
         <action
@@ -58,7 +58,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_details"
-        android:name="com.example.sergeyportfolioapp.shibaphotodisplay.ui.extradetails.PhotoDetailsFragment"
+        android:name="com.example.sergeyportfolioapp.usermanagement.ui.extradetails.PhotoDetailsFragment"
         android:label="Photo Details"
         tools:layout="@layout/fragment_photo_details">
         <argument
