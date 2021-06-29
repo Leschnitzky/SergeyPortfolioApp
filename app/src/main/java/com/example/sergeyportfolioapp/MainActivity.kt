@@ -12,34 +12,39 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
-import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
-import com.example.sergeyportfolioapp.usermanagement.ui.UserProfilePicState
-import com.example.sergeyportfolioapp.usermanagement.ui.UserTitleState
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
+import com.example.sergeyportfolioapp.utils.DEFAULT_PROFILE_PIC
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    val scope = CoroutineScope(Job() + Dispatchers.Main + CoroutineName("MainActivity"))
 
     private val TAG = "MainActivity"
     private val userViewModel: UserViewModel by viewModels()
     private lateinit var drawerLayout : DrawerLayout
+    private lateinit var listener : NavigationView.OnNavigationItemSelectedListener
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: ")
         super.onCreate(savedInstanceState)
+        listener = this
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -49,6 +54,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navView: NavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
+        observeUserStatesForDrawer(navController,navView)
+
 
         navController.addOnDestinationChangedListener { _, _, _ ->
               supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_hamburger)
@@ -59,23 +66,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_logoff, R.id.nav_main
         ), drawerLayout)
 
-
         setupActionBarWithNavController(navController, drawerLayout)
         navView.setupWithNavController(navController)
 
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
-        observeUserStatesForDrawer(navController,navView)
     }
 
     private fun observeUserStatesForDrawer(navController: NavController, navView: NavigationView) {
-        lifecycleScope.launchWhenStarted {
-            observeUserTitleState(navController, navView)
-        }
-
-        lifecycleScope.launchWhenStarted {
-            observeProfileViewState()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                Log.d(TAG, "checkUserStatus: Observing on ${this.coroutineContext}")
+                userViewModel.mainActivityUIState.collect {
+                    Log.d(TAG, "checkUserStatus: Got $it")
+                    handleUserUIChangeInMainActivity(it, navView, navController)
+                }
+            }
         }
     }
 
@@ -94,78 +101,71 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_logoff -> {
-                lifecycleScope.launch {
-                    userViewModel._intentChannel.send(UserIntent.LogoutUser)
+                Log.d(TAG, "onNavigationItemSelected: Pressed!")
+                userViewModel.viewModelScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED){
+                        Log.d(TAG, "onNavigationItemSelected: Pressed from Coroutine")
+                        userViewModel.intentChannel.send(UserIntent.LogoutUser)
+                    }
                 }
             }
+            R.id.nav_register -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_register)
+            }
         }
-        //close navigation drawer
-        //close navigation drawer
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
-
-    private fun observeUserTitleState(navController : NavController, navView : NavigationView) {
-        userViewModel.userTitle.onEach {
-            handleUserTitleChange(it,navView,navController)
-        }.catch {  }
-    }
-
-    private fun handleUserTitleChange(
-        it: UserTitleState,
+    private fun handleUserUIChangeInMainActivity(
+        it: MainContract.State,
         navView: NavigationView,
         navController: NavController
     ) {
-        when (it) {
-            is UserTitleState.Member -> {
+        when (it.titleState) {
+
+            is MainContract.UserTitleState.Member -> {
                 navView
                     .getHeaderView(0)
                     .findViewById<TextView>(R.id.drawer_title)
-                    .text = it.name
+                    .text = it.titleState.name
 
                 navView.menu.setGroupVisible(R.id.member, true)
                 navView.menu.setGroupVisible(R.id.unsigned, false)
-                navController.graph.startDestination = R.id.nav_shiba
                 Log.d(TAG, "observeUserTitleState: moving to SHIBA")
+                navController.graph.startDestination = R.id.nav_shiba
+
                 navController.navigate(
                     R.id.nav_shiba,
-                    bundleOf("name" to it.name)
+                    bundleOf("name" to it.titleState.name)
                 )
 
+
             }
-            is UserTitleState.Guest -> {
+            is MainContract.UserTitleState.Guest -> {
                 navView.menu.setGroupVisible(R.id.member, false)
                 navView.menu.setGroupVisible(R.id.unsigned, true)
                 navView
                     .getHeaderView(0)
                     .findViewById<TextView>(R.id.drawer_title)
                     .text = resources.getString(R.string.initial_user_title)
-                navController.graph.startDestination =
-                    R.id.nav_login_menu
-
                 Log.d(TAG, "observeUserTitleState: moving to LOGIN")
-                navController.navigate(R.id.nav_login_menu)
+                navController.navigate(R.id.nav_login_menu).also {
+                    navController.graph.startDestination = R.id.nav_login_menu
+                }
+
             }
-            is UserTitleState.InitState -> {
+            is MainContract.UserTitleState.InitState -> {
             }
         }
 
-    }
 
-    suspend fun observeProfileViewState() {
-        userViewModel.currentProfilePicture.onEach {
-            handleProfilePictureChange(it)
-        }.catch {  }
-    }
-
-    private fun handleProfilePictureChange(it: UserProfilePicState) {
-        when(it){
-            is UserProfilePicState.DefaultPicture -> {
+        when(it.profilePicState){
+            is MainContract.UserProfilePicState.DefaultPicture -> {
                 Glide
                     .with(this)
                     .asDrawable()
-                    .load("http://cdn.shibe.online/shibes/1dceabce914325b357fbd59e4ef829bc5ddfad6c.jpg")
+                    .load(DEFAULT_PROFILE_PIC)
                     .override(200,200)
                     .into(
                         findViewById<NavigationView>(R.id.nav_view).
@@ -173,11 +173,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         findViewById(R.id.drawer_profile_pic))
 
             }
-            is UserProfilePicState.NewProfilePic -> {
+            is MainContract.UserProfilePicState.NewProfilePic -> {
                 Glide
                     .with(this)
                     .asDrawable()
-                    .load(it.picture)
+                    .load(it.profilePicState.picture)
                     .override(200,200)
                     .into(
                         findViewById<NavigationView>(R.id.nav_view).
@@ -186,6 +186,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             else -> {}
         }
+
+
     }
 
 

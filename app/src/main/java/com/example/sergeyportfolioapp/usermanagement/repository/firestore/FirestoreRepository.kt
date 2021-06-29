@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirestoreRepository {
     suspend fun addNewUserToFirestore(email: String)
-    suspend fun addNewUserToFirestore(email: String, profilePic : String)
+    suspend fun addNewUserToFirestore(email: String,name: String)
+    suspend fun addNewUserToFirestore(email: String, name : String, profilePic : String)
     fun getUserFromFirestore(email: String): Flow<UserForFirestore>
     suspend fun updateUserFromFirestore(userForFirestore: UserForFirestore)
 }

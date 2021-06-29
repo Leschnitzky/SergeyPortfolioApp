@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +32,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.awesomedialog.*
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.main.state.ShibaViewState
-import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
+import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.utils.FOLDER_NAME
 import com.example.sergeyportfolioapp.utils.RecycleViewScrollDisabler
@@ -41,6 +42,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class ShibaFragment : Fragment() {
 
@@ -48,17 +50,15 @@ class ShibaFragment : Fragment() {
     private lateinit var localPhotoPaths : ArrayList<String>
     private lateinit var loadingAnimation : LottieAnimationView
     private lateinit var recyclerView: RecyclerView
-    private lateinit var job: Job
     private lateinit var getMorePhotosButton : Button
     var disabler: OnItemTouchListener = RecycleViewScrollDisabler()
-    private val userViewModel: UserViewModel by viewModels()
+    private val userViewModel: UserViewModel by activityViewModels()
 
     private val TAG = "ShibaFragment"
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         postponeEnterTransition()
     }
     override fun onCreateView(
@@ -77,7 +77,7 @@ class ShibaFragment : Fragment() {
         Log.d(TAG, "setupUI: 1")
         initializeViews(root)
         Log.d(TAG, "setupUI: 2")
-        observeViewModel()
+//        observeViewModel()
         Log.d(TAG, "setupUI: 3")
         setupClicks()
         Log.d(TAG, "setupUI: 4")
@@ -97,10 +97,8 @@ class ShibaFragment : Fragment() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                     observeShibaViewState()
-                }
             }
         }
 
@@ -122,7 +120,7 @@ class ShibaFragment : Fragment() {
                     action = {
                         // Show ad and load more photos
                         lifecycleScope.launch {
-                            userViewModel._intentChannel.send(
+                            userViewModel.intentChannel.send(
                                 UserIntent.GetNewPhotos
                             )
                         }
@@ -141,20 +139,10 @@ class ShibaFragment : Fragment() {
 
     private fun setupUser() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    getInitialPhotos()
-                }
-
-                launch {
-                    displayProfilePic()
-                }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                    getInitialPhotos()
             }
         }
-    }
-
-    private suspend fun displayProfilePic() {
-            userViewModel._intentChannel.send(UserIntent.DisplayProfilePicture)
     }
 
 
@@ -182,6 +170,7 @@ class ShibaFragment : Fragment() {
                         displayError(it.error)
                         unlockUI()
                     }
+                    is ShibaViewState.Idle -> {}
                 }
             }
     }
@@ -282,7 +271,7 @@ class ShibaFragment : Fragment() {
     }
 
     private suspend fun getInitialPhotos() {
-        userViewModel._intentChannel.send(UserIntent.GetPhotos)
+//        userViewModel.intentChannel.send(UserIntent.GetPhotos)
     }
 
 

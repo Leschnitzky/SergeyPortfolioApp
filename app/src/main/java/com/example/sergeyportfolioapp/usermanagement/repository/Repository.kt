@@ -13,7 +13,7 @@ interface Repository {
     suspend fun getCurrentUserFavorites(): Flow<UserForFirestore>
     suspend fun updateCurrentUserPhotos(list: ArrayList<String>, originalUrlList: List<String>)
     suspend fun updateCurrentUserProfilePicture(profilePic : String)
-    suspend fun getCurrentUserProfilePic(): Flow<UserForFirestore>
-    suspend fun getCurrentUserURLMap() : Map<String,String>
+
+    suspend fun getCurrentUserTitleState() : Flow<Pair<String, String>>
 
 }

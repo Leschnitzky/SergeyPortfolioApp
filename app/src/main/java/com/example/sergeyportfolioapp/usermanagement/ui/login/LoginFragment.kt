@@ -13,6 +13,7 @@ import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,10 +22,11 @@ import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
-import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
+import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,10 +34,11 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class LoginFragment : Fragment(){
     private val TAG = "LoginFragment"
-    private val userViewModel: UserViewModel by viewModels()
+    private val userViewModel: UserViewModel by activityViewModels()
 
     private lateinit var loginButton : Button
     private lateinit var passForgetButton : Button
@@ -117,7 +120,6 @@ class LoginFragment : Fragment(){
 
     @InternalCoroutinesApi
     private fun observeViewModel() {
-
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 observeLoginViewState()
@@ -191,8 +193,8 @@ class LoginFragment : Fragment(){
 
     private fun setupClicks() {
         loginButton.setOnClickListener {
-            lifecycleScope.launch {
-                userViewModel._intentChannel.send(
+            viewLifecycleOwner.lifecycleScope.launch {
+                userViewModel.intentChannel.send(
                     UserIntent.Login(
                     emailEditLayout.editText?.text.toString(),
                     passwordEditLayout.editText?.text.toString()
@@ -204,8 +206,8 @@ class LoginFragment : Fragment(){
         }
 
         passForgetButton.setOnClickListener {
-            lifecycleScope.launch {
-                userViewModel._intentChannel.send(
+            viewLifecycleOwner.lifecycleScope.launch {
+                userViewModel.intentChannel.send(
                     UserIntent.ForgotPass(
                     emailEditLayout.editText?.text.toString()
                 ))

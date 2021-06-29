@@ -2,7 +2,7 @@ package com.example.sergeyportfolioapp.usermanagement.repository
 
 import android.util.Log
 import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.RetrofitRepository
-import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.FirebaseRepository
+import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.AuthRepository
 import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.model.UserForFirebase
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.FirestoreRepository
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.UserForFirestore
@@ -13,13 +13,15 @@ import com.example.sergeyportfolioapp.utils.GlobalTags.Companion.TAG_PROFILE_PIC
 import com.google.firebase.auth.FirebaseAuthException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
     var userDao: UserDao,
-    var database: FirebaseRepository,
+    var authRepository: AuthRepository,
     var firestoreRepo : FirestoreRepository,
     val retrofitRepository: RetrofitRepository,
     val applicationScope : CoroutineScope
@@ -41,27 +43,30 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun createUser(email: String, password: String, name: String): String {
-        database.createUser(UserForFirebase(email,password)).let {
+        authRepository.createUser(UserForFirebase(email,password)).let {
             userDao.insertUser(User(email,name, arrayListOf(), mapOf()))
         }
-        firestoreRepo.addNewUserToFirestore(email)
+        firestoreRepo.addNewUserToFirestore(email,name)
         return name;
     }
 
     override fun logoutUser() {
         Log.d(TAG, "logoutUser: ")
-        database.logOffFromCurrentUser()
+        authRepository.logOffFromCurrentUser()
     }
 
     override fun getCurrentUserEmail(): String? {
-        return database.getCurrentUser()?.email
+        return authRepository.getCurrentUser()?.email
     }
 
     override suspend fun getCurrentUserDisplayName(): String? {
-        if(database.getCurrentUser() == null){
+        if(authRepository.getCurrentUser() == null){
             return null
         }
-        return userDao.getDisplayNameByEmail(database.getCurrentUser()!!.email!!).first().displayName
+        return userDao
+            .getDisplayNameByEmail(
+                authRepository.getCurrentUser()!!.email!!
+            ).first().displayName
     }
 
     override suspend fun getCurrentUserPhotos(): ArrayList<String> {
@@ -115,17 +120,12 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCurrentUserProfilePic(): kotlinx.coroutines.flow.Flow<UserForFirestore> {
-        Log.d("$TAG.$TAG_PROFILE_PIC", "getCurrentUserProfilePic: start currentProfile")
-        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+    override suspend fun getCurrentUserTitleState(): Flow<Pair<String, String> > {
+        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).map {
 
-
-
-    }
-
-    override suspend fun getCurrentUserURLMap(): Map<String, String> {
-        val typeConverter = UserTypeConverter()
-        return typeConverter.StringToMap(userDao.getCurrentURLMapByEmail(getCurrentUserEmail()!!).first())
+            Log.d(TAG, "getCurrentUserTitleState: $it")
+            Pair(it.displayName,it.profilePicURI)
+        }
     }
 
     suspend fun getPhotosFromServer(): List<String> {
@@ -134,11 +134,11 @@ class RepositoryImpl @Inject constructor(
 
 
     private suspend fun logWithANewUserAndGetName(user: UserForFirebase): String {
-        database.logToUser(user).let {
-                val userEmail = database.getCurrentUser()?.email!!
+        authRepository.logToUser(user).let {
+                val userEmail = authRepository.getCurrentUser()?.email!!
                 val userDisplayNameEntry = userDao.getDisplayNameByEmail(userEmail)
             return if(userDisplayNameEntry.isEmpty()) {
-                val firebaseDisplayName = database.getUserDisplayName()
+                val firebaseDisplayName = authRepository.getUserDisplayName()
                 userDao.insertUser(User(userEmail,firebaseDisplayName, arrayListOf(), mapOf()))
                 firebaseDisplayName
             } else {

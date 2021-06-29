@@ -22,6 +22,7 @@ import java.nio.file.Files
 
 private const val TAG = "HelperFunctions"
 const val FOLDER_NAME = "ShibaDaily"
+const val DEFAULT_PROFILE_PIC =  "http://cdn.shibe.online/shibes/1dceabce914325b357fbd59e4ef829bc5ddfad6c.jpg"
 fun isValidEmail(target: CharSequence?): Boolean {
     return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
 }
@@ -108,5 +109,11 @@ fun <T> DocumentReference.getDataFlow(mapper: (DocumentSnapshot?) -> T): Flow<T>
             return@map mapper(it)
         }
 }
+
+interface UiState
+
+interface UiEvent
+
+interface UiEffect
 
 

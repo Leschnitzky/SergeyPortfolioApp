@@ -7,48 +7,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
+import androidx.lifecycle.*
+import androidx.navigation.fragment.findNavController
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
-    private val userViewModel: UserViewModel by viewModels()
+    private val userViewModel: UserViewModel by activityViewModels()
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        setupUI()
+        lifecycleScope.launch() {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                checkUserConnection()
+            }
+        }
         requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    private fun setupUI() {
-        initializeUser()
-    }
 
-    private fun initializeUser() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                userViewModel._intentChannel.send(UserIntent.CheckLogin)
-            }
-        }
-    }
 
+    private suspend fun checkUserConnection(){
+        userViewModel.intentChannel.send(UserIntent.CheckLogin)
+    }
 
 
     private lateinit var savedStateHandle: SavedStateHandle
-
 
 }

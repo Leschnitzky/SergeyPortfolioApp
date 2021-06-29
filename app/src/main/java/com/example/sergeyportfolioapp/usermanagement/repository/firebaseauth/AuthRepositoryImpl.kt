@@ -7,8 +7,8 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class FirebaseRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth)
-    : FirebaseRepository {
+class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth)
+    : AuthRepository {
     private val TAG = "FirebaseRepositoryImpl"
     override suspend fun createUser(userForFirebase: UserForFirebase) {
         firebaseAuth.createUserWithEmailAndPassword(

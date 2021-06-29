@@ -3,11 +3,12 @@ package com.example.sergeyportfolioapp.usermanagement.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sergeyportfolioapp.MainContract
+import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.main.state.ShibaViewState
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
-import com.example.sergeyportfolioapp.utils.GlobalTags.Companion.TAG_PROFILE_PIC
 import com.example.sergeyportfolioapp.utils.isValidEmail
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import javax.inject.Scope
+import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 
 
 @HiltViewModel
@@ -25,20 +27,15 @@ class UserViewModel @Inject constructor(
     var resourcesProvider: ResourcesProvider
 ): ViewModel() {
 
-    enum class FragmentDisplayNumber(val number: Int){
-        LoginFragment(1),
-        RegisterFragment(2)
-    }
-
-    val scope = viewModelScope
-
     private val TAG = "UserViewModel"
-
-    val _intentChannel = Channel<UserIntent>(Channel.UNLIMITED)
 
    init {
        handleIntent()
    }
+
+    val intentChannel = Channel<UserIntent>(Channel.UNLIMITED)
+
+
 
     private val _stateLoginPage = MutableStateFlow<LoginViewState>(LoginViewState.Idle)
     private val _stateRegisterPage = MutableStateFlow<RegisterViewState>(RegisterViewState.Idle)
@@ -52,124 +49,83 @@ class UserViewModel @Inject constructor(
         get() = _stateShibaPage
 
 
-
-    val userTitle : SharedFlow<UserTitleState>
-        get() = _userTitle.asSharedFlow()
-    private val _userTitle = MutableSharedFlow<UserTitleState>()
-
-
+    val mainActivityUIState : StateFlow<MainContract.State>
+        get() = _mainActivityUIState
+    private val _mainActivityUIState = MutableStateFlow(MainContract.State(
+        MainContract.UserTitleState.InitState,
+        MainContract.UserProfilePicState.InitState
+    ))
 
     val currPhotosInDB : StateFlow<ShibaViewState>
         get() = _currPhotosInDB.asStateFlow()
     private val _currPhotosInDB = MutableStateFlow<ShibaViewState>(ShibaViewState.Idle)
 
-    val favoritePhotosInDB : StateFlow<ArrayList<String>>
-        get() = _favoritePhotosInDB.asStateFlow()
-    private val _favoritePhotosInDB = MutableStateFlow<ArrayList<String>>(arrayListOf())
-
-    val currentProfilePicture : SharedFlow<UserProfilePicState>
-        get() = _currentProfilePicture.asSharedFlow()
-    private var _currentProfilePicture = MutableSharedFlow<UserProfilePicState>()
 
 
-    private fun handleIntent() {
-        viewModelScope.launch {
-            _intentChannel.consumeAsFlow().collect {
+    private fun handleIntent() = viewModelScope.launch {
+
+            intentChannel.consumeAsFlow().collect {
                 Log.d(TAG, "handleIntent: Got Intent $it")
                 when (it) {
                     is UserIntent.Login -> logUser(it.email, it.password)
-                    is UserIntent.Register -> registerUser(it.name,it.email,it.password,it.selected)
+                    is UserIntent.Register -> registerUser(
+                        it.name,
+                        it.email,
+                        it.password,
+                        it.selected
+                    )
                     is UserIntent.SetProfilePicture -> updateUserProfilePicture(it.url)
 //                    is UserIntent.DisplayProfilePicture -> loadCurrentUserProfilePicture()
-                    is UserIntent.GetPhotos -> getPhotosForCurrentUser()
+//                    is UserIntent.GetPhotos -> getPhotosForCurrentUser()
                     is UserIntent.CheckLogin -> checkUserStatus()
                     is UserIntent.LogoutUser -> logoutUser()
                 }
             }
-        }
     }
 
-    private suspend fun checkUserStatus() {
-        val email = getCurrentUserEmail()
-            if(email == "Guest"){
-                _userTitle.emit(UserTitleState.Guest)
-                _currentProfilePicture.emit(UserProfilePicState.DefaultPicture)
+    private suspend fun checkUserStatus() = withContext(viewModelScope.coroutineContext) {
+            val email = getCurrentUserEmail()
+            Log.d(TAG, "checkUserStatus: $email")
+            if(email == "Unsigned"){
+                emitGuestUser()
             } else {
-                withContext(Dispatchers.IO){
-                    getUserDisplayName().let { name ->
-                        if(name == null){
-                            if(email == "Unsigned"){
-                                viewModelScope.launch {
-                                    _userTitle.emit(UserTitleState.Guest)
-                                    _currentProfilePicture.emit(UserProfilePicState.DefaultPicture)
-                                }
+                repo.getCurrentUserTitleState().collectLatest {
+                        pair ->
+                    Log.d(TAG, "checkUserStatus: $pair")
+                        _mainActivityUIState.value =
+                            MainContract.State(
+                                MainContract.UserTitleState.Member(pair.first),
+                                MainContract.UserProfilePicState.NewProfilePic(pair.second)
+                            )
 
-                            } else {
-                                _userTitle.emit(UserTitleState.Member(email))
-                                repo.getCurrentUserProfilePic().collect {
-                                    viewModelScope.launch {
-                                        if(it.profilePicURI.isEmpty()){
-                                            _currentProfilePicture.emit(UserProfilePicState.DefaultPicture)
-                                        } else {
-                                            _currentProfilePicture.emit(UserProfilePicState.NewProfilePic(it.profilePicURI))
-
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            _userTitle.emit(UserTitleState.Member(name))
-                            repo.getCurrentUserProfilePic().collect {
-
-                                viewModelScope.launch {
-                                    if(it.profilePicURI.isEmpty()){
-                                        _currentProfilePicture.emit(UserProfilePicState.DefaultPicture)
-
-                                    } else {
-                                        _currentProfilePicture.emit(UserProfilePicState.NewProfilePic(it.profilePicURI))
-
-                                    }
-                                }
-
-                            }
-                        }
-
-
-                    }
                 }
             }
     }
 
-    private fun getPhotosForCurrentUser() {
+
+    private suspend fun emitGuestUser(){
+        withContext(viewModelScope.coroutineContext){
+            _mainActivityUIState.value = (
+                MainContract.State(
+                    MainContract.UserTitleState.Guest,
+                    MainContract.UserProfilePicState.DefaultPicture
+                )
+            )
+            Log.d(TAG, "checkUserStatus: Emitted Guest on ${this.coroutineContext}")
+        }
+    }
+
+//    private fun getPhotosForCurrentUser() {
 //        _stateShibaPage.value = ShibaViewState.Loading
-//        viewModelScope.launch {
+//        GlobalScope.launch {
 //            repo.getCurrentUserPhotos().let {
 //                _stateShibaPage.value = ShibaViewState.GotPhotos(it)
 //            }
 //        }
-    }
-
-    private fun loadCurrentUserProfilePicture() {
-        Log.d("$TAG.$TAG_PROFILE_PIC", "loadCurrentUserProfilePicture: ")
-        _stateShibaPage.value = ShibaViewState.Loading
-        viewModelScope.launch {
-            repo.getCurrentUserProfilePic().collect {
-                Log.d("$TAG.$TAG_PROFILE_PIC", "loadCurrentUserProfilePicture: 2 ")
-                withContext(MainScope().coroutineContext){
-                    if(it.profilePicURI.isNullOrEmpty()){
-                        _currentProfilePicture.emit(UserProfilePicState.DefaultPicture)
-
-                    } else {
-                        _currentProfilePicture.emit(UserProfilePicState.NewProfilePic(it.profilePicURI))
-
-                    }
-                }
-            }
-        }
-    }
+//    }
 
     private fun logUser(email: String, password: String) {
-        viewModelScope.launch(MainScope().coroutineContext)  {
+        viewModelScope.launch  {
             _stateLoginPage.value = LoginViewState.Loading
             Log.d(TAG, "logUser: HERE 1")
             _stateLoginPage.value = try {
@@ -178,12 +134,15 @@ class UserViewModel @Inject constructor(
                         LoginViewState.LoggedIn(
                             repo.loginUserAndReturnName(email,password).also {
                                 Log.d(TAG, "logUser: HERE 2")
-                                _userTitle.emit(UserTitleState.Member(it))
                             }.also {
-
-                                repo.getCurrentUserProfilePic().collect {
+                                repo.getCurrentUserTitleState().collect {
+                                    state ->
                                     Log.d(TAG, "logUser: HERE 3")
-                                    _currentProfilePicture.emit(UserProfilePicState.NewProfilePic(it.profilePicURI))
+                                    _mainActivityUIState.value =
+                                        MainContract.State(
+                                            MainContract.UserTitleState.Member(state.first),
+                                            MainContract.UserProfilePicState.NewProfilePic(state.second)
+                                    )
                                 }
                             }
                         )
@@ -206,7 +165,7 @@ class UserViewModel @Inject constructor(
     }
     private fun registerUser(name: String, email: String, password: String, selected: Boolean){
         Log.d(TAG, "registerUser: $name , $email, $password, $selected")
-        viewModelScope.launch(Dispatchers.IO)  {
+        viewModelScope.launch  {
             _stateRegisterPage.value = RegisterViewState.Loading
             _stateRegisterPage.value = try {
                 if(email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()){
@@ -214,7 +173,15 @@ class UserViewModel @Inject constructor(
                         if(selected){
                             RegisterViewState.Registered(
                                 repo.createUser(email,password,name).also {
-                                        _userTitle.emit(UserTitleState.Member(it))
+                                    repo.getCurrentUserTitleState().collect {
+                                            title ->
+                                        Log.d(TAG, "logUser: HERE 3")
+                                        _mainActivityUIState.value =
+                                            MainContract.State(
+                                                MainContract.UserTitleState.Member(title.first),
+                                                MainContract.UserProfilePicState.NewProfilePic(title.second)
+                                            )
+                                    }
                                 })
                         } else {
                             RegisterViewState.Error("Terms and conditions are not checked" ,
@@ -241,33 +208,22 @@ class UserViewModel @Inject constructor(
 
     private fun logoutUser() {
         Log.d(TAG, "logoutUser: ")
-
-            viewModelScope.launch {
+        viewModelScope.launch {
                 _stateShibaPage.value = ShibaViewState.Loading
             Log.d(TAG, "logoutUser: Sending Guest")
                 repo.logoutUser().also {
-                    withContext(MainScope().coroutineContext){
-                        _userTitle.emit(UserTitleState.Guest)
-                        _currentProfilePicture.emit(UserProfilePicState.DefaultPicture)
-                        _stateShibaPage.value = ShibaViewState.Idle
-                    }
+                    _mainActivityUIState.value =
+                        MainContract.State(
+                                    MainContract.UserTitleState.Guest,
+                                    MainContract.UserProfilePicState.DefaultPicture
+                        )
+                    _stateShibaPage.value = ShibaViewState.Idle
                 }
         }
     }
 
-    override fun onCleared() {
-        Log.d(TAG, "onCleared:")
-        super.onCleared()
-    }
-
-
-    fun getCurrentUserEmail() : String{
-        val email = repo.getCurrentUserEmail()
-        if(email == null){
-            return "Unsigned"
-        } else {
-            return email
-        }
+    fun getCurrentUserEmail() : String {
+        return repo.getCurrentUserEmail() ?: "Unsigned"
     }
 
     suspend fun getUserDisplayName() : String? {
@@ -286,24 +242,13 @@ class UserViewModel @Inject constructor(
     }
 
     private suspend fun updateUserProfilePicture(picture : String){
-            repo.updateCurrentUserProfilePicture(picture).let {
-                _currentProfilePicture.emit(UserProfilePicState.NewProfilePic(picture))
-            }
+            repo.updateCurrentUserProfilePicture(picture).also {  }
 
     }
 
-    suspend fun getCurrentUserURLMap() : Map<String,String> {
-        return repo.getCurrentUserURLMap()
+    fun isUserConnected(): Boolean {
+        return repo.getCurrentUserEmail() != null
     }
-
-
-    suspend fun getProfilePictureFlow(): Flow<UserProfilePicState> {
-        return repo.getCurrentUserProfilePic().map {
-            UserProfilePicState.NewProfilePic(it.profilePicURI)
-        }
-    }
-
-
 
 
 }

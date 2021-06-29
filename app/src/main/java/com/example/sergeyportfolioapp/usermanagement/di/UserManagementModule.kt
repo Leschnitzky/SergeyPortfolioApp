@@ -1,14 +1,13 @@
 package com.example.sergeyportfolioapp.usermanagement.di
 
 import android.content.Context
-import androidx.room.CoroutinesRoom
 import androidx.room.Room
 import com.example.sergeyportfolioapp.MyApplication
 import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.RetrofitRepository
 import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.RetrofitRepositoryImpl
 import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.ShibaRetrofit
-import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.FirebaseRepository
-import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.FirebaseRepositoryImpl
+import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.AuthRepository
+import com.example.sergeyportfolioapp.usermanagement.repository.firebaseauth.AuthRepositoryImpl
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.FirestoreRepository
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.FirestoreRepositoryImpl
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
@@ -46,8 +45,8 @@ internal object UserManagementModule{
     }
 
     @Provides
-    fun provideFirebaseRepository() : FirebaseRepository{
-        return FirebaseRepositoryImpl(provideFirebaseDatabaseReference())
+    fun provideFirebaseRepository() : AuthRepository{
+        return AuthRepositoryImpl(provideFirebaseDatabaseReference())
     }
 
     @Provides

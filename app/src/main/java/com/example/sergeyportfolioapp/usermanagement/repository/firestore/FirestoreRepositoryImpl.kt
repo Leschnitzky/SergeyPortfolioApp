@@ -23,10 +23,16 @@ class FirestoreRepositoryImpl @Inject constructor(
             .set(toMap(UserForFirestore(email)))
     }
 
-    override suspend fun addNewUserToFirestore(email: String, profilePic: String) {
+    override suspend fun addNewUserToFirestore(email: String, name: String) {
         firestore.collection(COLLECTION_NAME)
             .document(email)
-            .set(toMap(UserForFirestore(email,profilePic, listOf())))
+            .set(toMap(UserForFirestore(email,name)))    }
+
+
+    override suspend fun addNewUserToFirestore(email: String, name: String, profilePic: String) {
+        firestore.collection(COLLECTION_NAME)
+            .document(email)
+            .set(toMap(UserForFirestore(email, name, profilePic, listOf())))
     }
 
     override fun getUserFromFirestore(email: String): Flow<UserForFirestore> {

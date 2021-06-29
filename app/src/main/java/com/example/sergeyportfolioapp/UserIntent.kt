@@ -1,4 +1,4 @@
-package com.example.sergeyportfolioapp.usermanagement.ui
+package com.example.sergeyportfolioapp
 
 sealed class UserIntent {
 

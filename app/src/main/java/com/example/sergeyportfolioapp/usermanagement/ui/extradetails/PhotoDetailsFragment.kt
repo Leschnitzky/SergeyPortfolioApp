@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.awesomedialog.*
 import com.example.sergeyportfolioapp.R
-import com.example.sergeyportfolioapp.usermanagement.ui.UserIntent
+import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -87,14 +87,14 @@ class PhotoDetailsFragment : Fragment() {
                         text = resources.getString(R.string.shiba_profile_request_accept),
                         action = {
                             // Show ad and load more photos
-                            lifecycleScope.launch {
-                                userViewModel._intentChannel.send(
-                                        UserIntent.SetProfilePicture(
-                                            userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]!!
-                                        )
-                                )
-
-                            }
+//                            lifecycleScope.launch {
+//                                userViewModel._intentChannel.send(
+//                                        UserIntent.SetProfilePicture(
+//                                            userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]!!
+//                                        )
+//                                )
+//
+//                            }
                         }
                     )
                     .onNegative(
