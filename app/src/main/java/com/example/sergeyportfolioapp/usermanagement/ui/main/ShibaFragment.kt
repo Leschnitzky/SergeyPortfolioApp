@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -57,10 +58,6 @@ class ShibaFragment : Fragment() {
     private val TAG = "ShibaFragment"
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        postponeEnterTransition()
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,6 +67,7 @@ class ShibaFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_shiba, container, false)
 
         setupUI(root)
+        Log.d(TAG, "onCreateView: returned root")
         return root
     }
 
@@ -77,7 +75,7 @@ class ShibaFragment : Fragment() {
         Log.d(TAG, "setupUI: 1")
         initializeViews(root)
         Log.d(TAG, "setupUI: 2")
-//        observeViewModel()
+        observeViewModel()
         Log.d(TAG, "setupUI: 3")
         setupClicks()
         Log.d(TAG, "setupUI: 4")
@@ -140,26 +138,31 @@ class ShibaFragment : Fragment() {
     private fun setupUser() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                    getInitialPhotos()
+                getInitialPhotos()
             }
         }
     }
 
 
     private suspend fun observeShibaViewState() {
-            userViewModel.currPhotosInDB.collect {
+            userViewModel.stateShibaPage.collect {
                 Log.d(TAG, "observeViewModel: Got ShibaViewState $it ")
                 when(it) {
                     is ShibaViewState.GotPhotos -> {
                         val original = it.list.subList(1,it.list.size)
                         if(it.list.first() == "SaveLocally"){
-                            savePhotosLocally(it.list).also { localPhotoList ->
+                            savePhotosLocally(original).also { localPhotoList ->
+                                Log.d(TAG, "Got Local Photos: Next action")
                                 userViewModel.updatePhotosToCurrentUserDB(localPhotoList,original)
                             }.also {
-                                updateRecyclerViewWithList(it,0)
+                                updateRecyclerViewWithList(original,0)
+                            }.apply {
+                                unlockUI()
                             }
                         } else {
-                            updateRecyclerViewWithList(it.list,0)
+                            updateRecyclerViewWithList(it.list,0).apply {
+                                unlockUI()
+                            }
                         }
                     }
                     is ShibaViewState.Loading ->{
@@ -184,20 +187,17 @@ class ShibaFragment : Fragment() {
         recyclerView.addOnItemTouchListener(disabler)
         loadingAnimation.visibility = View.VISIBLE
         getMorePhotosButton.isEnabled = false
+        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.isFocusable = false
     }
 
     private fun unlockUI() {
         recyclerView.removeOnItemTouchListener(disabler)
         getMorePhotosButton.isEnabled = true
         loadingAnimation.visibility = View.GONE
+        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.isFocusable = true
+
     }
 
-    private suspend fun loadPhotosToRecyclerViewFromLocalStorage(arrayList: ArrayList<String>) {
-        Log.d(TAG, "loadPhotosToRecyclerViewFromLocalStorage: ")
-        withContext(Dispatchers.Main){
-            updateRecyclerViewWithList(arrayList,0)
-        }
-    }
 
     private suspend fun savePhotosLocally(list: List<String>): ArrayList<String> {
         localPhotoPaths = arrayListOf()
@@ -240,16 +240,17 @@ class ShibaFragment : Fragment() {
 
                         override fun onLoadCleared(placeholder: Drawable?) {
                         }
+
+
                     })
             }
-
         }
         return localPhotoPaths
 
     }
 
     private fun updateRecyclerViewWithList(list: List<String>, mode: Int) {
-        Log.d(TAG, "updateRecyclerViewWithList: Got new update for recycler")
+        Log.d(TAG, "updateRecyclerViewWithList: Got new update for recycler $list")
             val recyclerViewAdapter = RecyclerViewAdapter(list,mode,requireContext(),userViewModel)
             recyclerViewAdapter.photoSelectedListener = object : RecyclerViewAdapter.PhotoSelectedListener {
                 override fun onPhotoSelected(imageView: ImageView, uri: String) {
@@ -271,7 +272,7 @@ class ShibaFragment : Fragment() {
     }
 
     private suspend fun getInitialPhotos() {
-//        userViewModel.intentChannel.send(UserIntent.GetPhotos)
+        userViewModel.intentChannel.send(UserIntent.GetPhotos)
     }
 
 

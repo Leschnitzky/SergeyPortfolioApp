@@ -2,6 +2,8 @@ package com.example.sergeyportfolioapp.usermanagement.ui.extradetails
 
 import android.os.Bundle
 import android.transition.TransitionInflater
+import android.transition.Visibility
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,26 +12,29 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ToggleButton
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.awesomedialog.*
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
+import com.example.sergeyportfolioapp.usermanagement.ui.extradetails.state.PhotoDetailsViewState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class PhotoDetailsFragment : Fragment() {
-    private val userViewModel : UserViewModel by viewModels()
-    private lateinit var dogImage : ImageView
-    private lateinit var favoriteButton : ToggleButton
-    private lateinit var setupAsProfileButton : Button
-
+    private val TAG = "PhotoDetailsFragment"
+    private val userViewModel : UserViewModel by activityViewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,7 +62,6 @@ class PhotoDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         // Inflate the layout for this fragment
         val root =  inflater.inflate(R.layout.fragment_photo_details, container, false)
         setupUI(root)
@@ -66,7 +70,25 @@ class PhotoDetailsFragment : Fragment() {
 
     private fun setupUI(root: View?) {
         initializeViews(root)
+        setupUIObserver()
         setupClicks()
+    }
+
+    private fun setupUIObserver() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                userViewModel.stateDetailsPage.collect {
+                    when(it){
+                        is PhotoDetailsViewState.Idle -> {
+                            unlockUI()
+                        }
+                        is PhotoDetailsViewState.Loading -> {
+                            lockUI()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun setupClicks() {
@@ -87,14 +109,28 @@ class PhotoDetailsFragment : Fragment() {
                         text = resources.getString(R.string.shiba_profile_request_accept),
                         action = {
                             // Show ad and load more photos
-//                            lifecycleScope.launch {
-//                                userViewModel._intentChannel.send(
-//                                        UserIntent.SetProfilePicture(
-//                                            userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]!!
-//                                        )
-//                                )
-//
-//                            }
+                            lifecycleScope.launch {
+                                val uri = arguments?.getString("uri")!!
+
+                                if(uri.startsWith("http")){
+                                    userViewModel.intentChannel.send(
+                                        UserIntent.SetProfilePicture(
+                                            uri
+                                        )
+                                    )
+                                } else {
+                                    Log.d(TAG, "setupClicks: ${arguments?.getString("uri")}")
+                                    Log.d(TAG, "setupClicks: Current Map: ${userViewModel.getCurrentUserURLMap()}")
+                                    val profilePic =
+                                        userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+
+                                    userViewModel.intentChannel.send(
+                                        UserIntent.SetProfilePicture(
+                                            profilePic!!
+                                        )
+                                    )
+                                }
+                            }
                         }
                     )
                     .onNegative(
@@ -108,10 +144,30 @@ class PhotoDetailsFragment : Fragment() {
         }
     }
 
+    private lateinit var dogImage : ImageView
+    private lateinit var favoriteButton : ToggleButton
+    private lateinit var setupAsProfileButton : Button
+    private lateinit var loadingAnimation : LottieAnimationView
+
     private fun initializeViews(root: View?) {
         dogImage = root!!.findViewById(R.id.drawer_profile_pic)
         setupAsProfileButton = root!!.findViewById(R.id.details_profile_button)
         favoriteButton = root!!.findViewById(R.id.details_set_as_favorite)
+        loadingAnimation = root!!.findViewById(R.id.details_loading_animation)
+        loadingAnimation.bringToFront()
     }
+
+
+    private fun unlockUI() {
+        favoriteButton.isEnabled = true
+        setupAsProfileButton.isEnabled = true
+        loadingAnimation.visibility = View.GONE
+    }
+
+    private fun lockUI() {
+        favoriteButton.isEnabled = false
+        setupAsProfileButton.isEnabled = false
+        loadingAnimation.visibility = View.VISIBLE    }
+
 
 }

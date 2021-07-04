@@ -11,7 +11,7 @@ data class UserForFirestore(val email: String,
     constructor(email: String, name: String) : this(email,name, DEFAULT_PROFILE_PIC, listOf())
 
     companion object{
-        fun fromMap(map : MutableMap<String,Any>) : UserForFirestore {
+        fun fromMap(map: Map<String,Any>) : UserForFirestore {
             return UserForFirestore(
                 map["email"] as String,
                 map["display_name"] as String,
@@ -20,7 +20,7 @@ data class UserForFirestore(val email: String,
             )
         }
 
-        fun toMap(userForFirestore: UserForFirestore) : MutableMap<String, Any> {
+        fun toMap(userForFirestore: UserForFirestore) : Map<String, Any> {
             return mutableMapOf<String,Any>(
                 "email" to userForFirestore.email,
                 "profile_pic" to userForFirestore.profilePicURI,

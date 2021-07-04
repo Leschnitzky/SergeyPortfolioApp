@@ -7,6 +7,7 @@ import com.example.sergeyportfolioapp.MainContract
 import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.main.state.ShibaViewState
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
+import com.example.sergeyportfolioapp.usermanagement.ui.extradetails.state.PhotoDetailsViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
 import com.example.sergeyportfolioapp.utils.isValidEmail
@@ -16,8 +17,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
 
 
 @HiltViewModel
@@ -40,6 +39,7 @@ class UserViewModel @Inject constructor(
     private val _stateLoginPage = MutableStateFlow<LoginViewState>(LoginViewState.Idle)
     private val _stateRegisterPage = MutableStateFlow<RegisterViewState>(RegisterViewState.Idle)
     private val _stateShibaPage = MutableStateFlow<ShibaViewState>(ShibaViewState.Idle)
+    private val _stateDetailsPage = MutableStateFlow<PhotoDetailsViewState>(PhotoDetailsViewState.Idle)
 
     val stateLoginPage: StateFlow<LoginViewState>
         get() = _stateLoginPage.asStateFlow()
@@ -47,6 +47,9 @@ class UserViewModel @Inject constructor(
         get() = _stateRegisterPage.asStateFlow()
     val stateShibaPage : StateFlow<ShibaViewState>
         get() = _stateShibaPage
+    val stateDetailsPage: StateFlow<PhotoDetailsViewState>
+        get() = _stateDetailsPage
+
 
 
     val mainActivityUIState : StateFlow<MainContract.State>
@@ -55,10 +58,6 @@ class UserViewModel @Inject constructor(
         MainContract.UserTitleState.InitState,
         MainContract.UserProfilePicState.InitState
     ))
-
-    val currPhotosInDB : StateFlow<ShibaViewState>
-        get() = _currPhotosInDB.asStateFlow()
-    private val _currPhotosInDB = MutableStateFlow<ShibaViewState>(ShibaViewState.Idle)
 
 
 
@@ -75,13 +74,14 @@ class UserViewModel @Inject constructor(
                         it.selected
                     )
                     is UserIntent.SetProfilePicture -> updateUserProfilePicture(it.url)
-//                    is UserIntent.DisplayProfilePicture -> loadCurrentUserProfilePicture()
-//                    is UserIntent.GetPhotos -> getPhotosForCurrentUser()
+                    is UserIntent.GetPhotos -> getPhotosForCurrentUser()
+                    is UserIntent.GetNewPhotos -> getMorePhotosForCurrentUser()
                     is UserIntent.CheckLogin -> checkUserStatus()
                     is UserIntent.LogoutUser -> logoutUser()
                 }
             }
     }
+
 
     private suspend fun checkUserStatus() = withContext(viewModelScope.coroutineContext) {
             val email = getCurrentUserEmail()
@@ -89,7 +89,7 @@ class UserViewModel @Inject constructor(
             if(email == "Unsigned"){
                 emitGuestUser()
             } else {
-                repo.getCurrentUserTitleState().collectLatest {
+                repo.getCurrentUserTitleState().also {
                         pair ->
                     Log.d(TAG, "checkUserStatus: $pair")
                         _mainActivityUIState.value =
@@ -115,14 +115,26 @@ class UserViewModel @Inject constructor(
         }
     }
 
-//    private fun getPhotosForCurrentUser() {
-//        _stateShibaPage.value = ShibaViewState.Loading
-//        GlobalScope.launch {
-//            repo.getCurrentUserPhotos().let {
-//                _stateShibaPage.value = ShibaViewState.GotPhotos(it)
-//            }
-//        }
-//    }
+    private fun getMorePhotosForCurrentUser() {
+        viewModelScope.launch {
+            _stateShibaPage.value = ShibaViewState.Loading
+            repo.getNewPhotosFromServer().let {
+                Log.d(TAG, "getPhotosForCurrentUser: updating $it")
+                _stateShibaPage.value = ShibaViewState.GotPhotos(it)
+            }
+        }
+    }
+
+    private fun getPhotosForCurrentUser() {
+        Log.d(TAG, "getPhotosForCurrentUser: ")
+        viewModelScope.launch {
+        _stateShibaPage.value = ShibaViewState.Loading
+            repo.getCurrentUserPhotos().let {
+                Log.d(TAG, "getPhotosForCurrentUser: updating $it")
+                _stateShibaPage.value = ShibaViewState.GotPhotos(it)
+            }
+        }
+    }
 
     private fun logUser(email: String, password: String) {
         viewModelScope.launch  {
@@ -135,7 +147,7 @@ class UserViewModel @Inject constructor(
                             repo.loginUserAndReturnName(email,password).also {
                                 Log.d(TAG, "logUser: HERE 2")
                             }.also {
-                                repo.getCurrentUserTitleState().collect {
+                                repo.getCurrentUserTitleState().also {
                                     state ->
                                     Log.d(TAG, "logUser: HERE 3")
                                     _mainActivityUIState.value =
@@ -173,7 +185,7 @@ class UserViewModel @Inject constructor(
                         if(selected){
                             RegisterViewState.Registered(
                                 repo.createUser(email,password,name).also {
-                                    repo.getCurrentUserTitleState().collect {
+                                    repo.getCurrentUserTitleState().also {
                                             title ->
                                         Log.d(TAG, "logUser: HERE 3")
                                         _mainActivityUIState.value =
@@ -226,10 +238,6 @@ class UserViewModel @Inject constructor(
         return repo.getCurrentUserEmail() ?: "Unsigned"
     }
 
-    suspend fun getUserDisplayName() : String? {
-        return repo.getCurrentUserDisplayName()
-    }
-
 
 
     fun updatePhotosToCurrentUserDB(list: ArrayList<String>, originalUrlList: List<String>) {
@@ -242,12 +250,25 @@ class UserViewModel @Inject constructor(
     }
 
     private suspend fun updateUserProfilePicture(picture : String){
-            repo.updateCurrentUserProfilePicture(picture).also {  }
+            _stateDetailsPage.value = PhotoDetailsViewState.Loading
+            repo.updateCurrentUserProfilePicture(picture).also {
+                val state = repo.getCurrentUserTitleState()
+                _mainActivityUIState.value =
+                    MainContract.State(
+                        MainContract.UserTitleState.Member(state.first),
+                        MainContract.UserProfilePicState.NewProfilePic(picture)
+                    ).also {
+                        _stateDetailsPage.value = PhotoDetailsViewState.Idle
+                    }
+            }
 
     }
 
-    fun isUserConnected(): Boolean {
-        return repo.getCurrentUserEmail() != null
+
+    suspend fun getCurrentUserURLMap(): Map<String,String> {
+            val map = repo.getCurrentUserURLMap()
+            Log.d(TAG, "getCurrentUserURLMap: $map")
+            return map
     }
 
 

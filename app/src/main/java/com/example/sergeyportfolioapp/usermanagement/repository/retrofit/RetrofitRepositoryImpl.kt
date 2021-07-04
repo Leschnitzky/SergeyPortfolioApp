@@ -15,7 +15,6 @@ class RetrofitRepositoryImpl @Inject constructor(
                 listOf()
             } else {
                 Log.d(TAG, "get10Photos: got something: $it")
-
                 it
             }
         }

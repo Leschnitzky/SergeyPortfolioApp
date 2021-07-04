@@ -133,12 +133,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 navView.menu.setGroupVisible(R.id.member, true)
                 navView.menu.setGroupVisible(R.id.unsigned, false)
                 Log.d(TAG, "observeUserTitleState: moving to SHIBA")
-                navController.graph.startDestination = R.id.nav_shiba
-
                 navController.navigate(
                     R.id.nav_shiba,
                     bundleOf("name" to it.titleState.name)
                 )
+                navController.graph.startDestination = R.id.nav_shiba
 
 
             }
@@ -150,9 +149,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .findViewById<TextView>(R.id.drawer_title)
                     .text = resources.getString(R.string.initial_user_title)
                 Log.d(TAG, "observeUserTitleState: moving to LOGIN")
-                navController.navigate(R.id.nav_login_menu).also {
-                    navController.graph.startDestination = R.id.nav_login_menu
-                }
+                navController.navigate(R.id.nav_login_menu)
+
+                navController.graph.startDestination = R.id.nav_login_menu
 
             }
             is MainContract.UserTitleState.InitState -> {

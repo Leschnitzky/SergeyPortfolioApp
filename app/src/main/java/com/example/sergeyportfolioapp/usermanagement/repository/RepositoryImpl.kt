@@ -9,13 +9,9 @@ import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.
 import com.example.sergeyportfolioapp.usermanagement.repository.room.UserDao
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.User
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.UserTypeConverter
-import com.example.sergeyportfolioapp.utils.GlobalTags.Companion.TAG_PROFILE_PIC
 import com.google.firebase.auth.FirebaseAuthException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -70,8 +66,9 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentUserPhotos(): ArrayList<String> {
+        Log.d(TAG, "getCurrentUserPhotos: ")
         val typeConverter = UserTypeConverter()
-        val photosUrls = arrayListOf<String>()
+        var photosUrls = arrayListOf<String>()
         photosUrls.addAll(
             typeConverter.StringToList(
                 userDao.getCurrentPhotosByEmail(
@@ -79,16 +76,18 @@ class RepositoryImpl @Inject constructor(
             ).first()
             )
         )
+        Log.d(TAG, "getCurrentUserPhotos SIZE: ${photosUrls.size}")
 
-        if(photosUrls.isEmpty()){
-            photosUrls.add("SaveLocally")
-            photosUrls.addAll(getPhotosFromServer())
+        if(photosUrls.isNullOrEmpty()){
+            photosUrls = getNewPhotosFromServer()
         }
+
+        Log.d(TAG, "Photo list: $photosUrls")
 
         return photosUrls
     }
 
-    override suspend fun getCurrentUserFavorites(): kotlinx.coroutines.flow.Flow<UserForFirestore> {
+    override suspend fun getCurrentUserFavorites(): UserForFirestore {
         return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
     }
 
@@ -113,22 +112,39 @@ class RepositoryImpl @Inject constructor(
     override suspend fun updateCurrentUserProfilePicture(profilePic: String) {
         val email = getCurrentUserEmail()
         withContext(Dispatchers.IO){
-            firestoreRepo.getUserFromFirestore(email!!).collect {
+            firestoreRepo.getUserFromFirestore(email!!).also {
                 it.profilePicURI = profilePic;
                 firestoreRepo.updateUserFromFirestore(it)
             }
         }
     }
 
-    override suspend fun getCurrentUserTitleState(): Flow<Pair<String, String> > {
-        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).map {
+    override suspend fun getCurrentUserTitleState(): Pair<String, String> {
+        firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).also {
 
             Log.d(TAG, "getCurrentUserTitleState: $it")
-            Pair(it.displayName,it.profilePicURI)
+            return Pair(it.displayName,it.profilePicURI)
         }
     }
 
+    override suspend fun getCurrentUserURLMap(): Map<String, String> {
+        val typeConverter = UserTypeConverter()
+        return typeConverter.StringToMap(
+            userDao.getCurrentURLMapByEmail(
+                getCurrentUserEmail()!!
+            ).first()
+        )
+    }
+
+    override suspend fun getNewPhotosFromServer() : ArrayList<String> {
+        val photosUrls = arrayListOf<String>()
+        photosUrls.add("SaveLocally")
+        photosUrls.addAll(getPhotosFromServer())
+        return photosUrls
+    }
+
     suspend fun getPhotosFromServer(): List<String> {
+        Log.d(TAG, "getPhotosFromServer: ")
         return retrofitRepository.get10Photos()
     }
 

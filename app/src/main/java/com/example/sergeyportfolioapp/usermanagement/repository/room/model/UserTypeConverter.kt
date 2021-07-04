@@ -1,5 +1,6 @@
 package com.example.sergeyportfolioapp.usermanagement.repository.room.model
 
+import android.util.Log
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import java.lang.StringBuilder
@@ -24,8 +25,11 @@ class UserTypeConverter {
 
         @TypeConverter
         fun StringToList(string: String): ArrayList<String> {
+            Log.d(TAG, "StringToList: Converting ${string.split(SEPERATOR)}")
             val list = arrayListOf<String>()
-            list.addAll(string.split(SEPERATOR))
+            if(string.isNotEmpty()){
+                list.addAll(string.split(SEPERATOR))
+            }
             return list
         }
 

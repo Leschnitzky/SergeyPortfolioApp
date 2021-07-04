@@ -10,10 +10,11 @@ interface Repository {
     fun getCurrentUserEmail() : String?
     suspend fun getCurrentUserDisplayName() : String?
     suspend fun getCurrentUserPhotos(): ArrayList<String>
-    suspend fun getCurrentUserFavorites(): Flow<UserForFirestore>
+    suspend fun getCurrentUserFavorites(): UserForFirestore
     suspend fun updateCurrentUserPhotos(list: ArrayList<String>, originalUrlList: List<String>)
     suspend fun updateCurrentUserProfilePicture(profilePic : String)
 
-    suspend fun getCurrentUserTitleState() : Flow<Pair<String, String>>
-
+    suspend fun getCurrentUserTitleState() : Pair<String, String>
+    suspend fun getCurrentUserURLMap() : Map<String,String>
+    suspend fun getNewPhotosFromServer(): ArrayList<String>
 }

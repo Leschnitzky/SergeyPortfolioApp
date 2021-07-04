@@ -4,8 +4,6 @@ import android.util.Log
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.UserForFirestore
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.UserForFirestore.Companion.fromMap
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.UserForFirestore.Companion.toMap
-import com.example.sergeyportfolioapp.utils.GlobalTags.Companion.TAG_PROFILE_PIC
-import com.example.sergeyportfolioapp.utils.getDataFlow
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kiwimob.firestore.coroutines.await
 import kotlinx.coroutines.flow.Flow
@@ -26,23 +24,22 @@ class FirestoreRepositoryImpl @Inject constructor(
     override suspend fun addNewUserToFirestore(email: String, name: String) {
         firestore.collection(COLLECTION_NAME)
             .document(email)
-            .set(toMap(UserForFirestore(email,name)))    }
+            .set(toMap(UserForFirestore(email,name))).await()    }
 
 
     override suspend fun addNewUserToFirestore(email: String, name: String, profilePic: String) {
         firestore.collection(COLLECTION_NAME)
             .document(email)
             .set(toMap(UserForFirestore(email, name, profilePic, listOf())))
+            .await()
     }
 
-    override fun getUserFromFirestore(email: String): Flow<UserForFirestore> {
-        return firestore
+    override suspend fun getUserFromFirestore(email: String): UserForFirestore {
+        val user = firestore
             .collection(COLLECTION_NAME)
-            .document(email)
-            .getDataFlow { querySnapshot ->
-                Log.d("$TAG.$TAG_PROFILE_PIC", "getUserFromFirestore: ${querySnapshot?.data} ")
-                querySnapshot?.data?.let { fromMap(it) }!!
-            }
+            .document(email).get().await()
+
+        return fromMap(user?.data as Map<String, Any>)
     }
 
 
@@ -56,5 +53,6 @@ class FirestoreRepositoryImpl @Inject constructor(
                 "list_favorite", userForFirestore.favoritesList
             )
             .await()
+
     }
 }
