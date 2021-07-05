@@ -2,7 +2,6 @@ package com.example.sergeyportfolioapp.usermanagement.ui.extradetails
 
 import android.os.Bundle
 import android.transition.TransitionInflater
-import android.transition.Visibility
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import android.widget.ImageView
 import android.widget.ToggleButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,6 +24,7 @@ import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.usermanagement.ui.extradetails.state.PhotoDetailsViewState
+import com.google.firebase.firestore.auth.User
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -72,18 +71,43 @@ class PhotoDetailsFragment : Fragment() {
         initializeViews(root)
         setupUIObserver()
         setupClicks()
+        setupUser()
+    }
+
+    private fun setupUser() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                if(arguments?.getString("uri")?.startsWith("http")!!){
+                    userViewModel.intentChannel.send(UserIntent.CheckPhotoInFavorites(
+                        arguments?.getString("uri")!!
+                    ))
+                } else {
+                    userViewModel.intentChannel.send(UserIntent.CheckPhotoInFavorites(
+                        userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")!!]!!
+                    ))
+                }
+            }
+        }
     }
 
     private fun setupUIObserver() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 userViewModel.stateDetailsPage.collect {
+                    Log.d(TAG, "setupUIObserver: Got $it")
+
                     when(it){
                         is PhotoDetailsViewState.Idle -> {
                             unlockUI()
+                            favoriteButton.isChecked = false
                         }
                         is PhotoDetailsViewState.Loading -> {
                             lockUI()
+                        }
+
+                        is PhotoDetailsViewState.PictureIsFavorite -> {
+                            unlockUI()
+                            favoriteButton.isChecked = true
                         }
                     }
                 }
@@ -140,6 +164,32 @@ class PhotoDetailsFragment : Fragment() {
                         }
                     )
 
+            }
+        }
+
+        favoriteButton.setOnClickListener {
+            lifecycleScope.launch {
+                var uri = arguments?.getString("uri")
+
+                if(!uri!!.startsWith("http")){
+                    uri = userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+                }
+
+                Log.d(TAG, "setupClicks: $uri")
+
+                if(favoriteButton.isChecked) {
+                    userViewModel.intentChannel.send(
+                        UserIntent.AddPictureFavorite(
+                            uri!!
+                        )
+                    )
+                } else {
+                    userViewModel.intentChannel.send(
+                        UserIntent.RemovePictureFavorite(
+                            uri!!
+                        )
+                    )
+                }
             }
         }
     }

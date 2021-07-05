@@ -8,6 +8,7 @@ import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.main.state.ShibaViewState
 import com.example.sergeyportfolioapp.usermanagement.repository.Repository
 import com.example.sergeyportfolioapp.usermanagement.ui.extradetails.state.PhotoDetailsViewState
+import com.example.sergeyportfolioapp.usermanagement.ui.favorites.state.ShibaFavoritesStateView
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
 import com.example.sergeyportfolioapp.utils.isValidEmail
@@ -36,11 +37,14 @@ class UserViewModel @Inject constructor(
 
 
 
+    private val _stateFavoritePage = MutableStateFlow<ShibaFavoritesStateView>(ShibaFavoritesStateView.InitState)
     private val _stateLoginPage = MutableStateFlow<LoginViewState>(LoginViewState.Idle)
     private val _stateRegisterPage = MutableStateFlow<RegisterViewState>(RegisterViewState.Idle)
     private val _stateShibaPage = MutableStateFlow<ShibaViewState>(ShibaViewState.Idle)
-    private val _stateDetailsPage = MutableStateFlow<PhotoDetailsViewState>(PhotoDetailsViewState.Idle)
+    private val _stateDetailsPage = MutableStateFlow<PhotoDetailsViewState>(PhotoDetailsViewState.InitState)
 
+    val stateFavoritePage : StateFlow<ShibaFavoritesStateView>
+        get() = _stateFavoritePage
     val stateLoginPage: StateFlow<LoginViewState>
         get() = _stateLoginPage.asStateFlow()
     val stateRegisterPage: StateFlow<RegisterViewState>
@@ -78,8 +82,52 @@ class UserViewModel @Inject constructor(
                     is UserIntent.GetNewPhotos -> getMorePhotosForCurrentUser()
                     is UserIntent.CheckLogin -> checkUserStatus()
                     is UserIntent.LogoutUser -> logoutUser()
+                    is UserIntent.AddPictureFavorite -> addPictureToFavorite(it.picture)
+                    is UserIntent.RemovePictureFavorite -> removePictureFromFavorites(it.picture)
+                    is UserIntent.CheckPhotoInFavorites -> checkPhotoInFavorites(it.picture)
+                    is UserIntent.UpdateFavoritesPage -> updateFavoritesPage()
                 }
             }
+    }
+
+    private fun updateFavoritesPage() {
+        viewModelScope.launch {
+            _stateFavoritePage.value = ShibaFavoritesStateView.Loading
+                repo.getCurrentUserFavorites().also {
+                    _stateFavoritePage.value = ShibaFavoritesStateView.PhotosLoaded(it)
+                }
+        }
+    }
+
+    private fun checkPhotoInFavorites(picture: String) {
+        _stateDetailsPage.value = PhotoDetailsViewState.Loading
+        viewModelScope.launch {
+            repo.isPhotoInCurrentUserFavorites(picture).also {
+                if(it){
+                    _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
+                } else {
+                    _stateDetailsPage.value = PhotoDetailsViewState.Idle
+                }
+            }
+        }
+    }
+
+    private fun removePictureFromFavorites(picture: String) {
+        viewModelScope.launch {
+            _stateDetailsPage.value = PhotoDetailsViewState.Loading
+            repo.removePictureFromFavorites(picture).also {
+                _stateDetailsPage.value = PhotoDetailsViewState.Idle
+            }
+        }
+    }
+
+    private fun addPictureToFavorite(picture: String) {
+        viewModelScope.launch {
+            _stateDetailsPage.value = PhotoDetailsViewState.Loading
+            repo.addPictureToFavorites(picture).also {
+                _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
+            }
+        }
     }
 
 

@@ -39,4 +39,5 @@
     <string name="shiba_profile_request_body">The following action would change your user profile to the current photo</string>
     <string name="shiba_profile_request_accept">Yes, change my profile</string>
     <string name="shiba_profile_request_decline">No, I\'m good with what I  have</string>
+    <string name="welcome_message_favorites">Favorites</string>
 </resources>

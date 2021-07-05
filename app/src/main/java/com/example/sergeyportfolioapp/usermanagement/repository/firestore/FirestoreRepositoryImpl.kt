@@ -30,7 +30,7 @@ class FirestoreRepositoryImpl @Inject constructor(
     override suspend fun addNewUserToFirestore(email: String, name: String, profilePic: String) {
         firestore.collection(COLLECTION_NAME)
             .document(email)
-            .set(toMap(UserForFirestore(email, name, profilePic, listOf())))
+            .set(toMap(UserForFirestore(email, name, profilePic, listOf(), listOf())))
             .await()
     }
 
@@ -50,9 +50,17 @@ class FirestoreRepositoryImpl @Inject constructor(
             .document(userForFirestore.email)
             .update(
                 "profile_pic", userForFirestore.profilePicURI,
-                "list_favorite", userForFirestore.favoritesList
+                "list_favorite", userForFirestore.favoritesList,
+                    "current_photos", userForFirestore.currentPhotosList
             )
             .await()
 
+    }
+
+    override suspend fun updateUserPhotos(email: String, urlsFromServer: List<String>) {
+        Log.d(TAG, "updateUserPhotos: $urlsFromServer")
+        val user = getUserFromFirestore(email)
+        user.currentPhotosList = urlsFromServer
+        updateUserFromFirestore(user)
     }
 }

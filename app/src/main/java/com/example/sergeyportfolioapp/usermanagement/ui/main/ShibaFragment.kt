@@ -16,7 +16,6 @@ import androidx.core.view.doOnPreDraw
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -34,6 +33,7 @@ import com.example.awesomedialog.*
 import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.main.state.ShibaViewState
 import com.example.sergeyportfolioapp.UserIntent
+import com.example.sergeyportfolioapp.usermanagement.ui.RecyclerViewAdapter
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.utils.FOLDER_NAME
 import com.example.sergeyportfolioapp.utils.RecycleViewScrollDisabler
@@ -201,6 +201,7 @@ class ShibaFragment : Fragment() {
 
     private suspend fun savePhotosLocally(list: List<String>): ArrayList<String> {
         localPhotoPaths = arrayListOf()
+        var shouldStop = false;
         list.forEachIndexed {
             index, url ->
              suspendCancellableCoroutine<Bitmap> {
@@ -221,26 +222,29 @@ class ShibaFragment : Fragment() {
                             resource: Bitmap,
                             transition: Transition<in Bitmap>?
                         ) {
-                            continuation.resume(resource){}
-                            val filename = "${userViewModel.getCurrentUserEmail()}_${index}.png"
-                            resource.compress(
-                                Bitmap.CompressFormat.PNG,
-                                0,
-                                getInternalFileOutstream(
-                                    requireContext(),
-                                    filename
+                                val filename = "${userViewModel.getCurrentUserEmail()}_${index}.png"
+                                resource.compress(
+                                    Bitmap.CompressFormat.PNG,
+                                    0,
+                                    getInternalFileOutstream(
+                                        requireContext(),
+                                        filename
+                                    )
                                 )
-                            )
-                            val fullpath = "${requireContext().externalCacheDir}/$FOLDER_NAME/$filename"
-                            Log.d(TAG, "onResourceReady: $fullpath")
-                            if(!localPhotoPaths.contains(fullpath)){
-                                localPhotoPaths.add(fullpath)
-                            }
+                                val fullpath =
+                                    "${requireContext().externalCacheDir}/$FOLDER_NAME/$filename"
+                                Log.d(TAG, "onResourceReady: $fullpath")
+                                if (!localPhotoPaths.contains(fullpath)) {
+                                    localPhotoPaths.add(fullpath)
+                                }
+                                if (index == 9) {
+                                    shouldStop = true
+                                }
+                            continuation.resume(resource) {}
                         }
 
                         override fun onLoadCleared(placeholder: Drawable?) {
                         }
-
 
                     })
             }
@@ -251,7 +255,7 @@ class ShibaFragment : Fragment() {
 
     private fun updateRecyclerViewWithList(list: List<String>, mode: Int) {
         Log.d(TAG, "updateRecyclerViewWithList: Got new update for recycler $list")
-            val recyclerViewAdapter = RecyclerViewAdapter(list,mode,requireContext(),userViewModel)
+            val recyclerViewAdapter = RecyclerViewAdapter(list.dropLast(1),mode,requireContext(),userViewModel)
             recyclerViewAdapter.photoSelectedListener = object : RecyclerViewAdapter.PhotoSelectedListener {
                 override fun onPhotoSelected(imageView: ImageView, uri: String) {
                     val extras = FragmentNavigatorExtras(

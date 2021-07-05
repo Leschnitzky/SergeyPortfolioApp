@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_login_menu, R.id.nav_shiba,
-            R.id.nav_logoff, R.id.nav_main
+            R.id.nav_logoff, R.id.nav_main, R.id.nav_favorites
         ), drawerLayout)
 
         setupActionBarWithNavController(navController, drawerLayout)
@@ -108,6 +108,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         userViewModel.intentChannel.send(UserIntent.LogoutUser)
                     }
                 }
+            }
+            R.id.nav_favorites -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_favorites)
+            }
+            R.id.nav_shiba -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_shiba)
             }
             R.id.nav_register -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.nav_register)

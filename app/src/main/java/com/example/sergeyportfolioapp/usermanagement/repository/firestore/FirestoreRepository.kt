@@ -9,4 +9,5 @@ interface FirestoreRepository {
     suspend fun addNewUserToFirestore(email: String, name : String, profilePic : String)
     suspend fun getUserFromFirestore(email: String): UserForFirestore
     suspend fun updateUserFromFirestore(userForFirestore: UserForFirestore)
+    suspend fun updateUserPhotos(email: String, urlsFromServer: List<String>)
 }

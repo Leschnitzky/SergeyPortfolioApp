@@ -79,7 +79,11 @@ class RepositoryImpl @Inject constructor(
         Log.d(TAG, "getCurrentUserPhotos SIZE: ${photosUrls.size}")
 
         if(photosUrls.isNullOrEmpty()){
-            photosUrls = getNewPhotosFromServer()
+
+            photosUrls = getPhotosFromServerDB()
+            if(photosUrls.isNullOrEmpty()){
+                photosUrls = getNewPhotosFromServer()
+            }
         }
 
         Log.d(TAG, "Photo list: $photosUrls")
@@ -87,8 +91,15 @@ class RepositoryImpl @Inject constructor(
         return photosUrls
     }
 
-    override suspend fun getCurrentUserFavorites(): UserForFirestore {
-        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+    private suspend fun getPhotosFromServerDB(): ArrayList<String> {
+        val photosUrls = arrayListOf<String>("SaveLocally")
+        photosUrls.addAll( firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).currentPhotosList as ArrayList<String>)
+        Log.d(TAG, "getPhotosFromServerDB: $photosUrls")
+        return photosUrls
+    }
+
+    override suspend fun getCurrentUserFavorites(): List<String> {
+        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).favoritesList
     }
 
     override suspend fun updateCurrentUserPhotos(
@@ -137,10 +148,34 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getNewPhotosFromServer() : ArrayList<String> {
+        val urlsFromServer = getPhotosFromServer()
+        firestoreRepo.updateUserPhotos(getCurrentUserEmail()!!,urlsFromServer)
         val photosUrls = arrayListOf<String>()
         photosUrls.add("SaveLocally")
-        photosUrls.addAll(getPhotosFromServer())
+        photosUrls.addAll(urlsFromServer)
         return photosUrls
+    }
+
+    override suspend fun addPictureToFavorites(picture: String) {
+        Log.d(TAG, "addPictureToFavorites: $picture")
+        val user = firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+        val arrayList = arrayListOf<String>(picture)
+        arrayList.addAll(user.favoritesList)
+        user.favoritesList = arrayList.distinct()
+        firestoreRepo.updateUserFromFirestore(user)
+    }
+
+    override suspend fun removePictureFromFavorites(picture: String) {
+        val user = firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+        val arrayList = arrayListOf<String>()
+        arrayList.addAll(user.favoritesList)
+        arrayList.remove(picture)
+        user.favoritesList = arrayList
+        firestoreRepo.updateUserFromFirestore(user)
+    }
+
+    override suspend fun isPhotoInCurrentUserFavorites(picture: String) : Boolean {
+        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).favoritesList.contains(picture)
     }
 
     suspend fun getPhotosFromServer(): List<String> {
