@@ -39,13 +39,15 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
+        val root = inflater.inflate(R.layout.fragment_main, container, false)
+
         lifecycleScope.launch() {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 checkUserConnection()
             }
         }
-        requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return root
     }
 
 

@@ -1,5 +1,9 @@
 package com.example.sergeyportfolioapp
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
+
+
 sealed class UserIntent {
 
 
@@ -19,6 +23,8 @@ sealed class UserIntent {
     data class AddPictureFavorite(val picture: String) : UserIntent()
     data class RemovePictureFavorite(val picture: String): UserIntent()
     data class CheckPhotoInFavorites(val picture: String): UserIntent()
+    data class SignInGoogle(val signedInAccountFromIntent: Task<GoogleSignInAccount>?) :UserIntent()
+
     object UpdateFavoritesPage : UserIntent()
 
 

@@ -3,6 +3,7 @@ package com.example.sergeyportfolioapp.usermanagement.di
 import android.content.Context
 import androidx.room.Room
 import com.example.sergeyportfolioapp.MyApplication
+import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.RetrofitRepository
 import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.RetrofitRepositoryImpl
 import com.example.sergeyportfolioapp.usermanagement.repository.retrofit.ShibaRetrofit
@@ -16,6 +17,9 @@ import com.example.sergeyportfolioapp.usermanagement.repository.RepositoryImpl
 import com.example.sergeyportfolioapp.usermanagement.repository.room.LocalUserDatabase
 import com.example.sergeyportfolioapp.usermanagement.repository.room.UserDao
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.UserTypeConverter
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.GsonBuilder
@@ -32,6 +36,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 @InstallIn(SingletonComponent::class)
 internal object UserManagementModule{
+
+    @Provides
+    fun provideGoogleSigninClient(@ApplicationContext context: Context): GoogleSignInClient{
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        return GoogleSignIn.getClient(context, gso)
+
+    }
 
 
     @Provides

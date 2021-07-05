@@ -87,7 +87,13 @@ class ShibaFragment : Fragment() {
     private fun initializeViews(root: View?) {
         getMorePhotosButton = root!!.findViewById(R.id.get_more_photos_button)
         welcomeText = root!!.findViewById(R.id.shiba_welcome)
-        welcomeText.text = String.format(resources.getString(R.string.welcoming_shiba),arguments?.getString("name"))
+        welcomeText.text = String.format(
+            resources.getString(
+                R.string.welcoming_shiba)
+                ,requireActivity().findViewById<TextView>(
+                    R.id.drawer_title
+                ).text.toString()
+        )
         loadingAnimation = root!!.findViewById(R.id.shiba_loading_animation)
         loadingAnimation.bringToFront()
         recyclerView = root!!.findViewById(R.id.shiba_recycler_view)

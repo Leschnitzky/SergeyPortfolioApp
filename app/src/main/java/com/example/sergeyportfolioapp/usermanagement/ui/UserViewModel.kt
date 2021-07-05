@@ -12,6 +12,8 @@ import com.example.sergeyportfolioapp.usermanagement.ui.favorites.state.ShibaFav
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
 import com.example.sergeyportfolioapp.utils.isValidEmail
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -86,8 +88,40 @@ class UserViewModel @Inject constructor(
                     is UserIntent.RemovePictureFavorite -> removePictureFromFavorites(it.picture)
                     is UserIntent.CheckPhotoInFavorites -> checkPhotoInFavorites(it.picture)
                     is UserIntent.UpdateFavoritesPage -> updateFavoritesPage()
+                    is UserIntent.SignInGoogle -> logUserWithGoogle(it.signedInAccountFromIntent)
                 }
             }
+    }
+
+    private fun logUserWithGoogle(signedInAccountFromIntent: Task<GoogleSignInAccount>?) {
+        viewModelScope.launch {
+            _stateLoginPage.value = LoginViewState.Loading
+            repo.signInAccountWithGoogle(signedInAccountFromIntent).also {
+                if(!repo.doesUserExistInFirestore(
+                        getCurrentUserEmail()
+                    )
+                ) {
+                    repo.createUserInFirestore(getCurrentUserEmail(), repo.getAuthDisplayName()).also {
+                        _stateLoginPage.value = LoginViewState.Idle
+                        repo.getCurrentUserTitleState().also {
+                            _mainActivityUIState.value =
+                                MainContract.State(
+                                    MainContract.UserTitleState.Member(it.first),
+                                    MainContract.UserProfilePicState.NewProfilePic(it.second)
+                                )
+                        }
+                    }
+                } else {
+                    repo.getCurrentUserTitleState().also {
+                        _mainActivityUIState.value =
+                            MainContract.State(
+                                MainContract.UserTitleState.Member(it.first),
+                                MainContract.UserProfilePicState.NewProfilePic(it.second)
+                            )
+                    }
+                }
+            }
+        }
     }
 
     private fun updateFavoritesPage() {

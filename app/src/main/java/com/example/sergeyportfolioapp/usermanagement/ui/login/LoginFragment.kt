@@ -2,6 +2,8 @@ package com.example.sergeyportfolioapp.usermanagement.ui.login
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,11 +12,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,6 +29,8 @@ import com.example.sergeyportfolioapp.R
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.UserIntent
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,6 +39,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
+import javax.inject.Inject
 
 
 @ExperimentalCoroutinesApi
@@ -41,12 +49,15 @@ class LoginFragment : Fragment(){
     private val userViewModel: UserViewModel by activityViewModels()
 
     private lateinit var loginButton : Button
+    @Inject lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var passForgetButton : Button
     private lateinit var registerButton : Button
     private lateinit var guideline: Guideline
     private lateinit var emailEditLayout : TextInputLayout
     private lateinit var passwordEditLayout : TextInputLayout
     private lateinit var loadingView : LottieAnimationView;
+    private lateinit var googleButton : ImageButton
+    private lateinit var facebookButton : ImageButton
     private lateinit var greetingAnimation : LottieAnimationView;
     @InternalCoroutinesApi
     override fun onCreateView(
@@ -60,6 +71,26 @@ class LoginFragment : Fragment(){
         return root
     }
 
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        Log.d(TAG, "$result: ")
+        if (result.resultCode == RESULT_OK) {
+            Log.d(TAG, "Got result: ")
+            // There are no request codes
+            val data: Intent? = result.data
+
+            lifecycleScope.launch {
+                Log.d(TAG, "launching Intent: ")
+                userViewModel.intentChannel.send(
+                    UserIntent.SignInGoogle(
+                        GoogleSignIn.getSignedInAccountFromIntent(data)
+                    )
+                )
+
+            }
+        }
+    }
+
+
 
     @InternalCoroutinesApi
     private fun setupUI(root: View){
@@ -72,12 +103,15 @@ class LoginFragment : Fragment(){
     private fun initiateViewFields(root: View) {
         greetingAnimation = root.findViewById(R.id.greetingAnimation)
         guideline = root.findViewById(R.id.loginSectionGuideline)
+        googleButton = root.findViewById(R.id.google_sign_in)
+        facebookButton = root.findViewById(R.id.facebook_sign_in)
         loginButton = root.findViewById(R.id.button)
         passForgetButton = root.findViewById(R.id.button3)
         registerButton = root.findViewById(R.id.register)
         emailEditLayout = root.findViewById(R.id.emailInput)
         passwordEditLayout = root.findViewById(R.id.passwordInput)
         loadingView = root.findViewById(R.id.animationView)
+        loadingView.bringToFront()
 
     }
 
@@ -87,7 +121,7 @@ class LoginFragment : Fragment(){
             viewLifecycleOwner,
             KeyboardVisibilityEventListener {
                 if (it) {
-                    val valueAnimator = ValueAnimator.ofFloat(0.5f, 0.05f)
+                    val valueAnimator = ValueAnimator.ofFloat(0.5f, 0.02f)
                     valueAnimator.duration = 250
                     // set duration
                     valueAnimator.interpolator = AccelerateDecelerateInterpolator()
@@ -101,7 +135,7 @@ class LoginFragment : Fragment(){
                     }
                     valueAnimator.start()
                 } else {
-                    val valueAnimator = ValueAnimator.ofFloat(0.05f, 0.5f)
+                    val valueAnimator = ValueAnimator.ofFloat(0.02f, 0.5f)
                     valueAnimator.duration = 250
                     // set duration
                     valueAnimator.interpolator = AccelerateDecelerateInterpolator()
@@ -135,15 +169,8 @@ class LoginFragment : Fragment(){
 
                     }
                     is LoginViewState.Loading -> {
-                        loginButton.isEnabled = false
+                        lockUI()
 
-                        emailEditLayout.isErrorEnabled = true
-                        passwordEditLayout.isErrorEnabled = true
-
-                        emailEditLayout.isEnabled = false
-                        passwordEditLayout.isEnabled = false
-                        loadingView.visibility = View.VISIBLE;
-                        loadingView.bringToFront();
                     }
 
                     is LoginViewState.LoggedIn -> {
@@ -190,6 +217,18 @@ class LoginFragment : Fragment(){
             }
     }
 
+    private fun lockUI() {
+        loginButton.isEnabled = false
+
+        emailEditLayout.isErrorEnabled = true
+        passwordEditLayout.isErrorEnabled = true
+
+        emailEditLayout.isEnabled = false
+        passwordEditLayout.isEnabled = false
+        registerButton.isEnabled = false
+        passForgetButton.isEnabled = false
+        loadingView.visibility = View.VISIBLE;    }
+
 
     private fun setupClicks() {
         loginButton.setOnClickListener {
@@ -212,6 +251,13 @@ class LoginFragment : Fragment(){
                     emailEditLayout.editText?.text.toString()
                 ))
             }
+        }
+
+
+        googleButton.setOnClickListener {
+            Log.d(TAG, "setupClicks: Launching intent")
+            val intent = mGoogleSignInClient.signInIntent
+            resultLauncher.launch(intent)
         }
     }
 

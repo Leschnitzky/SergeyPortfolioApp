@@ -42,8 +42,6 @@ class RegisterFragment : Fragment() {
     private lateinit var passwordInputLayout: TextInputLayout
     private lateinit var loadingView : LottieAnimationView
     private lateinit var registerButton : Button
-    private lateinit var facebookButton : ImageButton
-    private lateinit var googleButton : ImageButton
     private lateinit var guideline: Guideline
     private lateinit var radioBox : RadioButton
 
@@ -106,8 +104,6 @@ class RegisterFragment : Fragment() {
 
             }
             is RegisterViewState.Loading -> {
-                googleButton.isEnabled = false;
-                facebookButton.isEnabled = false;
 
                 nameInputLayout.isErrorEnabled = true
                 emailInputLayout.isErrorEnabled = true
@@ -224,8 +220,6 @@ class RegisterFragment : Fragment() {
     }
 
     private fun initiateViewFields(root: View) {
-        googleButton = root.findViewById(R.id.google_sign_up)
-        facebookButton = root.findViewById(R.id.facebook_sign_up)
         radioBox = root.findViewById(R.id.radioButton)
         emailSubText = root.findViewById(R.id.email_subtext)
         greetingText = root.findViewById(R.id.register_greeting)
@@ -233,7 +227,7 @@ class RegisterFragment : Fragment() {
         nameInputLayout = root.findViewById(R.id.register_page_name_layout)
         emailInputLayout = root.findViewById(R.id.register_page_email_layout)
         passwordInputLayout = root.findViewById(R.id.register_page_password_layout)
-        guideline = root.findViewById(R.id.register_page_accountdetails_seperator)
+        guideline = root.findViewById(R.id.register_page_thirdparty_seperator)
         loadingView = root.findViewById(R.id.register_page_loading_animation)
         loadingView.bringToFront()
 

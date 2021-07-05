@@ -36,6 +36,7 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/greeting_anim" />
 
+
     <TextView
         android:id="@+id/welcomeText"
         android:layout_width="0dp"
@@ -44,10 +45,10 @@
         android:text="@string/greeting_text"
         android:textAlignment="center"
         android:textAppearance="@style/TitleText"
-        app:layout_constraintBottom_toTopOf="@+id/loginSectionGuideline"
+        app:layout_constraintBottom_toTopOf="@+id/login_google_layout"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline" />
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInput"
@@ -88,6 +89,52 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/login_google_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_card_includer"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/loginSectionGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline">
+
+        <ImageButton
+            android:id="@+id/facebook_sign_in"
+            android:layout_width="@dimen/register_page_circular_view"
+            android:layout_height="@dimen/register_page_circular_view"
+            android:layout_alignParentEnd="true"
+
+            android:layout_weight="0.5"
+            android:background="?colorBackgroundFloating"
+            android:src="@drawable/button_press_facebook"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/google_sign_in"
+            tools:layout_editor_absoluteY="10dp" />
+
+        <ImageButton
+            android:id="@+id/google_sign_in"
+            android:layout_width="@dimen/register_page_circular_view"
+            android:layout_height="@dimen/register_page_circular_view"
+            android:layout_alignParentStart="true"
+
+
+            android:layout_toStartOf="@id/facebook_sign_in"
+            android:layout_weight="0.5"
+            android:background="?colorBackgroundFloating"
+            android:src="@drawable/button_press_google"
+            app:layout_constraintEnd_toStartOf="@+id/facebook_sign_in"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="10dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/button"

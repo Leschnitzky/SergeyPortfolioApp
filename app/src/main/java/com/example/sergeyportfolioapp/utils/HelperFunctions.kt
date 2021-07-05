@@ -22,6 +22,8 @@ import java.nio.file.Files
 
 private const val TAG = "HelperFunctions"
 const val FOLDER_NAME = "ShibaDaily"
+const val GOOGLE_SIGN_IN = 4
+const val FACEBOOK_SIGN_IN = 5
 const val DEFAULT_PROFILE_PIC =  "http://cdn.shibe.online/shibes/1dceabce914325b357fbd59e4ef829bc5ddfad6c.jpg"
 fun isValidEmail(target: CharSequence?): Boolean {
     return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()

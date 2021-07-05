@@ -9,7 +9,11 @@ import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.
 import com.example.sergeyportfolioapp.usermanagement.repository.room.UserDao
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.User
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.UserTypeConverter
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.GoogleAuthProvider
+import com.kiwimob.firestore.coroutines.await
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -44,6 +48,12 @@ class RepositoryImpl @Inject constructor(
         }
         firestoreRepo.addNewUserToFirestore(email,name)
         return name;
+    }
+
+    override suspend fun createUserInFirestore(email: String, name: String) {
+        firestoreRepo.addNewUserToFirestore(email,name).let {
+            userDao.insertUser(User(email,name, arrayListOf(), mapOf()))
+        }
     }
 
     override fun logoutUser() {
@@ -81,7 +91,7 @@ class RepositoryImpl @Inject constructor(
         if(photosUrls.isNullOrEmpty()){
 
             photosUrls = getPhotosFromServerDB()
-            if(photosUrls.isNullOrEmpty()){
+            if(photosUrls.size == 1){
                 photosUrls = getNewPhotosFromServer()
             }
         }
@@ -176,6 +186,20 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun isPhotoInCurrentUserFavorites(picture: String) : Boolean {
         return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).favoritesList.contains(picture)
+    }
+
+    override suspend fun signInAccountWithGoogle(signedInAccountFromIntent: Task<GoogleSignInAccount>?) {
+        signedInAccountFromIntent?.await().also {
+            authRepository.logToUser(GoogleAuthProvider.getCredential(it?.idToken,null))
+        }
+    }
+
+    override suspend fun doesUserExistInFirestore(currentUserEmail: String) : Boolean {
+        return firestoreRepo.doesUserExist(currentUserEmail)
+    }
+
+    override fun getAuthDisplayName(): String {
+       return authRepository.getUserDisplayName()
     }
 
     suspend fun getPhotosFromServer(): List<String> {

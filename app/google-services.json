@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "35008376670-eu1j69r60pllua8sturkqnbprbqktmie.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sergeyportfolioapp",
+            "certificate_hash": "bc8205cd4f2f4bd903120f5c688d3e54e8d75704"
+          }
+        },
+        {
           "client_id": "35008376670-o99pnrc7bgt6ooiu58hpckmur67cbfeq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

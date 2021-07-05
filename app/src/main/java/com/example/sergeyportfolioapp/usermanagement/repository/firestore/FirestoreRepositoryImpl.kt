@@ -63,4 +63,13 @@ class FirestoreRepositoryImpl @Inject constructor(
         user.currentPhotosList = urlsFromServer
         updateUserFromFirestore(user)
     }
+
+    override suspend fun doesUserExist(currentUserEmail: String): Boolean {
+        firestore
+            .collection(COLLECTION_NAME)
+            .document(currentUserEmail)
+            .get().await().let {
+                return it.exists()
+            }
+    }
 }

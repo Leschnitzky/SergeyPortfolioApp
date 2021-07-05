@@ -39,14 +39,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.3515732" />
+        app:layout_constraintGuide_percent="0.35" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/register_page_thirdparty_seperator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.20" />
+        app:layout_constraintGuide_begin="146dp" />
 
     <TextView
         android:id="@+id/register_greeting"
@@ -121,12 +121,11 @@
         android:id="@+id/email_subtext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="@string/normal_email_suggestion"
         android:textAppearance="@style/SubtitleText"
         app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
         app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
-        app:layout_constraintTop_toTopOf="@+id/register_page_accountdetails_seperator" />
+        app:layout_constraintTop_toTopOf="@+id/register_page_thirdparty_seperator" />
 
     <RadioButton
         android:id="@+id/radioButton"
@@ -152,39 +151,6 @@
         app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/radioButton" />
 
-    <LinearLayout
-        android:elevation="6dp"
-        android:layout_width="0dp"
-        android:padding="10dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@drawable/shape_card_includer"
-        app:layout_constraintBottom_toTopOf="@+id/register_page_accountdetails_seperator"
-        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
-        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
-        app:layout_constraintTop_toTopOf="@+id/register_page_thirdparty_seperator">
-
-        <ImageButton
-            android:layout_weight="0.5"
-            android:id="@+id/google_sign_up"
-            android:layout_width="@dimen/register_page_circular_view"
-            android:layout_height="@dimen/register_page_circular_view"
-            android:background="?colorBackgroundFloating"
-
-            android:src="@drawable/button_press_facebook" />
-
-        <ImageButton
-            android:layout_weight="0.5"
-            android:layout_marginRight="10dp"
-            android:id="@+id/facebook_sign_up"
-            android:layout_width="@dimen/register_page_circular_view"
-            android:layout_height="@dimen/register_page_circular_view"
-            android:background="?colorBackgroundFloating"
-
-            android:src="@drawable/button_press_google"/>
-
-    </LinearLayout>
 
 
 
