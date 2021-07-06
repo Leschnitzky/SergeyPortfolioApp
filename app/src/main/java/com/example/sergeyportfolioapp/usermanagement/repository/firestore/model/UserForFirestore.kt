@@ -3,7 +3,7 @@ package com.example.sergeyportfolioapp.usermanagement.repository.firestore.model
 import com.example.sergeyportfolioapp.utils.DEFAULT_PROFILE_PIC
 
 data class UserForFirestore(val email: String,
-                            val displayName : String,
+                            var displayName : String,
                             var profilePicURI : String,
                             var favoritesList : List<String>,
                             var currentPhotosList : List<String>){

@@ -40,4 +40,7 @@
     <string name="shiba_profile_request_accept">Yes, change my profile</string>
     <string name="shiba_profile_request_decline">No, I\'m good with what I  have</string>
     <string name="welcome_message_favorites">Favorites</string>
+    <string name="facebook_app_id">115533204011400</string>
+    <string name="profile_display_name_category">DisplayName:</string>
+    <string name="profile_profile_pic_category">Profile Pic:</string>
 </resources>

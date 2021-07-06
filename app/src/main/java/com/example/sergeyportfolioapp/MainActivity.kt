@@ -1,7 +1,10 @@
 package com.example.sergeyportfolioapp
 
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -26,6 +29,8 @@ import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 
 @ExperimentalCoroutinesApi
@@ -63,7 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_login_menu, R.id.nav_shiba,
-            R.id.nav_logoff, R.id.nav_main, R.id.nav_favorites
+            R.id.nav_logoff, R.id.nav_main, R.id.nav_favorites, R.id.nav_profile
         ), drawerLayout)
 
         setupActionBarWithNavController(navController, drawerLayout)
@@ -118,6 +123,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_register -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.nav_register)
             }
+
+            R.id.nav_profile -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_profile)
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
@@ -161,6 +170,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             is MainContract.UserTitleState.InitState -> {
+            }
+            is MainContract.UserTitleState.MemberNoNavigate -> {
+                navView.menu.setGroupVisible(R.id.member, true)
+                navView.menu.setGroupVisible(R.id.unsigned, false)
+                navView
+                    .getHeaderView(0)
+                    .findViewById<TextView>(R.id.drawer_title)
+                    .text = it.titleState.displayName
+                navController.graph.startDestination = R.id.nav_shiba
             }
         }
 

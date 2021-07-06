@@ -10,8 +10,10 @@ import com.example.sergeyportfolioapp.usermanagement.repository.Repository
 import com.example.sergeyportfolioapp.usermanagement.ui.extradetails.state.PhotoDetailsViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.favorites.state.ShibaFavoritesStateView
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
+import com.example.sergeyportfolioapp.usermanagement.ui.profile.state.ProfileViewState
 import com.example.sergeyportfolioapp.usermanagement.ui.register.viewstate.RegisterViewState
 import com.example.sergeyportfolioapp.utils.isValidEmail
+import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuthException
@@ -44,6 +46,7 @@ class UserViewModel @Inject constructor(
     private val _stateRegisterPage = MutableStateFlow<RegisterViewState>(RegisterViewState.Idle)
     private val _stateShibaPage = MutableStateFlow<ShibaViewState>(ShibaViewState.Idle)
     private val _stateDetailsPage = MutableStateFlow<PhotoDetailsViewState>(PhotoDetailsViewState.InitState)
+    private val _stateProfilePage = MutableStateFlow<ProfileViewState>(ProfileViewState.Idle)
 
     val stateFavoritePage : StateFlow<ShibaFavoritesStateView>
         get() = _stateFavoritePage
@@ -55,6 +58,8 @@ class UserViewModel @Inject constructor(
         get() = _stateShibaPage
     val stateDetailsPage: StateFlow<PhotoDetailsViewState>
         get() = _stateDetailsPage
+    val stateProfilePage: StateFlow<ProfileViewState>
+        get() = _stateProfilePage
 
 
 
@@ -89,11 +94,75 @@ class UserViewModel @Inject constructor(
                     is UserIntent.CheckPhotoInFavorites -> checkPhotoInFavorites(it.picture)
                     is UserIntent.UpdateFavoritesPage -> updateFavoritesPage()
                     is UserIntent.SignInGoogle -> logUserWithGoogle(it.signedInAccountFromIntent)
+                    is UserIntent.FacebookSignIn -> logUserWithFacebook(it.accessToken)
+                    is UserIntent.GetProfileData -> broadcastUserProfile()
+                    is UserIntent.UpdateDisplayName -> updateDisplayNameForUser(it.editTextValue)
                 }
             }
     }
 
+    private fun updateDisplayNameForUser(displayName: String) {
+        Log.d(TAG, "updateDisplayNameForUser: ")
+        viewModelScope.launch {
+            _stateProfilePage.value = ProfileViewState.Loading
+            repo.updateCurrentUserDisplayName(displayName).also {
+                repo.getCurrentUserData().also {
+                    _stateProfilePage.value = ProfileViewState.LoadedData(it)
+                }.also {
+                    _mainActivityUIState.value =
+                        MainContract.State(
+                            MainContract.UserTitleState.MemberNoNavigate(it.displayName),
+                            MainContract.UserProfilePicState.NewProfilePic(it.profilePicURI)
+                        )
+                }
+            }
+        }
+    }
+
+    private fun broadcastUserProfile() {
+        Log.d(TAG, "broadcastUserProfile: ")
+        viewModelScope.launch {
+            _stateProfilePage.value = ProfileViewState.Loading
+            repo.getCurrentUserData().also {
+                _stateProfilePage.value = ProfileViewState.LoadedData(it)
+            }
+        }
+    }
+
+    private fun logUserWithFacebook(token: AccessToken?) {
+        Log.d(TAG, "logUserWithFacebook: ")
+        viewModelScope.launch {
+            _stateLoginPage.value = LoginViewState.Loading
+            repo.signInAccountWithFacebook(token).also {
+                if(!repo.doesUserExistInFirestore(
+                        getCurrentUserEmail()
+                    )
+                ) {
+                    repo.createUserInFirestore(getCurrentUserEmail(), repo.getAuthDisplayName()).also {
+                        _stateLoginPage.value = LoginViewState.Idle
+                        repo.getCurrentUserTitleState().also {
+                            _mainActivityUIState.value =
+                                MainContract.State(
+                                    MainContract.UserTitleState.Member(it.first),
+                                    MainContract.UserProfilePicState.NewProfilePic(it.second)
+                                )
+                        }
+                    }
+                } else {
+                    repo.getCurrentUserTitleState().also {
+                        _mainActivityUIState.value =
+                            MainContract.State(
+                                MainContract.UserTitleState.Member(it.first),
+                                MainContract.UserProfilePicState.NewProfilePic(it.second)
+                            )
+                    }
+                }
+            }
+        }
+    }
+
     private fun logUserWithGoogle(signedInAccountFromIntent: Task<GoogleSignInAccount>?) {
+        Log.d(TAG, "logUserWithGoogle: ")
         viewModelScope.launch {
             _stateLoginPage.value = LoginViewState.Loading
             repo.signInAccountWithGoogle(signedInAccountFromIntent).also {
@@ -219,6 +288,7 @@ class UserViewModel @Inject constructor(
     }
 
     private fun logUser(email: String, password: String) {
+        Log.d(TAG, "logUser: ")
         viewModelScope.launch  {
             _stateLoginPage.value = LoginViewState.Loading
             Log.d(TAG, "logUser: HERE 1")
@@ -306,13 +376,13 @@ class UserViewModel @Inject constructor(
                 _stateShibaPage.value = ShibaViewState.Loading
             Log.d(TAG, "logoutUser: Sending Guest")
                 repo.logoutUser().also {
+                    _stateShibaPage.value = ShibaViewState.Idle
+                    _stateLoginPage.value = LoginViewState.Idle
                     _mainActivityUIState.value =
                         MainContract.State(
                                     MainContract.UserTitleState.Guest,
                                     MainContract.UserProfilePicState.DefaultPicture
-                        )
-                    _stateShibaPage.value = ShibaViewState.Idle
-                }
+                        ) }
         }
     }
 
@@ -332,16 +402,14 @@ class UserViewModel @Inject constructor(
     }
 
     private suspend fun updateUserProfilePicture(picture : String){
-            _stateDetailsPage.value = PhotoDetailsViewState.Loading
             repo.updateCurrentUserProfilePicture(picture).also {
+
                 val state = repo.getCurrentUserTitleState()
                 _mainActivityUIState.value =
                     MainContract.State(
                         MainContract.UserTitleState.Member(state.first),
                         MainContract.UserProfilePicState.NewProfilePic(picture)
-                    ).also {
-                        _stateDetailsPage.value = PhotoDetailsViewState.Idle
-                    }
+                    )
             }
 
     }

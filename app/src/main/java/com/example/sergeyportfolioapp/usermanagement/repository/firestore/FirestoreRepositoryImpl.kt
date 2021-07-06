@@ -49,6 +49,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             .collection(COLLECTION_NAME)
             .document(userForFirestore.email)
             .update(
+                "display_name", userForFirestore.displayName,
                 "profile_pic", userForFirestore.profilePicURI,
                 "list_favorite", userForFirestore.favoritesList,
                     "current_photos", userForFirestore.currentPhotosList

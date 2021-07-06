@@ -1,6 +1,7 @@
 package com.example.sergeyportfolioapp.usermanagement.repository
 
 import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.UserForFirestore
+import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.flow.Flow
@@ -27,4 +28,7 @@ interface Repository {
     suspend fun signInAccountWithGoogle(signedInAccountFromIntent: Task<GoogleSignInAccount>?)
     suspend fun doesUserExistInFirestore(currentUserEmail: String) : Boolean
     fun getAuthDisplayName(): String
+    suspend fun signInAccountWithFacebook(token: AccessToken?)
+    suspend fun getCurrentUserData(): UserForFirestore
+    suspend fun updateCurrentUserDisplayName(displayName: String)
 }

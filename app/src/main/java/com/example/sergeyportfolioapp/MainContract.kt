@@ -18,6 +18,7 @@ class MainContract {
         object InitState : UserTitleState()
         object Guest : UserTitleState()
         data class Member(val name: String): UserTitleState()
+        data class MemberNoNavigate(val displayName: String) : MainContract.UserTitleState()
     }
 
     sealed class UserProfilePicState {

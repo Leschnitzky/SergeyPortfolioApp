@@ -9,8 +9,11 @@ import com.example.sergeyportfolioapp.usermanagement.repository.firestore.model.
 import com.example.sergeyportfolioapp.usermanagement.repository.room.UserDao
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.User
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.UserTypeConverter
+import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FacebookAuthCredential
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.kiwimob.firestore.coroutines.await
@@ -62,6 +65,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     override fun getCurrentUserEmail(): String? {
+        Log.d(TAG, "getCurrentUserEmail: ${authRepository.getCurrentUser()?.email}")
         return authRepository.getCurrentUser()?.email
     }
 
@@ -200,6 +204,25 @@ class RepositoryImpl @Inject constructor(
 
     override fun getAuthDisplayName(): String {
        return authRepository.getUserDisplayName()
+    }
+
+    override suspend fun signInAccountWithFacebook(token: AccessToken?) {
+        Log.d(TAG, "signInAccountWithFacebook: ${token?.token}")
+        authRepository.logToUser(FacebookAuthProvider.getCredential(token?.token!!))
+    }
+
+    override suspend fun getCurrentUserData(): UserForFirestore {
+        return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+    }
+
+    override suspend fun updateCurrentUserDisplayName(displayName: String) {
+        var user = firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+        Log.d(TAG, "updateCurrentUserDisplayName: Current User $user")
+        user.displayName = displayName
+        Log.d(TAG, "updateCurrentUserDisplayName: $displayName")
+        Log.d(TAG, "updateCurrentUserDisplayName: Updating $user")
+
+        firestoreRepo.updateUserFromFirestore(user)
     }
 
     suspend fun getPhotosFromServer(): List<String> {

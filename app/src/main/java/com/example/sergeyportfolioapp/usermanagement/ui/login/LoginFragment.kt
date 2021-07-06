@@ -4,7 +4,10 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +16,6 @@ import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
@@ -26,19 +27,28 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.sergeyportfolioapp.R
-import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.UserIntent
+import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.usermanagement.ui.login.viewstate.LoginViewState
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import java.util.*
 import javax.inject.Inject
 
 
@@ -50,6 +60,8 @@ class LoginFragment : Fragment(){
 
     private lateinit var loginButton : Button
     @Inject lateinit var mGoogleSignInClient: GoogleSignInClient
+    @Inject lateinit var mCallbackManager: CallbackManager
+    @Inject lateinit var mLoginManager: LoginManager
     private lateinit var passForgetButton : Button
     private lateinit var registerButton : Button
     private lateinit var guideline: Guideline
@@ -156,6 +168,7 @@ class LoginFragment : Fragment(){
     private fun observeViewModel() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                Log.d(TAG, "observeViewModel: Started")
                 observeLoginViewState()
             }
         }
@@ -163,7 +176,8 @@ class LoginFragment : Fragment(){
 
     @InternalCoroutinesApi
     private suspend fun observeLoginViewState() {
-            userViewModel.stateLoginPage.collectLatest {
+            userViewModel.stateLoginPage.collect {
+                Log.d(TAG, "observeLoginViewState: Got $it")
                 when (it) {
                     is LoginViewState.Idle -> {
 
@@ -219,6 +233,8 @@ class LoginFragment : Fragment(){
 
     private fun lockUI() {
         loginButton.isEnabled = false
+        facebookButton.isEnabled = false
+        googleButton.isEnabled = false
 
         emailEditLayout.isErrorEnabled = true
         passwordEditLayout.isErrorEnabled = true
@@ -230,7 +246,26 @@ class LoginFragment : Fragment(){
         loadingView.visibility = View.VISIBLE;    }
 
 
-    private fun setupClicks() {
+    private fun 
+            setupClicks() {
+        mLoginManager.registerCallback(mCallbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                Log.d(TAG, "facebook:onSuccess:$loginResult")
+
+                lifecycleScope.launch {
+                    userViewModel.intentChannel.send(UserIntent.FacebookSignIn(loginResult.accessToken))
+                }
+            }
+
+            override fun onCancel() {
+                Log.d(TAG, "facebook:onCancel")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.d(TAG, "facebook:onError", error)
+            }
+        })
+
         loginButton.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 userViewModel.intentChannel.send(
@@ -259,6 +294,21 @@ class LoginFragment : Fragment(){
             val intent = mGoogleSignInClient.signInIntent
             resultLauncher.launch(intent)
         }
+
+        facebookButton.setOnClickListener {
+            Log.d(TAG, "setupClicks: Facebook button")
+
+            mLoginManager.logInWithReadPermissions(this,listOf("email", "public_profile"))
+        }
+
+
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d(TAG, "onActivityResult: ")
+        super.onActivityResult(requestCode, resultCode, data)
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
 
 }

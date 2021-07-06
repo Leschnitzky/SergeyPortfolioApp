@@ -76,6 +76,11 @@
             android:id="@+id/action_nav_favorites_to_nav_details"
             app:destination="@id/nav_details" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.sergeyportfolioapp.usermanagement.ui.profile.ProfileFragment"
+        android:label="Profile Details"
+        tools:layout="@layout/fragment_profile" />
 
 
 </navigation>

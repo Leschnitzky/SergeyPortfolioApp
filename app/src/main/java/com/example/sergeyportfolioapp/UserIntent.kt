@@ -1,7 +1,9 @@
 package com.example.sergeyportfolioapp
 
+import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.auth.User
 
 
 sealed class UserIntent {
@@ -24,6 +26,8 @@ sealed class UserIntent {
     data class RemovePictureFavorite(val picture: String): UserIntent()
     data class CheckPhotoInFavorites(val picture: String): UserIntent()
     data class SignInGoogle(val signedInAccountFromIntent: Task<GoogleSignInAccount>?) :UserIntent()
+    data class FacebookSignIn(val accessToken: AccessToken?) : UserIntent()
+    data class UpdateDisplayName(val editTextValue: String) : UserIntent()
 
     object UpdateFavoritesPage : UserIntent()
 
@@ -32,5 +36,6 @@ sealed class UserIntent {
     object GetPhotos : UserIntent()
     object GetNewPhotos : UserIntent()
     object CheckLogin : UserIntent()
+    object GetProfileData : UserIntent()
 
 }

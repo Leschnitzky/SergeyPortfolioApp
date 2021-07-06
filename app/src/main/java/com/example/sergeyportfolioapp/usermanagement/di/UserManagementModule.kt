@@ -17,6 +17,8 @@ import com.example.sergeyportfolioapp.usermanagement.repository.RepositoryImpl
 import com.example.sergeyportfolioapp.usermanagement.repository.room.LocalUserDatabase
 import com.example.sergeyportfolioapp.usermanagement.repository.room.UserDao
 import com.example.sergeyportfolioapp.usermanagement.repository.room.model.UserTypeConverter
+import com.facebook.CallbackManager
+import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -36,6 +38,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 @InstallIn(SingletonComponent::class)
 internal object UserManagementModule{
+
+    @Provides
+    fun provideFacebookLoginManager() : LoginManager {
+        return LoginManager.getInstance()
+    }
+
+    @Provides
+    fun provideFacebookCallbackManager() : CallbackManager{
+        return CallbackManager.Factory.create()
+    }
 
     @Provides
     fun provideGoogleSigninClient(@ApplicationContext context: Context): GoogleSignInClient{
