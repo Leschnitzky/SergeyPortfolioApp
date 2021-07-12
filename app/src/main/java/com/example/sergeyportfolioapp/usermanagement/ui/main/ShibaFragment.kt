@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -38,6 +39,9 @@ import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.utils.FOLDER_NAME
 import com.example.sergeyportfolioapp.utils.RecycleViewScrollDisabler
 import com.example.sergeyportfolioapp.utils.getInternalFileOutstream
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -52,6 +56,9 @@ class ShibaFragment : Fragment() {
     private lateinit var loadingAnimation : LottieAnimationView
     private lateinit var recyclerView: RecyclerView
     private lateinit var getMorePhotosButton : Button
+    private lateinit var adView : AdView
+    private var mInterstitialAd: InterstitialAd? = null
+
     var disabler: OnItemTouchListener = RecycleViewScrollDisabler()
     private val userViewModel: UserViewModel by activityViewModels()
 
@@ -96,8 +103,47 @@ class ShibaFragment : Fragment() {
         )
         loadingAnimation = root!!.findViewById(R.id.shiba_loading_animation)
         loadingAnimation.bringToFront()
+
+        adView = root.findViewById(R.id.shiba_ad_view)
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+
         recyclerView = root!!.findViewById(R.id.shiba_recycler_view)
+
+        loadAd(adRequest)
+
+
     }
+
+    private fun loadAd(adRequest: AdRequest) {
+        InterstitialAd.load(requireContext(), getString(R.string.admob_id), adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d(TAG, "SERG " + adError?.message)
+                mInterstitialAd = null
+            }
+
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                Log.d(TAG, "SERG Ad was loaded.")
+                mInterstitialAd = interstitialAd
+            }
+        })
+
+        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdDismissedFullScreenContent() {
+                Log.d(TAG, "SERG Ad was dismissed.")
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                Log.d(TAG, "SERG Ad failed to show.")
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                Log.d(TAG, "SERG Ad showed fullscreen content.")
+                mInterstitialAd = null;
+            }
+        }
+    }
+
 
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -123,11 +169,19 @@ class ShibaFragment : Fragment() {
                     text = resources.getString(R.string.shiba_more_photos_dialog_button_text),
                     action = {
                         // Show ad and load more photos
+                        if (mInterstitialAd != null) {
+                            mInterstitialAd?.show(requireActivity())
+                        } else {
+                            Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                        }
+
                         lifecycleScope.launch {
                             userViewModel.intentChannel.send(
                                 UserIntent.GetNewPhotos
                             )
                         }
+                        val adRequest = AdRequest.Builder().build()
+                        loadAd(adRequest)
                     }
                 )
                 .onNegative(
@@ -193,14 +247,21 @@ class ShibaFragment : Fragment() {
         recyclerView.addOnItemTouchListener(disabler)
         loadingAnimation.visibility = View.VISIBLE
         getMorePhotosButton.isEnabled = false
-        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.isFocusable = false
+
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+
     }
 
     private fun unlockUI() {
         recyclerView.removeOnItemTouchListener(disabler)
         getMorePhotosButton.isEnabled = true
         loadingAnimation.visibility = View.GONE
-        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.isFocusable = true
+
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
 
     }
 

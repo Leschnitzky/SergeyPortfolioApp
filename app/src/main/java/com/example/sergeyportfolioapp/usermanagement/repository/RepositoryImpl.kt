@@ -83,22 +83,27 @@ class RepositoryImpl @Inject constructor(
         Log.d(TAG, "getCurrentUserPhotos: ")
         val typeConverter = UserTypeConverter()
         var photosUrls = arrayListOf<String>()
-        photosUrls.addAll(
-            typeConverter.StringToList(
-                userDao.getCurrentPhotosByEmail(
-                getCurrentUserEmail()!!
-            ).first()
-            )
+        val localDBQuery = userDao.getCurrentPhotosByEmail(
+            getCurrentUserEmail()!!
         )
-        Log.d(TAG, "getCurrentUserPhotos SIZE: ${photosUrls.size}")
+        Log.d(TAG, "getCurrentUserPhotos: $localDBQuery")
 
-        if(photosUrls.isNullOrEmpty()){
-
+        if(localDBQuery.isEmpty() || localDBQuery.first().isEmpty()){
             photosUrls = getPhotosFromServerDB()
             if(photosUrls.size == 1){
                 photosUrls = getNewPhotosFromServer()
             }
+        } else {
+            photosUrls.addAll(
+                typeConverter.StringToList(
+                    localDBQuery.first()
+                )
+            )
         }
+
+
+        Log.d(TAG, "getCurrentUserPhotos SIZE: ${photosUrls.size}")
+
 
         Log.d(TAG, "Photo list: $photosUrls")
 
@@ -223,6 +228,10 @@ class RepositoryImpl @Inject constructor(
         Log.d(TAG, "updateCurrentUserDisplayName: Updating $user")
 
         firestoreRepo.updateUserFromFirestore(user)
+    }
+
+    override suspend fun createUserInDB(currentUserEmail: String, authDisplayName: String) {
+        userDao.insertUser(User(currentUserEmail,authDisplayName, arrayListOf(), mapOf()))
     }
 
     suspend fun getPhotosFromServer(): List<String> {

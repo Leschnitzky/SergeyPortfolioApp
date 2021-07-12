@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -117,10 +118,16 @@ class ProfileFragment : Fragment() {
     private fun lockUI() {
         loadingAnimation.visibility = View.VISIBLE
         editDisplayNameButton.isEnabled = false
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
     }
 
     private fun unlockUI() {
         loadingAnimation.visibility = View.GONE
+        activity?.window?.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         editDisplayNameButton.isEnabled = true
 
     }

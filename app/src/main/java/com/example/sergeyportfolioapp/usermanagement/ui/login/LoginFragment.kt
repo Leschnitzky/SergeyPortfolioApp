@@ -4,10 +4,8 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +14,9 @@ import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
@@ -42,13 +42,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.util.*
+import java.io.InputStream
 import javax.inject.Inject
 
 
@@ -62,7 +59,7 @@ class LoginFragment : Fragment(){
     @Inject lateinit var mGoogleSignInClient: GoogleSignInClient
     @Inject lateinit var mCallbackManager: CallbackManager
     @Inject lateinit var mLoginManager: LoginManager
-    private lateinit var passForgetButton : Button
+    private lateinit var termsAndConditionsButton : Button
     private lateinit var registerButton : Button
     private lateinit var guideline: Guideline
     private lateinit var emailEditLayout : TextInputLayout
@@ -118,7 +115,7 @@ class LoginFragment : Fragment(){
         googleButton = root.findViewById(R.id.google_sign_in)
         facebookButton = root.findViewById(R.id.facebook_sign_in)
         loginButton = root.findViewById(R.id.button)
-        passForgetButton = root.findViewById(R.id.button3)
+        termsAndConditionsButton = root.findViewById(R.id.terms_and_conds_button)
         registerButton = root.findViewById(R.id.register)
         emailEditLayout = root.findViewById(R.id.emailInput)
         passwordEditLayout = root.findViewById(R.id.passwordInput)
@@ -180,7 +177,8 @@ class LoginFragment : Fragment(){
                 Log.d(TAG, "observeLoginViewState: Got $it")
                 when (it) {
                     is LoginViewState.Idle -> {
-
+                        activity?.window?.clearFlags(
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     }
                     is LoginViewState.Loading -> {
                         lockUI()
@@ -188,6 +186,8 @@ class LoginFragment : Fragment(){
                     }
 
                     is LoginViewState.LoggedIn -> {
+                        activity?.window?.clearFlags(
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         Log.d(TAG, "observeViewModel: Got name")
                         loginButton.isEnabled = true
                         emailEditLayout.isEnabled = true
@@ -200,6 +200,8 @@ class LoginFragment : Fragment(){
 
                     }
                     is LoginViewState.Error -> {
+                        activity?.window?.clearFlags(
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         loginButton.isEnabled = true
                         emailEditLayout.isEnabled = true
                         passwordEditLayout.isEnabled = true
@@ -238,11 +240,14 @@ class LoginFragment : Fragment(){
 
         emailEditLayout.isErrorEnabled = true
         passwordEditLayout.isErrorEnabled = true
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
         emailEditLayout.isEnabled = false
         passwordEditLayout.isEnabled = false
         registerButton.isEnabled = false
-        passForgetButton.isEnabled = false
+        termsAndConditionsButton.isEnabled = false
         loadingView.visibility = View.VISIBLE;    }
 
 
@@ -279,14 +284,11 @@ class LoginFragment : Fragment(){
             findNavController().navigate(R.id.action_nav_login_to_registerFragment)
         }
 
-        passForgetButton.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                userViewModel.intentChannel.send(
-                    UserIntent.ForgotPass(
-                    emailEditLayout.editText?.text.toString()
-                ))
-            }
+        termsAndConditionsButton.setOnClickListener {
+            createTermsAndCondsDialog()
         }
+
+
 
 
         googleButton.setOnClickListener {
@@ -297,11 +299,32 @@ class LoginFragment : Fragment(){
 
         facebookButton.setOnClickListener {
             Log.d(TAG, "setupClicks: Facebook button")
-
             mLoginManager.logInWithReadPermissions(this,listOf("email", "public_profile"))
         }
 
 
+    }
+
+    private fun createTermsAndCondsDialog() {
+        val inflater = LayoutInflater.from(requireContext())
+        val view: View = inflater.inflate(R.layout.scrollable_dialog_view, null)
+
+        val textview = view.findViewById<View>(R.id.textmsg) as TextView
+        try {
+            val res: Resources = resources
+            val in_s: InputStream = res.openRawResource(R.raw.terms_and_cond)
+            val b = ByteArray(in_s.available())
+            in_s.read(b)
+            textview.text = String(b)
+        } catch (e: Exception) {
+            textview.text = "Error: can't show terms."
+        }
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        alertDialog.setTitle("Terms and Conditions")
+        alertDialog.setView(view)
+        alertDialog.setPositiveButton("OK", null)
+        val alert: AlertDialog = alertDialog.create()
+        alert.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

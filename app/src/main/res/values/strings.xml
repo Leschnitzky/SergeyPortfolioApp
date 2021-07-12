@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ShibaDaily</string>
+    <string name="app_name">Daily Shiba</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Guest</string>
@@ -14,7 +14,7 @@
     <string name="emailInput">Email</string>
     <string name="passwordInput">Password</string>
     <string name="loginText">Login</string>
-    <string name="forgot_password_string">Did you forget password?</string>
+    <string name="forgot_password_string">Terms and Conditions</string>
     <string name="register_string">create an account</string>
     <string name="greeting_text">Welcome to DailyShiba</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -43,4 +43,6 @@
     <string name="facebook_app_id">115533204011400</string>
     <string name="profile_display_name_category">DisplayName:</string>
     <string name="profile_profile_pic_category">Profile Pic:</string>
+    <string name="admob_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="phone_imei">355257094371967</string>
 </resources>

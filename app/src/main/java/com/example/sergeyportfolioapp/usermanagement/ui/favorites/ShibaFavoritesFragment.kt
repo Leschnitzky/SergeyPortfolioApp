@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.activityViewModels
@@ -24,6 +25,8 @@ import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.usermanagement.ui.favorites.state.ShibaFavoritesStateView
 import com.example.sergeyportfolioapp.usermanagement.ui.main.ShibaFragmentDirections
 import com.example.sergeyportfolioapp.utils.RecycleViewScrollDisabler
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -110,21 +113,32 @@ class ShibaFavoritesFragment : Fragment() {
 
     private fun lockUI() {
         recyclerView.addOnItemTouchListener(disabler)
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
         loadingAnimation.visibility = View.VISIBLE
     }
 
     private fun unlockUI() {
         recyclerView.removeOnItemTouchListener(disabler)
+        activity?.window?.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         loadingAnimation.visibility = View.GONE
     }
 
     private lateinit var loadingAnimation : LottieAnimationView
     private lateinit var recyclerView : RecyclerView
+    private lateinit var adView : AdView
 
     private fun initializeViews(root: View?) {
         recyclerView = root!!.findViewById(R.id.favorite_recycler_view)
         loadingAnimation = root.findViewById(R.id.favorites_loading_animation)
         loadingAnimation.bringToFront()
+
+        adView = root.findViewById(R.id.favorites_ad_view)
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
     }
 
 }

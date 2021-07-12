@@ -133,6 +133,10 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.2.1'
     implementation 'com.github.brotoo25:firestore-coroutines:1.0.2'
 
+    //AdMob
+    implementation 'com.google.android.gms:play-services-ads:20.2.0'
+
+
 
 
 

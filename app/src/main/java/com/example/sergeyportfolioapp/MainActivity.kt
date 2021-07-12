@@ -1,10 +1,8 @@
 package com.example.sergeyportfolioapp
 
+import android.R.id.toggle
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -25,12 +23,13 @@ import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
 import com.example.sergeyportfolioapp.usermanagement.ui.UserViewModel
 import com.example.sergeyportfolioapp.utils.DEFAULT_PROFILE_PIC
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
+import java.util.*
 
 
 @ExperimentalCoroutinesApi
@@ -50,6 +49,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         Log.d(TAG, "onCreate: ")
         super.onCreate(savedInstanceState)
         listener = this
+        MobileAds.initialize(this) {}
+        val configuration = RequestConfiguration.Builder()
+            .setTestDeviceIds(listOf(getString(R.string.phone_imei))).build()
+        MobileAds.setRequestConfiguration(configuration)
+        actionBar?.setDisplayHomeAsUpEnabled(false)
+
+
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -212,6 +218,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     }
+
 
 
 }

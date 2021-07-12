@@ -78,5 +78,18 @@
         app:layout_constraintStart_toStartOf="@+id/favorites_left_guideline"
         app:layout_constraintTop_toTopOf="@+id/favorite_recycler_start" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/favorites_ad_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/favorites_right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/favorites_left_guideline"
+        app:layout_constraintTop_toTopOf="@+id/favorites_banner_guideline"></com.google.android.gms.ads.AdView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

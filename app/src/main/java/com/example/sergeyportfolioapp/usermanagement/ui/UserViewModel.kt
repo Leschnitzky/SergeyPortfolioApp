@@ -103,17 +103,19 @@ class UserViewModel @Inject constructor(
 
     private fun updateDisplayNameForUser(displayName: String) {
         Log.d(TAG, "updateDisplayNameForUser: ")
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateProfilePage.value = ProfileViewState.Loading
             repo.updateCurrentUserDisplayName(displayName).also {
                 repo.getCurrentUserData().also {
                     _stateProfilePage.value = ProfileViewState.LoadedData(it)
                 }.also {
-                    _mainActivityUIState.value =
-                        MainContract.State(
-                            MainContract.UserTitleState.MemberNoNavigate(it.displayName),
-                            MainContract.UserProfilePicState.NewProfilePic(it.profilePicURI)
-                        )
+                    withContext(Dispatchers.Main){
+                        _mainActivityUIState.value =
+                            MainContract.State(
+                                MainContract.UserTitleState.MemberNoNavigate(it.displayName),
+                                MainContract.UserProfilePicState.NewProfilePic(it.profilePicURI)
+                            )
+                    }
                 }
             }
         }
@@ -121,40 +123,48 @@ class UserViewModel @Inject constructor(
 
     private fun broadcastUserProfile() {
         Log.d(TAG, "broadcastUserProfile: ")
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateProfilePage.value = ProfileViewState.Loading
             repo.getCurrentUserData().also {
-                _stateProfilePage.value = ProfileViewState.LoadedData(it)
+                withContext(Dispatchers.Main){
+                    _stateProfilePage.value = ProfileViewState.LoadedData(it)
+
+                }
             }
         }
     }
 
     private fun logUserWithFacebook(token: AccessToken?) {
         Log.d(TAG, "logUserWithFacebook: ")
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateLoginPage.value = LoginViewState.Loading
             repo.signInAccountWithFacebook(token).also {
                 if(!repo.doesUserExistInFirestore(
                         getCurrentUserEmail()
                     )
                 ) {
+                    repo.createUserInDB(getCurrentUserEmail(), repo.getAuthDisplayName())
                     repo.createUserInFirestore(getCurrentUserEmail(), repo.getAuthDisplayName()).also {
                         _stateLoginPage.value = LoginViewState.Idle
                         repo.getCurrentUserTitleState().also {
+                            withContext(Dispatchers.Main){
+                                _mainActivityUIState.value =
+                                    MainContract.State(
+                                        MainContract.UserTitleState.Member(it.first),
+                                        MainContract.UserProfilePicState.NewProfilePic(it.second)
+                                    )
+                            }
+                        }
+                    }
+                } else {
+                    repo.getCurrentUserTitleState().also {
+                        withContext(Dispatchers.Main){
                             _mainActivityUIState.value =
                                 MainContract.State(
                                     MainContract.UserTitleState.Member(it.first),
                                     MainContract.UserProfilePicState.NewProfilePic(it.second)
                                 )
                         }
-                    }
-                } else {
-                    repo.getCurrentUserTitleState().also {
-                        _mainActivityUIState.value =
-                            MainContract.State(
-                                MainContract.UserTitleState.Member(it.first),
-                                MainContract.UserProfilePicState.NewProfilePic(it.second)
-                            )
                     }
                 }
             }
@@ -163,16 +173,30 @@ class UserViewModel @Inject constructor(
 
     private fun logUserWithGoogle(signedInAccountFromIntent: Task<GoogleSignInAccount>?) {
         Log.d(TAG, "logUserWithGoogle: ")
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateLoginPage.value = LoginViewState.Loading
             repo.signInAccountWithGoogle(signedInAccountFromIntent).also {
                 if(!repo.doesUserExistInFirestore(
                         getCurrentUserEmail()
                     )
                 ) {
+                    repo.createUserInDB(getCurrentUserEmail(), repo.getAuthDisplayName())
                     repo.createUserInFirestore(getCurrentUserEmail(), repo.getAuthDisplayName()).also {
                         _stateLoginPage.value = LoginViewState.Idle
                         repo.getCurrentUserTitleState().also {
+
+                            withContext(Dispatchers.Main){
+                                _mainActivityUIState.value =
+                                    MainContract.State(
+                                        MainContract.UserTitleState.Member(it.first),
+                                        MainContract.UserProfilePicState.NewProfilePic(it.second)
+                                    )
+                            }
+                        }
+                    }
+                } else {
+                    repo.getCurrentUserTitleState().also {
+                        withContext(Dispatchers.Main){
                             _mainActivityUIState.value =
                                 MainContract.State(
                                     MainContract.UserTitleState.Member(it.first),
@@ -180,55 +204,56 @@ class UserViewModel @Inject constructor(
                                 )
                         }
                     }
-                } else {
-                    repo.getCurrentUserTitleState().also {
-                        _mainActivityUIState.value =
-                            MainContract.State(
-                                MainContract.UserTitleState.Member(it.first),
-                                MainContract.UserProfilePicState.NewProfilePic(it.second)
-                            )
-                    }
                 }
             }
         }
     }
 
     private fun updateFavoritesPage() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateFavoritePage.value = ShibaFavoritesStateView.Loading
                 repo.getCurrentUserFavorites().also {
-                    _stateFavoritePage.value = ShibaFavoritesStateView.PhotosLoaded(it)
+                    withContext(Dispatchers.Main){
+                        _stateFavoritePage.value = ShibaFavoritesStateView.PhotosLoaded(it)
+
+                    }
                 }
         }
     }
 
     private fun checkPhotoInFavorites(picture: String) {
         _stateDetailsPage.value = PhotoDetailsViewState.Loading
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.isPhotoInCurrentUserFavorites(picture).also {
-                if(it){
-                    _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
-                } else {
-                    _stateDetailsPage.value = PhotoDetailsViewState.Idle
+                withContext(Dispatchers.Main){
+                    if(it){
+                        _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
+                    } else {
+                        _stateDetailsPage.value = PhotoDetailsViewState.Idle
+                    }
                 }
             }
         }
     }
 
     private fun removePictureFromFavorites(picture: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateDetailsPage.value = PhotoDetailsViewState.Loading
             repo.removePictureFromFavorites(picture).also {
-                _stateDetailsPage.value = PhotoDetailsViewState.Idle
+                withContext(Dispatchers.Main){
+                    _stateDetailsPage.value = PhotoDetailsViewState.Idle
+                }
             }
         }
     }
 
     private fun addPictureToFavorite(picture: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateDetailsPage.value = PhotoDetailsViewState.Loading
             repo.addPictureToFavorites(picture).also {
-                _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
+                withContext(Dispatchers.Main){
+                    _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
+                }
             }
         }
     }
@@ -267,22 +292,26 @@ class UserViewModel @Inject constructor(
     }
 
     private fun getMorePhotosForCurrentUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _stateShibaPage.value = ShibaViewState.Loading
             repo.getNewPhotosFromServer().let {
                 Log.d(TAG, "getPhotosForCurrentUser: updating $it")
-                _stateShibaPage.value = ShibaViewState.GotPhotos(it)
+                withContext(Dispatchers.Main){
+                    _stateShibaPage.value = ShibaViewState.GotPhotos(it)
+                }
             }
         }
     }
 
     private fun getPhotosForCurrentUser() {
         Log.d(TAG, "getPhotosForCurrentUser: ")
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
         _stateShibaPage.value = ShibaViewState.Loading
             repo.getCurrentUserPhotos().let {
                 Log.d(TAG, "getPhotosForCurrentUser: updating $it")
-                _stateShibaPage.value = ShibaViewState.GotPhotos(it)
+                withContext(Dispatchers.Main){
+                    _stateShibaPage.value = ShibaViewState.GotPhotos(it)
+                }
             }
         }
     }
@@ -296,17 +325,21 @@ class UserViewModel @Inject constructor(
                 if(!email.isEmpty() && !password.isEmpty()){
                     if(isValidEmail(email)){
                         LoginViewState.LoggedIn(
-                            repo.loginUserAndReturnName(email,password).also {
-                                Log.d(TAG, "logUser: HERE 2")
-                            }.also {
-                                repo.getCurrentUserTitleState().also {
-                                    state ->
-                                    Log.d(TAG, "logUser: HERE 3")
-                                    _mainActivityUIState.value =
-                                        MainContract.State(
-                                            MainContract.UserTitleState.Member(state.first),
-                                            MainContract.UserProfilePicState.NewProfilePic(state.second)
-                                    )
+                            withContext(Dispatchers.IO){
+                                repo.loginUserAndReturnName(email,password).also {
+                                    Log.d(TAG, "logUser: HERE 2")
+                                }.also {
+                                    repo.getCurrentUserTitleState().also {
+                                            state ->
+                                        Log.d(TAG, "logUser: HERE 3")
+                                        withContext(Dispatchers.Main){
+                                            _mainActivityUIState.value =
+                                                MainContract.State(
+                                                    MainContract.UserTitleState.Member(state.first),
+                                                    MainContract.UserProfilePicState.NewProfilePic(state.second)
+                                                )
+                                        }
+                                    }
                                 }
                             }
                         )
@@ -336,15 +369,20 @@ class UserViewModel @Inject constructor(
                     if(isValidEmail(email)){
                         if(selected){
                             RegisterViewState.Registered(
-                                repo.createUser(email,password,name).also {
-                                    repo.getCurrentUserTitleState().also {
-                                            title ->
-                                        Log.d(TAG, "logUser: HERE 3")
-                                        _mainActivityUIState.value =
-                                            MainContract.State(
-                                                MainContract.UserTitleState.Member(title.first),
-                                                MainContract.UserProfilePicState.NewProfilePic(title.second)
-                                            )
+                                withContext(Dispatchers.IO){
+                                    repo.createUser(email,password,name).also {
+                                        repo.getCurrentUserTitleState().also {
+                                                title ->
+                                            Log.d(TAG, "logUser: HERE 3")
+
+                                            withContext(Dispatchers.Main){
+                                                _mainActivityUIState.value =
+                                                    MainContract.State(
+                                                        MainContract.UserTitleState.Member(title.first),
+                                                        MainContract.UserProfilePicState.NewProfilePic(title.second)
+                                                    )
+                                            }
+                                        }
                                     }
                                 })
                         } else {
@@ -401,15 +439,19 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateUserProfilePicture(picture : String){
+    private suspend fun updateUserProfilePicture(picture : String) = withContext(Dispatchers.IO){
+        _stateDetailsPage.value = PhotoDetailsViewState.Loading
             repo.updateCurrentUserProfilePicture(picture).also {
 
                 val state = repo.getCurrentUserTitleState()
-                _mainActivityUIState.value =
-                    MainContract.State(
-                        MainContract.UserTitleState.Member(state.first),
-                        MainContract.UserProfilePicState.NewProfilePic(picture)
-                    )
+                withContext(Dispatchers.Main){
+                    _stateDetailsPage.value = PhotoDetailsViewState.Idle
+                    _mainActivityUIState.value =
+                        MainContract.State(
+                            MainContract.UserTitleState.Member(state.first),
+                            MainContract.UserProfilePicState.NewProfilePic(picture)
+                        )
+                }
             }
 
     }

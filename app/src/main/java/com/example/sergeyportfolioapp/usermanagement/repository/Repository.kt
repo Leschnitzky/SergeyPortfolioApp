@@ -31,4 +31,5 @@ interface Repository {
     suspend fun signInAccountWithFacebook(token: AccessToken?)
     suspend fun getCurrentUserData(): UserForFirestore
     suspend fun updateCurrentUserDisplayName(displayName: String)
+    suspend fun createUserInDB(currentUserEmail: String, authDisplayName: String)
 }

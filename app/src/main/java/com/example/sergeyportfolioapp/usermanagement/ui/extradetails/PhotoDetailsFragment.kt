@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ToggleButton
@@ -212,12 +213,21 @@ class PhotoDetailsFragment : Fragment() {
         favoriteButton.isEnabled = true
         setupAsProfileButton.isEnabled = true
         loadingAnimation.visibility = View.GONE
+
+        activity?.window?.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun lockUI() {
         favoriteButton.isEnabled = false
         setupAsProfileButton.isEnabled = false
-        loadingAnimation.visibility = View.VISIBLE    }
+        loadingAnimation.visibility = View.VISIBLE
+        activity?.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
+
+    }
 
 
 }
