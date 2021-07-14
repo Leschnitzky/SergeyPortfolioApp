@@ -1,1 +1,0 @@
-package com.example.sergeyportfolioapp.usermanagement.repository.model

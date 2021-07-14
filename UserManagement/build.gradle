@@ -15,13 +15,13 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.sergeyportfolioapp"
+        applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 28
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "com.example.sergeyportfolioapp.HiltTestRunner"
+        testInstrumentationRunner "com.leschnitzky.dailyshiba.HiltTestRunner"
 
     }
 

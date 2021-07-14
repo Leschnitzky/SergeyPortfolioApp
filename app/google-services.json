@@ -7,31 +7,27 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:35008376670:android:83b4fd98a6ebb6f37069cf",
+        "mobilesdk_app_id": "1:35008376670:android:31925678f2adafc57069cf",
         "android_client_info": {
-          "package_name": "com.example.sergeyportfolioapp"
+          "package_name": "com.leschnitzky.dailyshiba"
         }
       },
       "oauth_client": [
         {
-          "client_id": "35008376670-eu1j69r60pllua8sturkqnbprbqktmie.apps.googleusercontent.com",
+          "client_id": "35008376670-cusj54i6697ja1tcsba6929o9gphei9v.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.sergeyportfolioapp",
+            "package_name": "com.leschnitzky.dailyshiba",
             "certificate_hash": "bc8205cd4f2f4bd903120f5c688d3e54e8d75704"
           }
         },
         {
-          "client_id": "35008376670-o99pnrc7bgt6ooiu58hpckmur67cbfeq.apps.googleusercontent.com",
+          "client_id": "35008376670-cusj54i6697ja1tcsba6929o9gphei9v.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.sergeyportfolioapp",
-            "certificate_hash": "ac98817076a89c3b5df6c6d7438d0eca6f56773e"
+            "package_name": "com.leschnitzky.dailyshiba",
+            "certificate_hash": "51bf76e44294740051ace12586a8e11fbfc7102a"
           }
-        },
-        {
-          "client_id": "35008376670-mle2u685d5d6hnn8ckgk0aigqb2j7jsd.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -41,12 +37,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "35008376670-mle2u685d5d6hnn8ckgk0aigqb2j7jsd.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

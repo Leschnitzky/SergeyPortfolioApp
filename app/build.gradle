@@ -12,17 +12,29 @@ plugins {
 
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('/home/sergey/.android/debug.keystore')
+        }
+        release {
+            storeFile file('/home/sergey/Downloads/sergey_portfolio_keystore.jks')
+            storePassword 'xrdhh748159263'
+            keyAlias 'shiba'
+            keyPassword 'xrdhh748159263'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.sergeyportfolioapp"
+        applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 1
+        versionCode 3
         versionName "1.0"
 
-        testInstrumentationRunner "com.example.sergeyportfolioapp.HiltTestRunner"
+        testInstrumentationRunner "com.leschnitzky.dailyshiba.HiltTestRunner"
+        signingConfig signingConfigs.release
 
     }
 
@@ -135,6 +147,10 @@ dependencies {
 
     //AdMob
     implementation 'com.google.android.gms:play-services-ads:20.2.0'
+
+    //Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.github.ajalt:timberkt:1.5.1'
 
 
 

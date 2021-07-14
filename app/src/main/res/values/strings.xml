@@ -45,4 +45,5 @@
     <string name="profile_profile_pic_category">Profile Pic:</string>
     <string name="admob_id">ca-app-pub-3940256099942544/1033173712</string>
     <string name="phone_imei">355257094371967</string>
+    <string name="default_web_client_id">35008376670-nq3pr77grjkec79t9krng5f01g0fuing.apps.googleusercontent.com</string>
 </resources>

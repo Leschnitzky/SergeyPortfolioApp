@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_login_menu"
-        android:name="com.example.sergeyportfolioapp.usermanagement.ui.login.LoginFragment"
+        android:name="com.leschnitzky.dailyshiba.usermanagement.ui.login.LoginFragment"
         android:label="@string/menu_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/nav_register"
-        android:name="com.example.sergeyportfolioapp.usermanagement.ui.register.RegisterFragment"
+        android:name="com.leschnitzky.dailyshiba.usermanagement.ui.register.RegisterFragment"
         android:label="@string/menu_register"
         tools:layout="@layout/fragment_register" >
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_shiba"
-        android:name="com.example.sergeyportfolioapp.usermanagement.ui.main.ShibaFragment"
+        android:name="com.leschnitzky.dailyshiba.usermanagement.ui.main.ShibaFragment"
         android:label="ShibaRandom"
         tools:layout="@layout/fragment_shiba" >
         <action
@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_main"
-        android:name="com.example.sergeyportfolioapp.MainFragment"
+        android:name="com.leschnitzky.dailyshiba.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -58,7 +58,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_details"
-        android:name="com.example.sergeyportfolioapp.usermanagement.ui.extradetails.PhotoDetailsFragment"
+        android:name="com.leschnitzky.dailyshiba.usermanagement.ui.extradetails.PhotoDetailsFragment"
         android:label="Photo Details"
         tools:layout="@layout/fragment_photo_details">
         <argument
@@ -69,7 +69,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_favorites"
-        android:name="com.example.sergeyportfolioapp.usermanagement.ui.favorites.ShibaFavoritesFragment"
+        android:name="com.leschnitzky.dailyshiba.usermanagement.ui.favorites.ShibaFavoritesFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_shiba_favorites" >
         <action
@@ -78,7 +78,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.sergeyportfolioapp.usermanagement.ui.profile.ProfileFragment"
+        android:name="com.leschnitzky.dailyshiba.usermanagement.ui.profile.ProfileFragment"
         android:label="Profile Details"
         tools:layout="@layout/fragment_profile" />
 

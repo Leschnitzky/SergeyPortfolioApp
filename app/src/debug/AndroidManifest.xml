@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sergeyportfolioapp">
+    package="com.leschnitzky.dailyshiba">
 
     <application>
         <activity
-            android:name="com.example.sergeyportfolioapp.HiltTestActivity"
+            android:name="com.leschnitzky.dailyshiba.HiltTestActivity"
             android:exported="false"  />
     </application>
 
