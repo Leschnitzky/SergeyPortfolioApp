@@ -324,11 +324,11 @@ class ShibaFragment : Fragment() {
         Timber.d( "updateRecyclerViewWithList: Got new update for recycler $list")
             val recyclerViewAdapter = RecyclerViewAdapter(list.dropLast(1),mode,requireContext(),userViewModel)
             recyclerViewAdapter.photoSelectedListener = object : RecyclerViewAdapter.PhotoSelectedListener {
-                override fun onPhotoSelected(imageView: ImageView, uri: String) {
+                override fun onPhotoSelected(imageView: ImageView, uri: String, position: Int) {
                     val extras = FragmentNavigatorExtras(
                         imageView to uri
                     )
-
+                    userViewModel.currentPosition = position;
                     val action = ShibaFragmentDirections.actionNavShibaToPhotoDetailsFragment(uri = uri)
                     findNavController().navigate(action, extras)
                 }
@@ -339,12 +339,16 @@ class ShibaFragment : Fragment() {
             recyclerView.layoutManager = layoutManager
             recyclerView.doOnPreDraw {
                 startPostponedEnterTransition()
-        }
+            }
+            recyclerView.scrollToPosition(userViewModel.currentPosition);
     }
 
     private suspend fun getInitialPhotos() {
         userViewModel.intentChannel.send(UserIntent.GetPhotos)
     }
+
+
+
 
 
 

@@ -24,7 +24,7 @@ import org.junit.Test
  */
 @HiltAndroidTest
 @LargeTest
-class AndroidHiltTest {
+class LoginActivityTest {
 
     @get:Rule()
     val hiltRule = HiltAndroidRule(this)
@@ -40,17 +40,23 @@ class AndroidHiltTest {
     }
 
     @Test
-    fun TestEmailContainingEmailHint() {
+    fun testGoogleAndFacebookButtonsAreDisplayed(){
+        onView(withId(R.id.google_sign_in)).check(matches(isDisplayed()))
+        onView(withId(R.id.facebook_sign_in)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testEmailContainingEmailHint() {
         onView(withId(R.id.emailInputEditText)).check(matches(withHint("Email")));
     }
 
     @Test
-    fun TestEmailContainingPasswordHint() {
+    fun testEmailContainingPasswordHint() {
         onView(withId(R.id.passwordInputEditText)).check(matches(withHint("Password")));
     }
 
     @Test
-    fun TestPassWrongEmailFormatToEmailField(){
+    fun testPassWrongEmailFormatToEmailField(){
         onView(withId(R.id.emailInputEditText))
             .perform(typeText("emailgmail.com"))
             .perform(closeSoftKeyboard())
@@ -63,7 +69,7 @@ class AndroidHiltTest {
     }
 
     @Test
-    fun TestEmptyPasswordField(){
+    fun testEmptyPasswordField(){
         onView(withId(R.id.emailInputEditText))
             .perform(typeText("emailgmail.com"))
             .perform(closeSoftKeyboard())
@@ -73,7 +79,7 @@ class AndroidHiltTest {
     }
 
     @Test
-    fun TestEmptyEmailField(){
+    fun testEmptyEmailField(){
         onView(withId(R.id.passwordInputEditText))
             .perform(typeText("test"))
             .perform(closeSoftKeyboard())
@@ -83,7 +89,7 @@ class AndroidHiltTest {
     }
 
     @Test
-    fun TestWrongCredentials(){
+    fun testWrongCredentials(){
         onView(withId(R.id.emailInputEditText))
             .perform(typeText("test@gmail.com"))
             .perform(closeSoftKeyboard())
@@ -96,7 +102,7 @@ class AndroidHiltTest {
     }
 
     @Test
-    fun TestCorrectCredentials(){
+    fun testCorrectCredentials(){
         onView(withId(R.id.emailInputEditText))
             .perform(typeText("test@gmail.com"))
             .perform(closeSoftKeyboard())

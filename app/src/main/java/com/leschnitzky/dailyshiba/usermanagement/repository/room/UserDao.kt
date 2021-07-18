@@ -22,7 +22,7 @@ interface UserDao {
     suspend fun updateCurrentPhotosByMail(photos : ArrayList<String>, email: String)
 
     @Query("UPDATE users set original_url_map=:map WHERE email LIKE :email")
-    suspend fun updateCurrentPhotoURLMapByMail(email: String, map: Map<String,String>)
+    suspend fun updateCurrentPhotoURLMapByMail(email: String, map: String)
 
 
     @Insert
@@ -30,5 +30,6 @@ interface UserDao {
 
     @Delete
     suspend fun deleteUser(user: User)
+
 
 }

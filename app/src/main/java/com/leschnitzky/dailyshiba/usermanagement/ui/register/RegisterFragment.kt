@@ -2,32 +2,45 @@ package com.leschnitzky.dailyshiba.usermanagement.ui.register
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.DialogInterface
+import android.content.res.Resources
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.*
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.material.textfield.TextInputLayout
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.register.viewstate.RegisterViewState
-import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import timber.log.Timber
+import java.io.InputStream
+
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -221,6 +234,7 @@ class RegisterFragment : Fragment() {
 
     private fun initiateViewFields(root: View) {
         radioBox = root.findViewById(R.id.radioButton)
+        initRadioBox();
         emailSubText = root.findViewById(R.id.email_subtext)
         greetingText = root.findViewById(R.id.register_greeting)
         registerButton = root.findViewById(R.id.register_done)
@@ -231,6 +245,55 @@ class RegisterFragment : Fragment() {
         loadingView = root.findViewById(R.id.register_page_loading_animation)
         loadingView.bringToFront()
 
+    }
+
+    private fun initRadioBox() {
+        val linkClick: ClickableSpan = object : ClickableSpan() {
+            override fun onClick(view: View) {
+                createTermsAndCondsDialog()
+                view.invalidate()
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                if (radioBox.isPressed) {
+                    ds.color = ContextCompat.getColor(requireContext(), R.color.design_default_color_primary)
+                } else {
+                    ds.color = ContextCompat.getColor(requireContext(), R.color.design_default_color_secondary)
+                }
+                radioBox.invalidate()
+            }
+        }
+        radioBox.highlightColor = Color.TRANSPARENT
+        val spannableString: Spannable = SpannableString(getString(R.string.terms_and_conditions_text))
+        spannableString.setSpan(linkClick, 15, 35, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        radioBox.setText(spannableString, TextView.BufferType.SPANNABLE)
+        radioBox.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+
+    private fun createTermsAndCondsDialog() {
+        val inflater = LayoutInflater.from(requireContext())
+        val view: View = inflater.inflate(R.layout.scrollable_dialog_view, null)
+
+        val textview = view.findViewById<View>(R.id.textmsg) as TextView
+        try {
+            val res: Resources = resources
+            val in_s: InputStream = res.openRawResource(R.raw.terms_and_cond)
+            val b = ByteArray(in_s.available())
+            in_s.read(b)
+            textview.text = String(b)
+        } catch (e: Exception) {
+            textview.text = "Error: can't show terms."
+        }
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        alertDialog.setTitle("Terms and Conditions")
+        alertDialog.setView(view)
+        alertDialog.setPositiveButton("OK", DialogInterface.OnClickListener {
+                dialog, which ->
+            radioBox.isChecked = true;
+        })
+        val alert: AlertDialog = alertDialog.create()
+        alert.show()
     }
 
 

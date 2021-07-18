@@ -109,6 +109,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
+        invalidateOptionsMenu()
         when (item.itemId) {
             R.id.nav_logoff -> {
                 Timber.d( "onNavigationItemSelected: Pressed!")

@@ -1,46 +1,106 @@
 package com.leschnitzky.dailyshiba.usermanagement.ui.extradetails
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionInflater
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ToggleButton
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.awesomedialog.*
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.extradetails.state.PhotoDetailsViewState
+import com.leschnitzky.dailyshiba.utils.OnDoubleClickListener
+import com.leschnitzky.dailyshiba.utils.getKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.InputStream
 
 
 @AndroidEntryPoint
 class PhotoDetailsFragment : Fragment() {
     private val TAG = "PhotoDetailsFragment"
     private val userViewModel : UserViewModel by activityViewModels()
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        Timber.d( "$result: ")
+        if (result.resultCode == Activity.RESULT_OK) {
+            unlockUI()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.move)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.move)
+        setHasOptionsMenu(true)
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.photo_details_app_bar_menu,menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.details_share_photo -> {
+                lockUI()
+                lifecycleScope.launch {
+                    Timber.d("Shared Photo!")
+                    val photo = arguments?.getString("uri")
+                    Timber.d("$photo")
+                    var photoUri: Uri? = null
+                    photoUri = if(photo!!.startsWith("http")){
+                        FileProvider.getUriForFile(
+                            requireContext(),
+                            requireActivity().applicationContext.packageName + ".provider",
+                            File(getKey(userViewModel.getCurrentUserURLMap(),photo)))
+                    } else {
+                        FileProvider.getUriForFile(
+                            requireContext(),
+                            requireActivity().applicationContext.packageName + ".provider",
+                            File(photo));
+
+                    }
+                    val sharingIntent = Intent(Intent.ACTION_SEND)
+                    try {
+                        val stream: InputStream? = requireActivity().contentResolver.openInputStream(photoUri)
+                    } catch (e: FileNotFoundException) {
+                        Timber.e(e)
+                        e.printStackTrace()
+                    }
+                    sharingIntent.type = "image/jpeg"
+                    sharingIntent.putExtra(Intent.EXTRA_STREAM, photoUri)
+                    sharingIntent.putExtra(Intent.EXTRA_TEXT,getString(R.string.daily_shiba_sharing_template))
+                    resultLauncher.launch(Intent.createChooser(sharingIntent, "Share image using"))
+                }
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,6 +117,8 @@ class PhotoDetailsFragment : Fragment() {
                     .into(this)
             }
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -117,9 +179,37 @@ class PhotoDetailsFragment : Fragment() {
     }
 
     private fun setupClicks() {
-        dogImage.setOnClickListener {
-            findNavController().popBackStack()
-        }
+        dogImage.setOnClickListener(object : OnDoubleClickListener() {
+            override fun onSingleClick(v: View?) {
+
+            }
+
+            override fun onDoubleClick(v: View?) {
+                Timber.d("Double CLICK!")
+                lifecycleScope.launch {
+                    var uri = arguments?.getString("uri")
+
+                    if(!uri!!.startsWith("http")){
+                        uri = userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+                    }
+                    favoriteButton.isChecked = !favoriteButton.isChecked
+                    if(favoriteButton.isChecked) {
+                        userViewModel.intentChannel.send(
+                            UserIntent.AddPictureFavorite(
+                                uri!!
+                            )
+                        )
+                    } else {
+                        userViewModel.intentChannel.send(
+                            UserIntent.RemovePictureFavorite(
+                                uri!!
+                            )
+                        )
+                    }
+                }
+            }
+
+        })
         setupAsProfileButton.setOnClickListener {
             lifecycleScope.launch {
                 AwesomeDialog
@@ -204,6 +294,8 @@ class PhotoDetailsFragment : Fragment() {
         dogImage = root!!.findViewById(R.id.drawer_profile_pic)
         setupAsProfileButton = root!!.findViewById(R.id.details_profile_button)
         favoriteButton = root!!.findViewById(R.id.details_set_as_favorite)
+        favoriteButton.textOn = "";
+        favoriteButton.textOff = "";
         loadingAnimation = root!!.findViewById(R.id.details_loading_animation)
         loadingAnimation.bringToFront()
     }

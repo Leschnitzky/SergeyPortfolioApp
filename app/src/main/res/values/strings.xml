@@ -46,4 +46,6 @@
     <string name="admob_id">ca-app-pub-3940256099942544/1033173712</string>
     <string name="phone_imei">355257094371967</string>
     <string name="default_web_client_id">35008376670-nq3pr77grjkec79t9krng5f01g0fuing.apps.googleusercontent.com</string>
+    <string name="details_settings_share">Share</string>
+    <string name="daily_shiba_sharing_template">This image was shared by Daily Shiba. \n\n\n Download from Google Play : https://play.google.com/store/apps/details?id=com.leschnitzky.dailyshiba</string>
 </resources>

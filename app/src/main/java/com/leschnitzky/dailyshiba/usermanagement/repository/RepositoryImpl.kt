@@ -125,10 +125,13 @@ class RepositoryImpl @Inject constructor(
         list: ArrayList<String>,
         originalUrlList: List<String>
     ) {
+        val converter = UserTypeConverter()
+
         Timber.d( "updateCurrentUserPhotos: Email: ${getCurrentUserEmail()!!} ,List: $list, Original Url List: $originalUrlList")
         userDao.updateCurrentPhotosByMail(list,getCurrentUserEmail()!!)
         val map = createURLMap(list,originalUrlList)
-        userDao.updateCurrentPhotoURLMapByMail(getCurrentUserEmail()!!,map)
+        Timber.d("MAP : $map")
+        userDao.updateCurrentPhotoURLMapByMail(getCurrentUserEmail()!!,converter.MapToString(map))
     }
 
     private fun createURLMap(list: ArrayList<String>, originalUrlList: List<String>): Map<String,String> {
@@ -159,6 +162,7 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentUserURLMap(): Map<String, String> {
         val typeConverter = UserTypeConverter()
+        Timber.d(getCurrentUserEmail()!!)
         return typeConverter.StringToMap(
             userDao.getCurrentURLMapByEmail(
                 getCurrentUserEmail()!!

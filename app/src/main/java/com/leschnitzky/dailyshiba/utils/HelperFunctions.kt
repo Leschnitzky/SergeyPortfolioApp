@@ -118,3 +118,7 @@ interface UiEvent
 interface UiEffect
 
 
+
+fun <K, V> getKey(map: Map<K, V>, target: V): K {
+    return map.keys.first { target == map[it] };
+}

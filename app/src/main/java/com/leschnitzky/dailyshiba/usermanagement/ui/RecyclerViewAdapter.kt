@@ -1,7 +1,6 @@
 package com.leschnitzky.dailyshiba.usermanagement.ui
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,7 @@ class RecyclerViewAdapter internal constructor(
 ) :
     RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>() {
     interface PhotoSelectedListener {
-        fun onPhotoSelected(imageView: ImageView, uri: String)
+        fun onPhotoSelected(imageView: ImageView, uri: String, position: Int)
     }
     lateinit var photoSelectedListener: PhotoSelectedListener
 
@@ -40,7 +39,8 @@ class RecyclerViewAdapter internal constructor(
         holder.image.transitionName = image
 
         holder.image.setOnClickListener {
-            photoSelectedListener.onPhotoSelected(holder.image, image)
+            photoSelectedListener.onPhotoSelected(holder.image, image, position)
+
         }
         if(mode == 1){
             Glide

@@ -32,6 +32,8 @@ class UserViewModel @Inject constructor(
     var resourcesProvider: ResourcesProvider
 ): ViewModel() {
 
+    var currentPositionFavorites: Int = 0
+    var currentPosition: Int = 0
     private val TAG = "UserViewModel"
 
    init {
@@ -432,7 +434,7 @@ class UserViewModel @Inject constructor(
 
 
     fun updatePhotosToCurrentUserDB(list: ArrayList<String>, originalUrlList: List<String>) {
-        Timber.d( "updatePhotosToCurrentUserDB: $list")
+        Timber.d( "updatePhotosToCurrentUserDB: $list \n\n\n $originalUrlList")
         viewModelScope.launch(Dispatchers.IO)  {
             withContext(Dispatchers.IO){
                 repo.updateCurrentUserPhotos(list,originalUrlList)

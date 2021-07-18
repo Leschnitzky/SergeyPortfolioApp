@@ -1,7 +1,6 @@
 package com.leschnitzky.dailyshiba.usermanagement.ui.favorites
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -89,12 +88,13 @@ class ShibaFavoritesFragment : Fragment() {
         Timber.d( "initRecyclerView: $list")
         val adapter = RecyclerViewAdapter(list,0,requireContext(),userViewModel)
         adapter.photoSelectedListener = object : RecyclerViewAdapter.PhotoSelectedListener {
-            override fun onPhotoSelected(imageView: ImageView, uri: String) {
+            override fun onPhotoSelected(imageView: ImageView, uri: String, position: Int) {
 
                 Timber.d( "onPhotoSelected: $uri")
                 val extras = FragmentNavigatorExtras(
                     imageView to uri
                 )
+                userViewModel.currentPositionFavorites = position;
 
                 val action = ShibaFavoritesFragmentDirections.actionNavFavoritesToNavDetails(uri = uri)
                 findNavController().navigate(action, extras)
@@ -108,6 +108,8 @@ class ShibaFavoritesFragment : Fragment() {
         recyclerView.doOnPreDraw {
             startPostponedEnterTransition()
         }
+        recyclerView.scrollToPosition(userViewModel.currentPositionFavorites);
+
 
     }
 
