@@ -6,6 +6,7 @@ plugins {
     id 'com.google.gms.google-services'
 
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.firebase.crashlytics'
 
 }
 
@@ -30,8 +31,10 @@ android {
         applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 3
-        versionName "1.0"
+        versionCode 5
+        versionName "1.11"
+
+
 
         testInstrumentationRunner "com.leschnitzky.dailyshiba.HiltTestRunner"
         signingConfig signingConfigs.release
@@ -155,7 +158,10 @@ dependencies {
     implementation 'com.github.ajalt:timberkt:1.5.1'
     implementation "androidx.recyclerview:recyclerview:1.2.1"
 
-    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+    //Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
 
 
 

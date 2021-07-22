@@ -43,9 +43,10 @@
     <string name="facebook_app_id">115533204011400</string>
     <string name="profile_display_name_category">DisplayName:</string>
     <string name="profile_profile_pic_category">Profile Pic:</string>
-    <string name="admob_id">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="phone_imei">355257094371967</string>
+    <string name="admob_id">ca-app-pub-3634161836303395/9651535568</string>
+    <string name="device_ad_id">4D248129063A6D273EECD7A00BC907E0</string>
     <string name="default_web_client_id">35008376670-nq3pr77grjkec79t9krng5f01g0fuing.apps.googleusercontent.com</string>
     <string name="details_settings_share">Share</string>
     <string name="daily_shiba_sharing_template">This image was shared by Daily Shiba. \n\n\n Download from Google Play : https://play.google.com/store/apps/details?id=com.leschnitzky.dailyshiba</string>
+    <string name="banner_ad_id">ca-app-pub-3634161836303395/6668518693</string>
 </resources>

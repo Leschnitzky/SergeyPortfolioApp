@@ -131,7 +131,9 @@ class RepositoryImpl @Inject constructor(
         userDao.updateCurrentPhotosByMail(list,getCurrentUserEmail()!!)
         val map = createURLMap(list,originalUrlList)
         Timber.d("MAP : $map")
-        userDao.updateCurrentPhotoURLMapByMail(getCurrentUserEmail()!!,converter.MapToString(map))
+        userDao.updateCurrentPhotoURLMapByMail(getCurrentUserEmail()!!,converter.MapToString(map)).also{
+            Timber.d("USER: ${userDao.getDisplayNameByEmail(getCurrentUserEmail()!!)}")
+        }
     }
 
     private fun createURLMap(list: ArrayList<String>, originalUrlList: List<String>): Map<String,String> {
@@ -222,6 +224,15 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentUserData(): UserForFirestore {
         return firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+    }
+
+    override suspend fun getDBUserData(): User? {
+        val listQuery = userDao.getDisplayNameByEmail(getCurrentUserEmail()!!)
+        return if(listQuery.isNotEmpty()){
+            listQuery.first()
+        } else {
+            null
+        }
     }
 
     override suspend fun updateCurrentUserDisplayName(displayName: String) {

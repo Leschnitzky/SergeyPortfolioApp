@@ -79,17 +79,10 @@ class ShibaFragment : Fragment() {
     }
 
     private fun setupUI(root: View?) {
-        Timber.d( "setupUI: 1")
         initializeViews(root)
-        Timber.d( "setupUI: 2")
         observeViewModel()
-        Timber.d( "setupUI: 3")
         setupClicks()
-        Timber.d( "setupUI: 4")
         setupUser()
-        Timber.d( "setupUI: 5")
-
-
     }
     private fun initializeViews(root: View?) {
         getMorePhotosButton = root!!.findViewById(R.id.get_more_photos_button)
@@ -150,7 +143,7 @@ class ShibaFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                     observeShibaViewState()
             }
-        }
+    }
 
     }
 
@@ -233,7 +226,9 @@ class ShibaFragment : Fragment() {
                         displayError(it.error)
                         unlockUI()
                     }
-                    is ShibaViewState.Idle -> {}
+                    is ShibaViewState.Idle -> {
+                        unlockUI()
+                    }
                 }
             }
     }

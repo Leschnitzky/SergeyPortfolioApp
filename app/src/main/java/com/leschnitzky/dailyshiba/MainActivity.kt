@@ -2,7 +2,6 @@ package com.leschnitzky.dailyshiba
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listener = this
         MobileAds.initialize(this) {}
         val configuration = RequestConfiguration.Builder()
-            .setTestDeviceIds(listOf(getString(R.string.phone_imei))).build()
+            .setTestDeviceIds(listOf(getString(R.string.device_ad_id))).build()
         MobileAds.setRequestConfiguration(configuration)
         actionBar?.setDisplayHomeAsUpEnabled(false)
 

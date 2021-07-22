@@ -4,6 +4,7 @@ import com.leschnitzky.dailyshiba.usermanagement.repository.firestore.model.User
 import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.leschnitzky.dailyshiba.usermanagement.repository.room.model.User
 
 interface Repository {
 
@@ -29,6 +30,7 @@ interface Repository {
     fun getAuthDisplayName(): String
     suspend fun signInAccountWithFacebook(token: AccessToken?)
     suspend fun getCurrentUserData(): UserForFirestore
+    suspend fun getDBUserData(): User?
     suspend fun updateCurrentUserDisplayName(displayName: String)
     suspend fun createUserInDB(currentUserEmail: String, authDisplayName: String)
 }

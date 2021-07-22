@@ -44,8 +44,9 @@ class PhotoDetailsFragment : Fragment() {
 
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         Timber.d( "$result: ")
+        unlockUI()
         if (result.resultCode == Activity.RESULT_OK) {
-            unlockUI()
+
         }
     }
 

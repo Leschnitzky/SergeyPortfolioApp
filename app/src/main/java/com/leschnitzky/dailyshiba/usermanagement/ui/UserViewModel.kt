@@ -150,6 +150,9 @@ class UserViewModel @Inject constructor(
                     repo.createUserInFirestore(getCurrentUserEmail(), repo.getAuthDisplayName()).also {
                         _stateLoginPage.value = LoginViewState.Idle
                         repo.getCurrentUserTitleState().also {
+                            if(repo.getDBUserData() == null){
+                                repo.createUserInDB(getCurrentUserEmail()!!,it.first)
+                            }
                             withContext(Dispatchers.Main){
                                 _mainActivityUIState.value =
                                     MainContract.State(
@@ -161,6 +164,9 @@ class UserViewModel @Inject constructor(
                     }
                 } else {
                     repo.getCurrentUserTitleState().also {
+                        if(repo.getDBUserData() == null){
+                            repo.createUserInDB(getCurrentUserEmail()!!,it.first)
+                        }
                         withContext(Dispatchers.Main){
                             _mainActivityUIState.value =
                                 MainContract.State(
@@ -183,10 +189,12 @@ class UserViewModel @Inject constructor(
                         getCurrentUserEmail()
                     )
                 ) {
-                    repo.createUserInDB(getCurrentUserEmail(), repo.getAuthDisplayName())
                     repo.createUserInFirestore(getCurrentUserEmail(), repo.getAuthDisplayName()).also {
                         _stateLoginPage.value = LoginViewState.Idle
                         repo.getCurrentUserTitleState().also {
+                            if(repo.getDBUserData() == null){
+                                repo.createUserInDB(getCurrentUserEmail()!!,it.first)
+                            }
 
                             withContext(Dispatchers.Main){
                                 _mainActivityUIState.value =
@@ -199,6 +207,9 @@ class UserViewModel @Inject constructor(
                     }
                 } else {
                     repo.getCurrentUserTitleState().also {
+                        if(repo.getDBUserData() == null){
+                            repo.createUserInDB(getCurrentUserEmail()!!,it.first)
+                        }
                         withContext(Dispatchers.Main){
                             _mainActivityUIState.value =
                                 MainContract.State(
@@ -208,6 +219,9 @@ class UserViewModel @Inject constructor(
                         }
                     }
                 }
+
+
+
             }
         }
     }
@@ -436,8 +450,15 @@ class UserViewModel @Inject constructor(
     fun updatePhotosToCurrentUserDB(list: ArrayList<String>, originalUrlList: List<String>) {
         Timber.d( "updatePhotosToCurrentUserDB: $list \n\n\n $originalUrlList")
         viewModelScope.launch(Dispatchers.IO)  {
+            withContext(Dispatchers.Main){
+                _stateShibaPage.value = ShibaViewState.Loading
+            }
             withContext(Dispatchers.IO){
-                repo.updateCurrentUserPhotos(list,originalUrlList)
+                repo.updateCurrentUserPhotos(list,originalUrlList).also {
+                    withContext(Dispatchers.Main){
+                        _stateShibaPage.value = ShibaViewState.Idle
+                    }
+                }
             }
         }
     }
