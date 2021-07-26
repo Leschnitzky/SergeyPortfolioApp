@@ -249,6 +249,10 @@ class RepositoryImpl @Inject constructor(
         userDao.insertUser(User(currentUserEmail,authDisplayName, arrayListOf(), mapOf()))
     }
 
+    override suspend fun sendResetEmail(email: String) {
+        authRepository.sendEmailResetMail(email)
+    }
+
     suspend fun getPhotosFromServer(): List<String> {
         Timber.d( "getPhotosFromServer: ")
         return retrofitRepository.get10Photos()

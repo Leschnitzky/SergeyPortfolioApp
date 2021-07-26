@@ -9,16 +9,11 @@ sealed class UserIntent {
 
 
 
-    //Login
     data class Login(val email: String, val password: String) : UserIntent()
     object LogoutUser : UserIntent()
-    data class ForgotPass(val email: String) : UserIntent()
-    //Register
-    data class Register(val name: String, val email: String, val password: String, val selected: Boolean) : UserIntent()
-    object RegisterWithFacebook : UserIntent()
-    object RegisterWithGoogle : UserIntent()
 
-    //Set as Profile Picture
+    data class Register(val name: String, val email: String, val password: String, val selected: Boolean) : UserIntent()
+
 
     data class SetProfilePicture(val url: String) : UserIntent()
     data class AddPictureFavorite(val picture: String) : UserIntent()
@@ -27,6 +22,7 @@ sealed class UserIntent {
     data class SignInGoogle(val signedInAccountFromIntent: Task<GoogleSignInAccount>?) :UserIntent()
     data class FacebookSignIn(val accessToken: AccessToken?) : UserIntent()
     data class UpdateDisplayName(val editTextValue: String) : UserIntent()
+    data class SendResetPassEmail(val email: String) : UserIntent()
 
     object UpdateFavoritesPage : UserIntent()
 

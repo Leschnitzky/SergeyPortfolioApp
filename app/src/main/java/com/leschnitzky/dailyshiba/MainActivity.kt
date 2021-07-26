@@ -2,12 +2,14 @@ package com.leschnitzky.dailyshiba
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -19,6 +21,8 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
+import com.example.awesomedialog.*
+import com.google.android.gms.ads.AdRequest
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.utils.DEFAULT_PROFILE_PIC
 import com.google.android.gms.ads.MobileAds
@@ -39,7 +43,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val userViewModel: UserViewModel by viewModels()
     private lateinit var drawerLayout : DrawerLayout
     private lateinit var listener : NavigationView.OnNavigationItemSelectedListener
-
+    private val navWhiteList = listOf<Int>(
+        R.id.nav_register,
+        R.id.nav_details,
+        R.id.nav_favorites,
+        R.id.nav_profile
+    )
     private lateinit var appBarConfiguration: AppBarConfiguration
 
 
@@ -218,6 +227,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    override fun onBackPressed() {
+        val navController = findNavController(R.id.nav_host_fragment)
+        val currentDestinationID = navController.currentDestination?.id
+
+        if(navWhiteList.contains(currentDestinationID)){
+            navController.navigateUp()
+        } else {
+
+            AwesomeDialog
+                .build(this)
+                .title(
+                    titleColor = ContextCompat.getColor(this,R.color.design_default_color_primary),
+                    title = resources.getString(R.string.leave_application_title)
+                )
+                .body(resources.getString(R.string.leave_application))
+                .onPositive(
+                    buttonBackgroundColor = R.color.design_default_color_secondary,
+                    text = resources.getString(R.string.leave_application_yes),
+                    action = {
+                        // Show ad and load more photos
+                        super.onBackPressed()
+                    }
+                )
+                .onNegative(
+                    buttonBackgroundColor = R.color.design_default_color_secondary,
+
+                    text = resources.getString(R.string.leave_application_no),
+                    action = {
+                    }
+                )
+        }
+
+
+    }
 
 
 }

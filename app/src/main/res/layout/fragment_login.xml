@@ -140,13 +140,14 @@
         android:id="@+id/button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginEnd="32dp"
+        android:textAlignment="center"
         android:text="@string/loginText"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/passwordInput"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -183,7 +184,7 @@
         android:textSize="@dimen/little_button_text_size"
         app:layout_constraintEnd_toStartOf="@+id/terms_and_conds_button"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/passwordInput"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <Button
@@ -194,14 +195,28 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/forgot_password_string"
 
+        android:text="@string/terms_and_cond_string"
         android:textSize="@dimen/little_button_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="@+id/passwordInput"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/register"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
+    <Button
+        android:id="@+id/login_forgot_password"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+
+        android:layout_width="192dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center_horizontal"
+
+        android:text="@string/forgot_password_string"
+        android:textColor="?colorPrimary"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="@+id/terms_and_conds_button"
+        app:layout_constraintStart_toStartOf="@+id/register"
+        app:layout_constraintTop_toBottomOf="@+id/register" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

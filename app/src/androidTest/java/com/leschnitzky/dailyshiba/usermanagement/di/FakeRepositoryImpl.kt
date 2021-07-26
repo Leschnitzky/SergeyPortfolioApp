@@ -6,6 +6,7 @@ import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuthException
+import com.leschnitzky.dailyshiba.usermanagement.repository.room.model.User
 
 class FakeRepositoryImpl : Repository {
     override suspend fun loginUserAndReturnName(email: String, password: String): String {
@@ -135,6 +136,10 @@ class FakeRepositoryImpl : Repository {
             "test@gmail.com",
             "Serg"
         )
+    }
+
+    override suspend fun getDBUserData(): User? {
+        return User("test@gmail.com","Test", arrayListOf(), mapOf())
     }
 
     override suspend fun updateCurrentUserDisplayName(displayName: String) {

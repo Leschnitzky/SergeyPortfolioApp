@@ -74,7 +74,19 @@
         tools:layout="@layout/fragment_shiba_favorites" >
         <action
             android:id="@+id/action_nav_favorites_to_nav_details"
-            app:destination="@id/nav_details" />
+            app:destination="@id/nav_details" >
+            <argument
+                android:name="uri"
+                android:defaultValue="null"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="intent"
+                android:defaultValue="null"
+                app:argType="string"
+                app:nullable="true" />
+        </action>
+
     </fragment>
     <fragment
         android:id="@+id/nav_profile"

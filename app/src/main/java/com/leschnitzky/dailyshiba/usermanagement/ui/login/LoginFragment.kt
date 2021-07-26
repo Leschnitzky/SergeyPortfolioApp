@@ -15,6 +15,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -69,6 +70,7 @@ class LoginFragment : Fragment(){
     private lateinit var googleButton : ImageButton
     private lateinit var facebookButton : ImageButton
     private lateinit var greetingAnimation : LottieAnimationView;
+    private lateinit var forgotPassButton : Button
     @InternalCoroutinesApi
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -122,6 +124,7 @@ class LoginFragment : Fragment(){
         passwordEditLayout = root.findViewById(R.id.passwordInput)
         loadingView = root.findViewById(R.id.animationView)
         loadingView.bringToFront()
+        forgotPassButton = root.findViewById<Button>(R.id.login_forgot_password)
 
     }
 
@@ -178,35 +181,23 @@ class LoginFragment : Fragment(){
                 Timber.d( "observeLoginViewState: Got $it")
                 when (it) {
                     is LoginViewState.Idle -> {
-                        activity?.window?.clearFlags(
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        unlockUI()
                     }
                     is LoginViewState.Loading -> {
                         lockUI()
 
                     }
+                    is LoginViewState.ResetEmailSent -> {
+                        unlockUI()
+
+                        Toast.makeText(requireContext(),getString(R.string.email_sent_confirmation), Toast.LENGTH_SHORT).show()
+                    }
 
                     is LoginViewState.LoggedIn -> {
-                        activity?.window?.clearFlags(
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        Timber.d( "observeViewModel: Got name")
-                        loginButton.isEnabled = true
-                        emailEditLayout.isEnabled = true
-                        passwordEditLayout.isEnabled = true
-
-                        emailEditLayout.isErrorEnabled = false
-                        passwordEditLayout.isErrorEnabled = false
-
-                        loadingView.visibility = View.GONE;
+                        unlockUI()
 
                     }
                     is LoginViewState.Error -> {
-                        activity?.window?.clearFlags(
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        loginButton.isEnabled = true
-                        emailEditLayout.isEnabled = true
-                        passwordEditLayout.isEnabled = true
-                        loadingView.visibility = View.GONE;
 
                         when(it.error_code.value){
                             LoginViewState.LoginErrorCode.EMPTY_EMAIL.value -> {
@@ -234,6 +225,20 @@ class LoginFragment : Fragment(){
             }
     }
 
+    private fun unlockUI(){
+        activity?.window?.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        loginButton.isEnabled = true
+        emailEditLayout.isEnabled = true
+        passwordEditLayout.isEnabled = true
+        facebookButton.isEnabled = true
+        registerButton.isEnabled = true
+        termsAndConditionsButton.isEnabled = true
+        googleButton.isEnabled = true
+        loadingView.visibility = View.GONE;
+
+    }
+
     private fun lockUI() {
         loginButton.isEnabled = false
         facebookButton.isEnabled = false
@@ -252,8 +257,7 @@ class LoginFragment : Fragment(){
         loadingView.visibility = View.VISIBLE;    }
 
 
-    private fun 
-            setupClicks() {
+    private fun setupClicks() {
         mLoginManager.registerCallback(mCallbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
                 Timber.d( "facebook:onSuccess:$loginResult")
@@ -289,8 +293,15 @@ class LoginFragment : Fragment(){
             createTermsAndCondsDialog()
         }
 
-
-
+        forgotPassButton.setOnClickListener {
+            lifecycleScope.launch {
+                userViewModel.intentChannel.send(
+                    UserIntent.SendResetPassEmail(
+                        emailEditLayout.editText?.text.toString()
+                    )
+                )
+            }
+        }
 
         googleButton.setOnClickListener {
             Timber.d( "setupClicks: Launching intent")

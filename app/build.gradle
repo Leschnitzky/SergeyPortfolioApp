@@ -31,8 +31,8 @@ android {
         applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 5
-        versionName "1.11"
+        versionCode 8
+        versionName "1.12"
 
 
 
@@ -91,13 +91,19 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:5.0.0'
 
 
+    def nav_version = "2.3.5"
+    api("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    api("androidx.navigation:navigation-ui-ktx:$nav_version")
+    api("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
 
 //    Testing
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    androidTestImplementation "io.mockk:mockk:1.12.0"
+    androidTestImplementation "org.mockito:mockito-core:3.11.2"
+    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
+
 
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
@@ -114,10 +120,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
 
-    def nav_version = "2.3.5"
-    api("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    api("androidx.navigation:navigation-ui-ktx:$nav_version")
-    api("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
 
 
 

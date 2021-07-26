@@ -100,8 +100,30 @@ class UserViewModel @Inject constructor(
                     is UserIntent.FacebookSignIn -> logUserWithFacebook(it.accessToken)
                     is UserIntent.GetProfileData -> broadcastUserProfile()
                     is UserIntent.UpdateDisplayName -> updateDisplayNameForUser(it.editTextValue)
+                    is UserIntent.SendResetPassEmail -> startPasswordReset(it.email)
                 }
             }
+    }
+
+    private fun startPasswordReset(email: String) {
+        Timber.d("Starting password reset")
+        viewModelScope.launch(Dispatchers.IO) {
+            _stateLoginPage.value = LoginViewState.Loading
+            if(email.isNotEmpty()){
+                if(isValidEmail(email)){
+                    repo.sendResetEmail(email).also {
+                        withContext(Dispatchers.Main){
+                            _stateLoginPage.value = LoginViewState.ResetEmailSent
+                        }
+                    }
+                } else {
+                    _stateLoginPage.value = LoginViewState.Error("Current email is invalid", LoginViewState.LoginErrorCode.INVALID_EMAIL)
+                }
+            } else {
+                _stateLoginPage.value = LoginViewState.Error("Email is empty" , LoginViewState.LoginErrorCode.EMPTY_EMAIL)
+            }
+
+        }
     }
 
     private fun updateDisplayNameForUser(displayName: String) {

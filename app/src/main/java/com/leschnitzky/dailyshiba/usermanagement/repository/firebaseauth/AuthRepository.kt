@@ -11,4 +11,5 @@ interface AuthRepository {
     fun logOffFromCurrentUser()
     fun getUserDisplayName(): String
     suspend fun logToUser(tokenID: AuthCredential)
+    suspend fun sendEmailResetMail(email: String)
 }

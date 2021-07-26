@@ -14,7 +14,8 @@
     <string name="emailInput">Email</string>
     <string name="passwordInput">Password</string>
     <string name="loginText">Login</string>
-    <string name="forgot_password_string">Terms and Conditions</string>
+    <string name="forgot_password_string">Restore password</string>
+    <string name="terms_and_cond_string">Terms and Conditions</string>
     <string name="register_string">create an account</string>
     <string name="greeting_text">Welcome to DailyShiba</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -49,4 +50,9 @@
     <string name="details_settings_share">Share</string>
     <string name="daily_shiba_sharing_template">This image was shared by Daily Shiba. \n\n\n Download from Google Play : https://play.google.com/store/apps/details?id=com.leschnitzky.dailyshiba</string>
     <string name="banner_ad_id">ca-app-pub-3634161836303395/6668518693</string>
+    <string name="email_sent_confirmation">Reset email sent, please follow the instructions inside the email</string>
+    <string name="leave_application_no">No, I want to see more Shibe</string>
+    <string name="leave_application_yes">Yes, I would like to exit the application</string>
+    <string name="leave_application">This action will close the application, are you sure?</string>
+    <string name="leave_application_title">Exit application</string>
 </resources>

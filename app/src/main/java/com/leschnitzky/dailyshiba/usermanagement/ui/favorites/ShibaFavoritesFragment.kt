@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
@@ -96,15 +97,19 @@ class ShibaFavoritesFragment : Fragment() {
                 )
                 userViewModel.currentPositionFavorites = position;
 
-                val action = ShibaFavoritesFragmentDirections.actionNavFavoritesToNavDetails(uri = uri)
+                val action = ShibaFavoritesFragmentDirections.actionNavFavoritesToNavDetails(
+                    uri = uri,
+                    intent = "favorites"
+                )
                 findNavController().navigate(action, extras)
             }
         }
 
         val layoutManager = LinearLayoutManager(requireContext())
+        val gridLayoutManager = GridLayoutManager(requireContext(),3)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = gridLayoutManager
         recyclerView.doOnPreDraw {
             startPostponedEnterTransition()
         }

@@ -1,14 +1,19 @@
 package com.leschnitzky.dailyshiba.usermanagement.di
 
+import android.content.Context
 import com.facebook.CallbackManager
 import com.facebook.login.LoginManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.usermanagement.repository.Repository
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import io.mockk.mockk
+import org.mockito.Mockito.mock
 
 @Module
 @TestInstallIn(
@@ -22,17 +27,23 @@ internal object TestModule {
     }
 
     @Provides
-    fun provideGoogleSignInClient() : GoogleSignInClient{
-        return mockk<GoogleSignInClient>()
+    fun provideFacebookLoginManager() : LoginManager {
+        return LoginManager.getInstance()
     }
 
     @Provides
     fun provideFacebookCallbackManager() : CallbackManager{
-        return mockk()
+        return CallbackManager.Factory.create()
     }
 
     @Provides
-    fun provideFacebookLoginManager() : LoginManager{
-        return mockk()
+    fun provideGoogleSigninClient(@ApplicationContext context: Context): GoogleSignInClient{
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        return GoogleSignIn.getClient(context, gso)
+
     }
 }

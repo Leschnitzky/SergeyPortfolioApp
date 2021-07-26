@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
@@ -329,9 +330,10 @@ class ShibaFragment : Fragment() {
                 }
             }
             val layoutManager = LinearLayoutManager(requireContext())
+            val gridLayoutManager = GridLayoutManager(requireContext(),3)
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
             recyclerView.adapter = recyclerViewAdapter
-            recyclerView.layoutManager = layoutManager
+            recyclerView.layoutManager = gridLayoutManager
             recyclerView.doOnPreDraw {
                 startPostponedEnterTransition()
             }

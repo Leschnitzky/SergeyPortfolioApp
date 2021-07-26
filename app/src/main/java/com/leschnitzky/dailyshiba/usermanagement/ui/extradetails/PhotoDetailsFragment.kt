@@ -2,8 +2,11 @@ package com.leschnitzky.dailyshiba.usermanagement.ui.extradetails
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.media.AudioRecord.MetricsConstants.SOURCE
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.transition.TransitionInflater
 import android.view.*
 import android.widget.Button
@@ -20,6 +23,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.awesomedialog.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.leschnitzky.dailyshiba.R
@@ -29,12 +34,14 @@ import com.leschnitzky.dailyshiba.usermanagement.ui.extradetails.state.PhotoDeta
 import com.leschnitzky.dailyshiba.utils.OnDoubleClickListener
 import com.leschnitzky.dailyshiba.utils.getKey
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
+import java.net.URI
 
 
 @AndroidEntryPoint
@@ -55,54 +62,8 @@ class PhotoDetailsFragment : Fragment() {
 
         sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.move)
         sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.move)
-        setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.photo_details_app_bar_menu,menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
-            R.id.details_share_photo -> {
-                lockUI()
-                lifecycleScope.launch {
-                    Timber.d("Shared Photo!")
-                    val photo = arguments?.getString("uri")
-                    Timber.d("$photo")
-                    var photoUri: Uri? = null
-                    photoUri = if(photo!!.startsWith("http")){
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            requireActivity().applicationContext.packageName + ".provider",
-                            File(getKey(userViewModel.getCurrentUserURLMap(),photo)))
-                    } else {
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            requireActivity().applicationContext.packageName + ".provider",
-                            File(photo));
-
-                    }
-                    val sharingIntent = Intent(Intent.ACTION_SEND)
-                    try {
-                        val stream: InputStream? = requireActivity().contentResolver.openInputStream(photoUri)
-                    } catch (e: FileNotFoundException) {
-                        Timber.e(e)
-                        e.printStackTrace()
-                    }
-                    sharingIntent.type = "image/jpeg"
-                    sharingIntent.putExtra(Intent.EXTRA_STREAM, photoUri)
-                    sharingIntent.putExtra(Intent.EXTRA_TEXT,getString(R.string.daily_shiba_sharing_template))
-                    resultLauncher.launch(Intent.createChooser(sharingIntent, "Share image using"))
-                }
-                true
-            }
-            else -> {
-                super.onOptionsItemSelected(item)
-            }
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -284,11 +245,60 @@ class PhotoDetailsFragment : Fragment() {
                 }
             }
         }
+
+        shareButton.setOnClickListener {
+            lockUI()
+            lifecycleScope.launch {
+                Timber.d("Shared Photo!")
+                val photo = arguments?.getString("uri")
+                Timber.d("$photo")
+                var photoUri: Uri? = null
+
+                if(arguments?.containsKey("intent")!!){
+                    Glide.with(requireContext())
+                        .asBitmap()
+                        .load(photo)
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: Transition<in Bitmap>?
+                            ) {
+                                Timber.d("Got here!")
+                                val bitmapPath = MediaStore
+                                    .Images.Media.insertImage(requireActivity().contentResolver, resource, "palette", "share palette");
+                                photoUri = Uri.parse(bitmapPath);
+                            }
+                        });
+                    launch {
+                        delay(2000)
+                    }
+                } else {
+                    photoUri = if(photo!!.startsWith("http")){
+                        FileProvider.getUriForFile(
+                            requireContext(),
+                            requireActivity().applicationContext.packageName + ".provider",
+                            File(getKey(userViewModel.getCurrentUserURLMap(),photo)))
+                    } else {
+                        FileProvider.getUriForFile(
+                            requireContext(),
+                            requireActivity().applicationContext.packageName + ".provider",
+                            File(photo));
+
+                    }
+                }
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                sharingIntent.type = "image/jpeg"
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, photoUri)
+                sharingIntent.putExtra(Intent.EXTRA_TEXT,getString(R.string.daily_shiba_sharing_template))
+                resultLauncher.launch(Intent.createChooser(sharingIntent, "Share image using"))
+            }
+        }
     }
 
     private lateinit var dogImage : ImageView
     private lateinit var favoriteButton : ToggleButton
     private lateinit var setupAsProfileButton : Button
+    private lateinit var shareButton: Button
     private lateinit var loadingAnimation : LottieAnimationView
 
     private fun initializeViews(root: View?) {
@@ -297,6 +307,7 @@ class PhotoDetailsFragment : Fragment() {
         favoriteButton = root!!.findViewById(R.id.details_set_as_favorite)
         favoriteButton.textOn = "";
         favoriteButton.textOff = "";
+        shareButton = root.findViewById(R.id.details_share_button)
         loadingAnimation = root!!.findViewById(R.id.details_loading_animation)
         loadingAnimation.bringToFront()
     }

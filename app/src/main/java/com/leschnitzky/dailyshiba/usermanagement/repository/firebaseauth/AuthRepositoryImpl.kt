@@ -1,6 +1,7 @@
 package com.leschnitzky.dailyshiba.usermanagement.repository.firebaseauth
 
 import android.util.Log
+import com.google.firebase.auth.ActionCodeSettings
 import com.leschnitzky.dailyshiba.usermanagement.repository.firebaseauth.model.UserForFirebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -48,6 +49,10 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
             return firebaseAuth.currentUser?.email!!;
         }
         return firebaseAuth.currentUser?.displayName!!
+    }
+
+    override suspend fun sendEmailResetMail(email: String) {
+        firebaseAuth.sendPasswordResetEmail(email)
     }
 
 

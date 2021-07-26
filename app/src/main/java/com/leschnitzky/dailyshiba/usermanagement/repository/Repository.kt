@@ -33,4 +33,5 @@ interface Repository {
     suspend fun getDBUserData(): User?
     suspend fun updateCurrentUserDisplayName(displayName: String)
     suspend fun createUserInDB(currentUserEmail: String, authDisplayName: String)
+    suspend fun sendResetEmail(email : String)
 }
