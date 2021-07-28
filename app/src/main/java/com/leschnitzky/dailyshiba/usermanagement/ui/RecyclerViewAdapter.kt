@@ -15,7 +15,6 @@ import timber.log.Timber
 
 class RecyclerViewAdapter internal constructor(
     private val shibaImages: List<String>,
-    private val mode: Int,
     private val context: Context,
     private val viewModel: UserViewModel,
 ) :
@@ -35,24 +34,12 @@ class RecyclerViewAdapter internal constructor(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val image = shibaImages[position]
-        Timber.d( "onBindViewHolder: Mode: $mode, Image: $image")
         holder.image.transitionName = image
 
         holder.image.setOnClickListener {
             photoSelectedListener.onPhotoSelected(holder.image, image, position)
 
         }
-        if(mode == 1){
-            Glide
-                .with(context)
-                .asBitmap()
-                .load(image)
-                .override(250,250)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(holder.image)
-        } else {
             Glide
                 .with(context)
                 .load(image)
@@ -61,7 +48,6 @@ class RecyclerViewAdapter internal constructor(
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(holder.image)
-        }
     }
 
     override fun getItemCount(): Int {

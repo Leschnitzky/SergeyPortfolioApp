@@ -23,11 +23,13 @@ sealed class UserIntent {
     data class FacebookSignIn(val accessToken: AccessToken?) : UserIntent()
     data class UpdateDisplayName(val editTextValue: String) : UserIntent()
     data class SendResetPassEmail(val email: String) : UserIntent()
+    data class UpdateUserSettings(val setting: String, val field: String, val value: String) : UserIntent() {
+
+    }
 
     object UpdateFavoritesPage : UserIntent()
 
 
-    object DisplayProfilePicture : UserIntent()
     object GetPhotos : UserIntent()
     object GetNewPhotos : UserIntent()
     object CheckLogin : UserIntent()

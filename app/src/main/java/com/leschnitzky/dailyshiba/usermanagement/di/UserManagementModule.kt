@@ -24,7 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.GsonBuilder
+import com.leschnitzky.dailyshiba.usermanagement.repository.retrofit.BreedsRetrofit
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,7 +33,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 
 @Module
@@ -92,8 +93,8 @@ internal object UserManagementModule{
             provideUserDao(context),
             provideFirebaseRepository(),
             provideFirestoreRepository(),
-            provideRetrofitRepository(),
-        provideApplicationScope(context as MyApplication))
+            provideRetrofitRepository()
+        )
     }
 
     @Provides
@@ -116,15 +117,37 @@ internal object UserManagementModule{
     fun provideShibaRetrofit() : ShibaRetrofit {
         val retrofit = Retrofit.Builder()
             .baseUrl("http://shibe.online/api/")
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
+                        .build()
+                ))
             .build()
 
         return retrofit.create(ShibaRetrofit::class.java)
     }
 
     @Provides
+    fun provideBreedsOtherRetrofit() : BreedsRetrofit {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.woofbot.io/v1/")
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
+                        .build()
+                )
+            )
+            .build()
+
+        return retrofit.create(BreedsRetrofit::class.java)
+    }
+
+    @Provides
     fun provideRetrofitRepository() : RetrofitRepository {
-        return RetrofitRepositoryImpl(provideShibaRetrofit())
+        return RetrofitRepositoryImpl(
+            provideShibaRetrofit(),
+            provideBreedsOtherRetrofit()
+        )
     }
 
 }

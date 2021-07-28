@@ -31,8 +31,8 @@ android {
         applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 8
-        versionName "1.12"
+        versionCode 12
+        versionName "1.2"
 
 
 
@@ -128,8 +128,7 @@ dependencies {
 
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
-    implementation "com.squareup.retrofit2:converter-moshi:2.6.2"
-    implementation "com.squareup.retrofit2:converter-gson:2.8.1"
+    implementation "com.squareup.retrofit2:converter-moshi:2.8.1"
 
     //Coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
@@ -163,6 +162,9 @@ dependencies {
     //Crashlytics
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    //App Intro
+    implementation 'com.github.AppIntro:AppIntro:6.1.0'
 
 
 

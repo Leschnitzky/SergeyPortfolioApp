@@ -14,7 +14,7 @@
     <string name="emailInput">Email</string>
     <string name="passwordInput">Password</string>
     <string name="loginText">Login</string>
-    <string name="forgot_password_string">Restore password</string>
+    <string name="forgot_password_string">Reset password</string>
     <string name="terms_and_cond_string">Terms and Conditions</string>
     <string name="register_string">create an account</string>
     <string name="greeting_text">Welcome to DailyShiba</string>
@@ -45,7 +45,7 @@
     <string name="profile_display_name_category">DisplayName:</string>
     <string name="profile_profile_pic_category">Profile Pic:</string>
     <string name="admob_id">ca-app-pub-3634161836303395/9651535568</string>
-    <string name="device_ad_id">4D248129063A6D273EECD7A00BC907E0</string>
+    <string name="device_ad_id">269C868A919BAB91DD12E0A01A9C5AF9</string>
     <string name="default_web_client_id">35008376670-nq3pr77grjkec79t9krng5f01g0fuing.apps.googleusercontent.com</string>
     <string name="details_settings_share">Share</string>
     <string name="daily_shiba_sharing_template">This image was shared by Daily Shiba. \n\n\n Download from Google Play : https://play.google.com/store/apps/details?id=com.leschnitzky.dailyshiba</string>
@@ -55,4 +55,11 @@
     <string name="leave_application_yes">Yes, I would like to exit the application</string>
     <string name="leave_application">This action will close the application, are you sure?</string>
     <string name="leave_application_title">Exit application</string>
+    <string name="profile_category">Profile Details</string>
+    <string name="profile_dogs_category">Dog Preferences</string>
+    <string name="profile_shiba_pref">Shiba</string>
+    <string name="profile_corgi_pref">Corgi</string>
+    <string name="profile_husky_pref">Husky</string>
+    <string name="profile_beagle_pref">Beagle</string>
+    <string name="must_be_signed">User must be signed in order to view his profile details</string>
 </resources>

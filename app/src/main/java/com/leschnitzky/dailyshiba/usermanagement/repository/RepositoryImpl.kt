@@ -16,10 +16,9 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.kiwimob.firestore.coroutines.await
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import timber.log.Timber
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
@@ -27,7 +26,6 @@ class RepositoryImpl @Inject constructor(
     var authRepository: AuthRepository,
     var firestoreRepo : FirestoreRepository,
     val retrofitRepository: RetrofitRepository,
-    val applicationScope : CoroutineScope
 ) : Repository {
     private val TAG = "RepositoryImpl"
     override suspend fun loginUserAndReturnName(email: String, password: String): String {
@@ -253,9 +251,78 @@ class RepositoryImpl @Inject constructor(
         authRepository.sendEmailResetMail(email)
     }
 
+    override suspend fun updateCurrentUserSettings(setting: String, field: String, value: String): String {
+        val user = firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!)
+
+        Timber.d("$user")
+        val currentSettingsMap = mutableMapOf<String,String>()
+        currentSettingsMap.putAll(user.userSettings.settings)
+
+        val currentSetting = user.userSettings.settings[setting]?.toCharArray()
+        currentSetting!![currentSetting.indexOf(field[0]) + 1] = value[0]
+
+        val newSettingValue = String(currentSetting)
+        val matcher = Pattern.compile("1").matcher(newSettingValue)
+
+        var count = 0
+        while (matcher.find()) {
+            count++
+        }
+        if(count == 0){
+            return "Must have at least one dog selected"
+        }
+
+        currentSettingsMap[setting] = newSettingValue
+
+        user.userSettings = UserForFirestore.UserSettingsForFirestore(currentSettingsMap)
+        firestoreRepo.updateUserFromFirestore(user)
+        return ""
+    }
+
     suspend fun getPhotosFromServer(): List<String> {
         Timber.d( "getPhotosFromServer: ")
-        return retrofitRepository.get10Photos()
+        firestoreRepo.getUserFromFirestore(getCurrentUserEmail()!!).also {
+            val dogSetting = it.userSettings.settings["dogs"]
+            val dogList = dogSetting?.chunked(2)
+                ?.filter {
+                    it.indexOf('1') != -1
+                }?.map {
+                    it.substring(0,1)
+                }?.toList()
+            return getPhotosByDogList(dogList)
+        }
+    }
+
+    private suspend fun getPhotosByDogList(dogList: List<String>?): List<String> {
+        val dogsPerType = 9 / dogList!!.size
+        val extraDogPhotos = 9 % dogList.size
+        val returnList = arrayListOf<String>()
+        withContext(Dispatchers.IO){
+            if(extraDogPhotos > 0){
+                async(Dispatchers.IO) {
+                    when(dogList.first()){
+                        "s" -> returnList.addAll( retrofitRepository.getShibaPhotos(extraDogPhotos))
+                        "c" -> returnList.addAll( retrofitRepository.getCorgiPhotos(extraDogPhotos))
+                        "h" -> returnList.addAll( retrofitRepository.getHuskyPhotos(extraDogPhotos))
+                        "b" -> returnList.addAll( retrofitRepository.getBeaglePhotos(extraDogPhotos))
+                        else -> {}
+                    }
+                }.await()
+            }
+            dogList.map {
+                async(Dispatchers.IO) {
+                    when(it){
+                        "s" -> returnList.addAll( retrofitRepository.getShibaPhotos(dogsPerType))
+                        "c" -> returnList.addAll( retrofitRepository.getCorgiPhotos(dogsPerType))
+                        "h" -> returnList.addAll( retrofitRepository.getHuskyPhotos(dogsPerType))
+                        "b" -> returnList.addAll( retrofitRepository.getBeaglePhotos(dogsPerType))
+                        else -> {}
+                    }
+                }
+            }.awaitAll()
+
+        }
+        return returnList
     }
 
 

@@ -87,7 +87,7 @@ class ShibaFavoritesFragment : Fragment() {
 
     private fun initRecyclerView(list: List<String>) {
         Timber.d( "initRecyclerView: $list")
-        val adapter = RecyclerViewAdapter(list,0,requireContext(),userViewModel)
+        val adapter = RecyclerViewAdapter(list,requireContext(),userViewModel)
         adapter.photoSelectedListener = object : RecyclerViewAdapter.PhotoSelectedListener {
             override fun onPhotoSelected(imageView: ImageView, uri: String, position: Int) {
 
@@ -99,6 +99,7 @@ class ShibaFavoritesFragment : Fragment() {
 
                 val action = ShibaFavoritesFragmentDirections.actionNavFavoritesToNavDetails(
                     uri = uri,
+                    uris = list.toTypedArray(),
                     intent = "favorites"
                 )
                 findNavController().navigate(action, extras)

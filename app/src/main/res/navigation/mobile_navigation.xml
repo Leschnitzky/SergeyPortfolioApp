@@ -66,6 +66,21 @@
             android:defaultValue="null"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="uris"
+            app:argType="string[]"
+            />
+        <action
+            android:id="@+id/action_nav_details_self_right"
+            app:destination="@id/nav_details"
+            app:exitAnim="@anim/slide_right"
+
+            app:popUpTo="@id/nav_shiba" />
+        <action
+            android:id="@+id/action_nav_details_self_left"
+            app:destination="@id/nav_details"
+            app:exitAnim="@anim/slide_left"
+            app:popUpTo="@id/nav_shiba" />
     </fragment>
     <fragment
         android:id="@+id/nav_favorites"

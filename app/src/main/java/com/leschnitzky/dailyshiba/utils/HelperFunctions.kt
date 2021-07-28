@@ -24,10 +24,18 @@ const val FOLDER_NAME = "ShibaDaily"
 const val GOOGLE_SIGN_IN = 4
 const val FACEBOOK_SIGN_IN = 5
 const val DEFAULT_PROFILE_PIC =  "http://cdn.shibe.online/shibes/1dceabce914325b357fbd59e4ef829bc5ddfad6c.jpg"
+const val API_KEY_DOG = "2fcd5522-87f8-4a71-a17e-cf9bcd2816b0"
 fun isValidEmail(target: CharSequence?): Boolean {
     return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
 }
 
+fun getStringBooleanRepr(boolean: Boolean) : String{
+    if(boolean){
+        return "1"
+    } else {
+        return "0"
+    }
+}
 
 fun getInternalFileOutstream(mcoContext: Context, sFileName: String?) :OutputStream?{
     val dir = File(mcoContext.externalCacheDir, FOLDER_NAME)

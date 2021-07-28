@@ -1,13 +1,17 @@
 package com.leschnitzky.dailyshiba
 
 import android.content.pm.ActivityInfo
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -53,16 +57,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d( "onCreate: ")
         super.onCreate(savedInstanceState)
         listener = this
-        MobileAds.initialize(this) {}
-        val configuration = RequestConfiguration.Builder()
-            .setTestDeviceIds(listOf(getString(R.string.device_ad_id))).build()
-        MobileAds.setRequestConfiguration(configuration)
-        actionBar?.setDisplayHomeAsUpEnabled(false)
+        setupAdMob()
+        setupMainActivityUI()
 
+    }
 
+    private fun setupMainActivityUI() {
+        setupDrawerLayout()
+    }
+
+    private lateinit var profilePicImageView : ImageView
+    private fun setupDrawerLayout() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -76,7 +83,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         navController.addOnDestinationChangedListener { _, _, _ ->
-              supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_hamburger)
+            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_hamburger)
         }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -90,6 +97,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
 
+        profilePicImageView = navView.getHeaderView(0).findViewById(R.id.drawer_profile_pic)
+        profilePicImageView.setOnClickListener {
+            if(userViewModel.getCurrentUserEmail() == "Unsigned") {
+                Toast.makeText(this,getString(R.string.must_be_signed),Toast.LENGTH_SHORT).show()
+            } else {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_profile)
+                drawerLayout.closeDrawers()
+            }
+        }
+    }
+
+    private fun setupAdMob() {
+        MobileAds.initialize(this) {}
+        val configuration = RequestConfiguration.Builder()
+            .setTestDeviceIds(listOf(getString(R.string.device_ad_id))).build()
+        MobileAds.setRequestConfiguration(configuration)
     }
 
     private fun observeUserStatesForDrawer(navController: NavController, navView: NavigationView) {

@@ -34,4 +34,5 @@ interface Repository {
     suspend fun updateCurrentUserDisplayName(displayName: String)
     suspend fun createUserInDB(currentUserEmail: String, authDisplayName: String)
     suspend fun sendResetEmail(email : String)
+    suspend fun updateCurrentUserSettings(setting: String, field: String, value: String) : String
 }

@@ -124,7 +124,7 @@ class LoginFragment : Fragment(){
         passwordEditLayout = root.findViewById(R.id.passwordInput)
         loadingView = root.findViewById(R.id.animationView)
         loadingView.bringToFront()
-        forgotPassButton = root.findViewById<Button>(R.id.login_forgot_password)
+        forgotPassButton = root.findViewById(R.id.login_forgot_password)
 
     }
 
@@ -236,6 +236,7 @@ class LoginFragment : Fragment(){
         termsAndConditionsButton.isEnabled = true
         googleButton.isEnabled = true
         loadingView.visibility = View.GONE;
+        forgotPassButton.isEnabled = true
 
     }
 
@@ -254,6 +255,7 @@ class LoginFragment : Fragment(){
         passwordEditLayout.isEnabled = false
         registerButton.isEnabled = false
         termsAndConditionsButton.isEnabled = false
+        forgotPassButton.isEnabled = false
         loadingView.visibility = View.VISIBLE;    }
 
 

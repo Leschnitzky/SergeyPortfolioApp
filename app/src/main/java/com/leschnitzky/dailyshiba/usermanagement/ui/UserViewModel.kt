@@ -22,14 +22,14 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.lang.Error
 import javax.inject.Inject
 
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
 class UserViewModel @Inject constructor(
-    var repo: Repository,
-    var resourcesProvider: ResourcesProvider
+    var repo: Repository
 ): ViewModel() {
 
     var currentPositionFavorites: Int = 0
@@ -101,8 +101,28 @@ class UserViewModel @Inject constructor(
                     is UserIntent.GetProfileData -> broadcastUserProfile()
                     is UserIntent.UpdateDisplayName -> updateDisplayNameForUser(it.editTextValue)
                     is UserIntent.SendResetPassEmail -> startPasswordReset(it.email)
+                    is UserIntent.UpdateUserSettings -> updateUserSettings(it.setting,it.field,it.value)
                 }
             }
+    }
+
+    private fun updateUserSettings(setting: String, field: String, value: String) {
+        Timber.d("Updating user settings")
+        viewModelScope.launch(Dispatchers.IO) {
+            _stateProfilePage.value = ProfileViewState.Loading
+            repo.updateCurrentUserSettings(setting,field,value).also {
+
+                if(it.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        _stateProfilePage.value = ProfileViewState.Idle
+                    }
+                } else {
+                    withContext(Dispatchers.Main){
+                        _stateProfilePage.value = ProfileViewState.Error(it)
+                    }
+                }
+            }
+        }
     }
 
     private fun startPasswordReset(email: String) {

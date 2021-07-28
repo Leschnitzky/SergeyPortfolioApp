@@ -9,5 +9,6 @@ interface FirestoreRepository {
     suspend fun getUserFromFirestore(email: String): UserForFirestore
     suspend fun updateUserFromFirestore(userForFirestore: UserForFirestore)
     suspend fun updateUserPhotos(email: String, urlsFromServer: List<String>)
+    suspend fun updateUserSettings(email: String, userSettingsForFirestore: UserForFirestore.UserSettingsForFirestore)
     suspend fun doesUserExist(currentUserEmail: String): Boolean
 }

@@ -11,8 +11,10 @@ import android.transition.TransitionInflater
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -20,6 +22,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -31,7 +35,9 @@ import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.extradetails.state.PhotoDetailsViewState
+import com.leschnitzky.dailyshiba.usermanagement.ui.favorites.ShibaFavoritesFragmentDirections
 import com.leschnitzky.dailyshiba.utils.OnDoubleClickListener
+import com.leschnitzky.dailyshiba.utils.OnSwipeTouchListener
 import com.leschnitzky.dailyshiba.utils.getKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -293,6 +299,39 @@ class PhotoDetailsFragment : Fragment() {
                 resultLauncher.launch(Intent.createChooser(sharingIntent, "Share image using"))
             }
         }
+
+        dogImage.setOnTouchListener(
+            object : OnSwipeTouchListener(){
+                override fun onSwipeLeft() {
+                    val uris = arguments?.getStringArray("uris")
+                    val index = uris?.indexOf(arguments?.getString("uri"))
+                    Timber.d("$uris")
+
+                    if(index!! + 1 < uris.size){
+                        val action = PhotoDetailsFragmentDirections.actionNavDetailsSelfLeft(
+                            uri = uris?.get(index!! + 1),
+                            uris = uris!!
+                        )
+                        findNavController().navigate(action)
+                    }
+                }
+
+                override fun onSwipeRight() {
+                    val uris = arguments?.getStringArray("uris")
+                    Timber.d("$uris")
+                    val index = uris?.indexOf(arguments?.getString("uri"))
+
+                    if(index!! - 1 > 0){
+                        val action = PhotoDetailsFragmentDirections.actionNavDetailsSelfRight(
+                            uri = uris?.get(index!! - 1),
+                            uris = uris!!
+                        )
+                        findNavController().navigate(action)
+                    }
+                }
+            }
+        )
+
     }
 
     private lateinit var dogImage : ImageView
@@ -318,11 +357,13 @@ class PhotoDetailsFragment : Fragment() {
         setupAsProfileButton.isEnabled = true
         loadingAnimation.visibility = View.GONE
 
+        shareButton.isEnabled = true
         activity?.window?.clearFlags(
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun lockUI() {
+        shareButton.isEnabled = false
         favoriteButton.isEnabled = false
         setupAsProfileButton.isEnabled = false
         loadingAnimation.visibility = View.VISIBLE

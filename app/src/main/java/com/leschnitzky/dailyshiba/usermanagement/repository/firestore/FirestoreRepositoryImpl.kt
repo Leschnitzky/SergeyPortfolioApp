@@ -6,6 +6,7 @@ import com.leschnitzky.dailyshiba.usermanagement.repository.firestore.model.User
 import com.leschnitzky.dailyshiba.usermanagement.repository.firestore.model.UserForFirestore.Companion.toMap
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kiwimob.firestore.coroutines.await
+import com.leschnitzky.dailyshiba.usermanagement.repository.firestore.model.FireStoreConverter
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,7 +31,7 @@ class FirestoreRepositoryImpl @Inject constructor(
     override suspend fun addNewUserToFirestore(email: String, name: String, profilePic: String) {
         firestore.collection(COLLECTION_NAME)
             .document(email)
-            .set(toMap(UserForFirestore(email, name, profilePic, listOf(), listOf())))
+            .set(toMap(UserForFirestore(email, name, profilePic, listOf(), listOf(), UserForFirestore.UserSettingsForFirestore.DEFAULT_USER_SETTINGS)))
             .await()
     }
 
@@ -52,7 +53,8 @@ class FirestoreRepositoryImpl @Inject constructor(
                 "display_name", userForFirestore.displayName,
                 "profile_pic", userForFirestore.profilePicURI,
                 "list_favorite", userForFirestore.favoritesList,
-                    "current_photos", userForFirestore.currentPhotosList
+                    "current_photos", userForFirestore.currentPhotosList,
+                "user_settings", FireStoreConverter.settingsToString(userForFirestore.userSettings)
             )
             .await()
 
@@ -62,6 +64,15 @@ class FirestoreRepositoryImpl @Inject constructor(
         Timber.d( "updateUserPhotos: $urlsFromServer")
         val user = getUserFromFirestore(email)
         user.currentPhotosList = urlsFromServer
+        updateUserFromFirestore(user)
+    }
+
+    override suspend fun updateUserSettings(
+        email: String,
+        userSettingsForFirestore: UserForFirestore.UserSettingsForFirestore
+    ) {
+        val user = getUserFromFirestore(email)
+        user.userSettings = userSettingsForFirestore
         updateUserFromFirestore(user)
     }
 

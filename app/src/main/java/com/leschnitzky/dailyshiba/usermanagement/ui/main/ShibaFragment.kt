@@ -203,18 +203,18 @@ class ShibaFragment : Fragment() {
                 Timber.d( "observeViewModel: Got ShibaViewState $it ")
                 when(it) {
                     is ShibaViewState.GotPhotos -> {
-                        val original = it.list.subList(1,it.list.size)
                         if(it.list.first() == "SaveLocally"){
+                            val original = it.list.subList(1,it.list.size)
                             savePhotosLocally(original).also { localPhotoList ->
                                 Timber.d( "Got Local Photos: Next action")
                                 userViewModel.updatePhotosToCurrentUserDB(localPhotoList,original)
                             }.also {
-                                updateRecyclerViewWithList(original,0)
+                                updateRecyclerViewWithList(original)
                             }.apply {
                                 unlockUI()
                             }
                         } else {
-                            updateRecyclerViewWithList(it.list,0).also {
+                            updateRecyclerViewWithList(it.list).also {
                                 unlockUI()
                             }
                         }
@@ -264,7 +264,6 @@ class ShibaFragment : Fragment() {
 
     private suspend fun savePhotosLocally(list: List<String>): ArrayList<String> {
         localPhotoPaths = arrayListOf()
-        var shouldStop = false;
         list.forEachIndexed {
             index, url ->
              suspendCancellableCoroutine<Bitmap> {
@@ -300,9 +299,6 @@ class ShibaFragment : Fragment() {
                                 if (!localPhotoPaths.contains(fullpath)) {
                                     localPhotoPaths.add(fullpath)
                                 }
-                                if (index == 9) {
-                                    shouldStop = true
-                                }
                             continuation.resume(resource) {}
                         }
 
@@ -316,16 +312,24 @@ class ShibaFragment : Fragment() {
 
     }
 
-    private fun updateRecyclerViewWithList(list: List<String>, mode: Int) {
+    private fun updateRecyclerViewWithList(list: List<String>) {
         Timber.d( "updateRecyclerViewWithList: Got new update for recycler $list")
-            val recyclerViewAdapter = RecyclerViewAdapter(list.dropLast(1),mode,requireContext(),userViewModel)
+            var finalList : List<String> = if(list.size > 9) {
+                list.dropLast(1);
+            } else {
+                list;
+            }
+            val recyclerViewAdapter = RecyclerViewAdapter(finalList,requireContext(),userViewModel)
             recyclerViewAdapter.photoSelectedListener = object : RecyclerViewAdapter.PhotoSelectedListener {
                 override fun onPhotoSelected(imageView: ImageView, uri: String, position: Int) {
                     val extras = FragmentNavigatorExtras(
                         imageView to uri
                     )
                     userViewModel.currentPosition = position;
-                    val action = ShibaFragmentDirections.actionNavShibaToPhotoDetailsFragment(uri = uri)
+                    val action = ShibaFragmentDirections.actionNavShibaToPhotoDetailsFragment(
+                        uri = uri,
+                        uris = list.toTypedArray()
+                    )
                     findNavController().navigate(action, extras)
                 }
             }
