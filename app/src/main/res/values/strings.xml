@@ -26,7 +26,7 @@
     <string name="terms_and_conditions_text">I agree to the terms and conditions</string>
     <string name="register_complete_button">Register</string>
     <string name="logoff">Logoff</string>
-    <string name="welcoming_shiba">Welcome %1$s!, These are your daily shiba photos</string>
+    <string name="welcoming_shiba">Welcome %1$s!, These are your current photos</string>
     <string name="get_more_photos">Get more photos</string>
     <string name="shiba_more_photos_dialog_title">More photos</string>
     <string name="shiba_more_photos_dialog_body">Watch an ad to get more awesome shiba photos?</string>

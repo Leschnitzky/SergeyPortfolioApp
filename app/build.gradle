@@ -31,8 +31,8 @@ android {
         applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 12
-        versionName "1.2"
+        versionCode 13
+        versionName "1.21"
 
 
 

@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -36,8 +37,10 @@ import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.extradetails.state.PhotoDetailsViewState
 import com.leschnitzky.dailyshiba.usermanagement.ui.favorites.ShibaFavoritesFragmentDirections
+import com.leschnitzky.dailyshiba.utils.GeneralTouchListener
 import com.leschnitzky.dailyshiba.utils.OnDoubleClickListener
 import com.leschnitzky.dailyshiba.utils.OnSwipeTouchListener
+
 import com.leschnitzky.dailyshiba.utils.getKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -74,6 +77,7 @@ class PhotoDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        ViewCompat.setTranslationZ(view, 1F)
         val uri = arguments?.getString("uri")
         view.findViewById<ImageView>(R.id.drawer_profile_pic).apply {
                 transitionName = uri
@@ -147,37 +151,71 @@ class PhotoDetailsFragment : Fragment() {
     }
 
     private fun setupClicks() {
-        dogImage.setOnClickListener(object : OnDoubleClickListener() {
-            override fun onSingleClick(v: View?) {
+        dogImage.setOnTouchListener(GeneralTouchListener(
+            object : OnDoubleClickListener() {
+                override fun onSingleClick(v: View?) {
 
-            }
+                }
 
-            override fun onDoubleClick(v: View?) {
-                Timber.d("Double CLICK!")
-                lifecycleScope.launch {
-                    var uri = arguments?.getString("uri")
+                override fun onDoubleClick(v: View?) {
+                    Timber.d("Double CLICK!")
+                    lifecycleScope.launch {
+                        var uri = arguments?.getString("uri")
 
-                    if(!uri!!.startsWith("http")){
-                        uri = userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+                        if(!uri!!.startsWith("http")){
+                            uri = userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+                        }
+                        favoriteButton.isChecked = !favoriteButton.isChecked
+                        if(favoriteButton.isChecked) {
+                            userViewModel.intentChannel.send(
+                                UserIntent.AddPictureFavorite(
+                                    uri!!
+                                )
+                            )
+                        } else {
+                            userViewModel.intentChannel.send(
+                                UserIntent.RemovePictureFavorite(
+                                    uri!!
+                                )
+                            )
+                        }
                     }
-                    favoriteButton.isChecked = !favoriteButton.isChecked
-                    if(favoriteButton.isChecked) {
-                        userViewModel.intentChannel.send(
-                            UserIntent.AddPictureFavorite(
-                                uri!!
-                            )
+                }
+            },
+            object : OnSwipeTouchListener(requireContext()){
+                override fun onSwipeTop() {
+                    super.onSwipeTop()
+                    val uris = arguments?.getStringArray("uris")
+                    val index = uris?.indexOf(arguments?.getString("uri"))
+                    Timber.d("$uris")
+
+                    if(index!! + 1 < uris.size - 1){
+                        val action = PhotoDetailsFragmentDirections.actionNavDetailsSelfTop(
+                            uri = uris?.get(index!! + 1),
+                            uris = uris!!
                         )
-                    } else {
-                        userViewModel.intentChannel.send(
-                            UserIntent.RemovePictureFavorite(
-                                uri!!
-                            )
+                        findNavController().navigate(action)
+                    }
+                }
+
+                override fun onSwipeBottom() {
+                    super.onSwipeBottom()
+                    val uris = arguments?.getStringArray("uris")
+                    Timber.d("$uris")
+                    val index = uris?.indexOf(arguments?.getString("uri"))
+
+                    if(index!! - 1 > 0){
+                        val action = PhotoDetailsFragmentDirections.actionNavDetailsSelfBot(
+                            uri = uris?.get(index!! - 1),
+                            uris = uris!!
                         )
+                        findNavController().navigate(action)
                     }
                 }
             }
+         )
+        )
 
-        })
         setupAsProfileButton.setOnClickListener {
             lifecycleScope.launch {
                 AwesomeDialog
@@ -300,37 +338,6 @@ class PhotoDetailsFragment : Fragment() {
             }
         }
 
-        dogImage.setOnTouchListener(
-            object : OnSwipeTouchListener(){
-                override fun onSwipeLeft() {
-                    val uris = arguments?.getStringArray("uris")
-                    val index = uris?.indexOf(arguments?.getString("uri"))
-                    Timber.d("$uris")
-
-                    if(index!! + 1 < uris.size){
-                        val action = PhotoDetailsFragmentDirections.actionNavDetailsSelfLeft(
-                            uri = uris?.get(index!! + 1),
-                            uris = uris!!
-                        )
-                        findNavController().navigate(action)
-                    }
-                }
-
-                override fun onSwipeRight() {
-                    val uris = arguments?.getStringArray("uris")
-                    Timber.d("$uris")
-                    val index = uris?.indexOf(arguments?.getString("uri"))
-
-                    if(index!! - 1 > 0){
-                        val action = PhotoDetailsFragmentDirections.actionNavDetailsSelfRight(
-                            uri = uris?.get(index!! - 1),
-                            uris = uris!!
-                        )
-                        findNavController().navigate(action)
-                    }
-                }
-            }
-        )
 
     }
 
