@@ -13,7 +13,7 @@ class FakeRepositoryImpl : Repository {
         if((email.equals("test@gmail.com")) && (password.equals("test123"))){
             return "test@gmail.com"
         }
-        throw FirebaseAuthException("no user","no_user")
+        throw FirebaseAuthException("There is no user record corresponding to this identifier. The user may have been deleted.","There is no user record corresponding to this identifier. The user may have been deleted.")
     }
 
     override suspend fun createUser(email: String, password: String, name: String): String {
@@ -148,6 +148,18 @@ class FakeRepositoryImpl : Repository {
 
     override suspend fun createUserInDB(currentUserEmail: String, authDisplayName: String) {
         return
+    }
+
+    override suspend fun sendResetEmail(email: String) {
+        return
+    }
+
+    override suspend fun updateCurrentUserSettings(
+        setting: String,
+        field: String,
+        value: String
+    ): String {
+        return "Test"
     }
 
 }

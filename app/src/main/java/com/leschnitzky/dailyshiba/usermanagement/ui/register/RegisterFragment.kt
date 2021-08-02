@@ -34,6 +34,7 @@ import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.register.viewstate.RegisterViewState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -41,18 +42,20 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 import timber.log.Timber
 import java.io.InputStream
 
-
-@AndroidEntryPoint
 class RegisterFragment : Fragment() {
     private val TAG = "RegisterFragment"
 
 
     private val userViewModel: UserViewModel by activityViewModels()
     private lateinit var nameInputLayout: TextInputLayout
+    private lateinit var nameInputLayoutEditText: EditText
     private lateinit var greetingText : TextView
-    private lateinit var emailSubText : TextView
     private lateinit var emailInputLayout: TextInputLayout
+    private lateinit var emailInputLayoutEditText: EditText
+
     private lateinit var passwordInputLayout: TextInputLayout
+    private lateinit var passwordInputLayoutEditText: EditText
+
     private lateinit var loadingView : LottieAnimationView
     private lateinit var registerButton : Button
     private lateinit var guideline: Guideline
@@ -93,8 +96,8 @@ class RegisterFragment : Fragment() {
             lifecycleScope.launch {
                 userViewModel.intentChannel.send(
                     UserIntent.Register(nameInputLayout.editText?.text.toString(),
-                    emailInputLayout.editText?.text.toString(),
-                    passwordInputLayout.editText?.text.toString(),
+                    emailInputLayoutEditText.text.toString(),
+                    passwordInputLayoutEditText.text.toString(),
                         radioBox.isChecked
                 ))
             }
@@ -197,7 +200,6 @@ class RegisterFragment : Fragment() {
                 viewLifecycleOwner,
                 KeyboardVisibilityEventListener {
                     if (it) {
-                        emailSubText.visibility = View.GONE;
                         greetingText.visibility = View.GONE
                         val valueAnimator = ValueAnimator.ofFloat(0.35f, 0.05f)
                         valueAnimator.duration = 250
@@ -213,7 +215,6 @@ class RegisterFragment : Fragment() {
                         }
                         valueAnimator.start()
                     } else {
-                        emailSubText.visibility = View.VISIBLE;
                         greetingText.visibility = View.VISIBLE
                         val valueAnimator = ValueAnimator.ofFloat(0.05f, 0.35f)
                         valueAnimator.duration = 250
@@ -235,11 +236,13 @@ class RegisterFragment : Fragment() {
     private fun initiateViewFields(root: View) {
         radioBox = root.findViewById(R.id.radioButton)
         initRadioBox();
-        emailSubText = root.findViewById(R.id.email_subtext)
         greetingText = root.findViewById(R.id.register_greeting)
         registerButton = root.findViewById(R.id.register_done)
         nameInputLayout = root.findViewById(R.id.register_page_name_layout)
+        nameInputLayoutEditText = root.findViewById(R.id.register_page_name_layout_edit_text)
         emailInputLayout = root.findViewById(R.id.register_page_email_layout)
+        emailInputLayoutEditText = root.findViewById(R.id.register_page_email_layout_input_text)
+        passwordInputLayoutEditText = root.findViewById(R.id.register_page_password_layout_edit_text)
         passwordInputLayout = root.findViewById(R.id.register_page_password_layout)
         guideline = root.findViewById(R.id.register_page_thirdparty_seperator)
         loadingView = root.findViewById(R.id.register_page_loading_animation)
@@ -264,9 +267,9 @@ class RegisterFragment : Fragment() {
             }
         }
         radioBox.highlightColor = Color.TRANSPARENT
-        val spannableString: Spannable = SpannableString(getString(R.string.terms_and_conditions_text))
-        spannableString.setSpan(linkClick, 15, 35, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        radioBox.setText(spannableString, TextView.BufferType.SPANNABLE)
+//        val spannableString: Spannable = SpannableString(getString(R.string.terms_and_conditions_text))
+//        spannableString.setSpan(linkClick, 15, 35, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        radioBox.setText(spannableString, TextView.BufferType.SPANNABLE)
         radioBox.movementMethod = LinkMovementMethod.getInstance()
     }
 

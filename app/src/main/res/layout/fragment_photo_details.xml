@@ -100,7 +100,7 @@
         app:layout_constraintTop_toBottomOf="@+id/details_profile_button" />
 
     <com.google.android.gms.ads.AdView
-        android:id="@+id/shiba_ad_view"
+        android:id="@+id/details_ad_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

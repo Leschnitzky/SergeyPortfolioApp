@@ -8,11 +8,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.usermanagement.repository.Repository
+import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel_Factory
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import dagger.multibindings.IntoMap
 import org.mockito.Mockito.mock
 
 @Module
@@ -46,4 +49,5 @@ internal object TestModule {
         return GoogleSignIn.getClient(context, gso)
 
     }
+
 }

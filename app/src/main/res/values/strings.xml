@@ -62,4 +62,5 @@
     <string name="profile_husky_pref">Husky</string>
     <string name="profile_beagle_pref">Beagle</string>
     <string name="must_be_signed">User must be signed in order to view his profile details</string>
+    <string name="no_internet_connection">No internet connection detected. please connect to the internet</string>
 </resources>

@@ -22,6 +22,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
+    var defaultDispatcher: CoroutineDispatcher,
     var userDao: UserDao,
     var authRepository: AuthRepository,
     var firestoreRepo : FirestoreRepository,
@@ -35,8 +36,8 @@ class RepositoryImpl @Inject constructor(
             return logWithANewUserAndGetName(user);
         } catch (e: FirebaseAuthException){
 
-            Log.e(TAG, "loginUserAndReturnName: caughtError: ${e.errorCode}")
-            Log.e(TAG, "loginUserAndReturnName: caughtError: ${e.message}")
+            Timber.e(TAG, "loginUserAndReturnName: caughtError: ${e.errorCode}")
+            Timber.e(TAG, "loginUserAndReturnName: caughtError: ${e.message}")
             throw e
 
         }
@@ -144,7 +145,7 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun updateCurrentUserProfilePicture(profilePic: String) {
         val email = getCurrentUserEmail()
-        withContext(Dispatchers.IO){
+        withContext(defaultDispatcher){
             firestoreRepo.getUserFromFirestore(email!!).also {
                 it.profilePicURI = profilePic;
                 firestoreRepo.updateUserFromFirestore(it)
@@ -297,25 +298,25 @@ class RepositoryImpl @Inject constructor(
         val dogsPerType = 9 / dogList!!.size
         val extraDogPhotos = 9 % dogList.size
         val returnList = arrayListOf<String>()
-        withContext(Dispatchers.IO){
+        withContext(defaultDispatcher){
             if(extraDogPhotos > 0){
-                async(Dispatchers.IO) {
+                async(defaultDispatcher) {
                     when(dogList.first()){
                         "s" -> returnList.addAll( retrofitRepository.getShibaPhotos(extraDogPhotos))
-                        "c" -> returnList.addAll( retrofitRepository.getCorgiPhotos(extraDogPhotos))
-                        "h" -> returnList.addAll( retrofitRepository.getHuskyPhotos(extraDogPhotos))
-                        "b" -> returnList.addAll( retrofitRepository.getBeaglePhotos(extraDogPhotos))
+                        "c" -> returnList.addAll( retrofitRepository.getCorgiPhotos(extraDogPhotos,defaultDispatcher))
+                        "h" -> returnList.addAll( retrofitRepository.getHuskyPhotos(extraDogPhotos,defaultDispatcher))
+                        "b" -> returnList.addAll( retrofitRepository.getBeaglePhotos(extraDogPhotos,defaultDispatcher))
                         else -> {}
                     }
                 }.await()
             }
             dogList.map {
-                async(Dispatchers.IO) {
+                async(defaultDispatcher) {
                     when(it){
                         "s" -> returnList.addAll( retrofitRepository.getShibaPhotos(dogsPerType))
-                        "c" -> returnList.addAll( retrofitRepository.getCorgiPhotos(dogsPerType))
-                        "h" -> returnList.addAll( retrofitRepository.getHuskyPhotos(dogsPerType))
-                        "b" -> returnList.addAll( retrofitRepository.getBeaglePhotos(dogsPerType))
+                        "c" -> returnList.addAll( retrofitRepository.getCorgiPhotos(dogsPerType,defaultDispatcher))
+                        "h" -> returnList.addAll( retrofitRepository.getHuskyPhotos(dogsPerType,defaultDispatcher))
+                        "b" -> returnList.addAll( retrofitRepository.getBeaglePhotos(dogsPerType,defaultDispatcher))
                         else -> {}
                     }
                 }

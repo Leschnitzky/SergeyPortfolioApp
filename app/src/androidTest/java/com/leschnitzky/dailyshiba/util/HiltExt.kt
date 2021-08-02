@@ -15,9 +15,9 @@ import com.leschnitzky.dailyshiba.R
 inline fun <reified T : Fragment> launchFragmentInHiltContainer(
     fragmentArgs: Bundle? = null,
     @StyleRes themeResId: Int = R.style.FragmentScenarioEmptyFragmentActivityTheme,
-    factory: FragmentFactory,
     crossinline action: Fragment.() -> Unit = {}
-) {
+) : Fragment {
+    var returnFragment: Fragment? = null
     val startActivityIntent = Intent.makeMainActivity(
         ComponentName(
             ApplicationProvider.getApplicationContext(),
@@ -29,18 +29,20 @@ inline fun <reified T : Fragment> launchFragmentInHiltContainer(
     )
 
     ActivityScenario.launch<HiltTestActivity>(startActivityIntent).onActivity { activity ->
-        activity.supportFragmentManager.fragmentFactory = factory
         val fragment: Fragment = activity.supportFragmentManager.fragmentFactory.instantiate(
             Preconditions.checkNotNull(T::class.java.classLoader),
             T::class.java.name
         )
         fragment.arguments = fragmentArgs
-
         activity.supportFragmentManager
             .beginTransaction()
             .add(android.R.id.content, fragment, "")
             .commitNow()
 
         fragment.action()
+        returnFragment = fragment
+
     }
+
+    return returnFragment!!
 }

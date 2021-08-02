@@ -1,5 +1,7 @@
-package com.leschnitzky.dailyshiba.tests
+package com.leschnitzky.dailyshiba.tests.fragments
 
+import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
@@ -11,13 +13,17 @@ import androidx.test.filters.LargeTest
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.usermanagement.ui.login.LoginFragment
 import com.leschnitzky.dailyshiba.util.hasTextInputLayoutErrorText
-import com.leschnitzky.dailyshiba.util.isToast
 import com.leschnitzky.dailyshiba.util.launchFragmentInHiltContainer
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.hamcrest.core.IsNot.not
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import timber.log.Timber
+import kotlin.test.assertEquals
 
 
 /**
@@ -33,18 +39,18 @@ class LoginFragmentTest {
     @get:Rule()
     val hiltRule = HiltAndroidRule(this)
 
-
+    var fragment : LoginFragment? = null
     @Before
     fun init() {
 
         hiltRule.inject()
-        launchFragmentInHiltContainer<LoginFragment>(factory = FragmentFactory())
+        fragment = launchFragmentInHiltContainer<LoginFragment>() as LoginFragment
 
     }
 
+    @ExperimentalCoroutinesApi
     @Test
     fun testGoogleAndFacebookButtonsAreDisplayed(){
-
         onView(withId(R.id.google_sign_in)).check(matches(isDisplayed()))
         onView(withId(R.id.facebook_sign_in)).check(matches(isDisplayed()))
     }
@@ -107,7 +113,10 @@ class LoginFragmentTest {
 
         onView(withId(R.id.button)).perform(click())
 
-        onView(withId(R.id.emailInput)).check(matches(hasTextInputLayoutErrorText("There is no user record corresponding to this identifier. The user may have been deleted")))
+        onView(withId(R.id.emailInput))
+            .check(
+                matches(
+                    hasTextInputLayoutErrorText("There is no user record corresponding to this identifier. The user may have been deleted.")))
     }
 
     @Test
@@ -121,6 +130,12 @@ class LoginFragmentTest {
             .perform(closeSoftKeyboard())
 
         onView(withId(R.id.button)).perform(click())
+
+
+        assertEquals(fragment!!.userViewModel.getCurrentUserEmail(), "test@gmail.com")
+
+
+
     }
 
 

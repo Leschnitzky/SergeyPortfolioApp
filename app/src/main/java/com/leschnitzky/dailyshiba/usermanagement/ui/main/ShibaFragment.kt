@@ -42,6 +42,7 @@ import com.leschnitzky.dailyshiba.utils.getInternalFileOutstream
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.leschnitzky.dailyshiba.utils.isConnected
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -163,19 +164,26 @@ class ShibaFragment : Fragment() {
                     text = resources.getString(R.string.shiba_more_photos_dialog_button_text),
                     action = {
                         // Show ad and load more photos
-                        if (mInterstitialAd != null) {
-                            mInterstitialAd?.show(requireActivity())
-                        } else {
-                            Log.d("TAG", "The interstitial ad wasn't ready yet.")
-                        }
+                        if(isConnected(requireContext())){
+                            if (mInterstitialAd != null) {
+                                mInterstitialAd?.show(requireActivity())
+                            } else {
+                                Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                            }
 
-                        lifecycleScope.launch {
-                            userViewModel.intentChannel.send(
-                                UserIntent.GetNewPhotos
-                            )
+                            lifecycleScope.launch {
+                                userViewModel.intentChannel.send(
+                                    UserIntent.GetNewPhotos
+                                )
+                            }
+                            val adRequest = AdRequest.Builder().build()
+                            loadAd(adRequest)
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.no_internet_connection),
+                                Toast.LENGTH_SHORT).show()
                         }
-                        val adRequest = AdRequest.Builder().build()
-                        loadAd(adRequest)
                     }
                 )
                 .onNegative(

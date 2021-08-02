@@ -28,21 +28,21 @@ class RetrofitRepositoryImpl @Inject constructor(
         return listOf()
     }
 
-    override suspend fun getCorgiPhotos(count: Int): List<String> {
-        return getBasePhotos(count,"corgi")
+    override suspend fun getCorgiPhotos(count: Int, dispatcher: CoroutineDispatcher): List<String> {
+        return getBasePhotos(count,"corgi",dispatcher)
     }
 
-    override suspend fun getHuskyPhotos(count: Int): List<String> {
-        return getBasePhotos(count,"husky")
+    override suspend fun getHuskyPhotos(count: Int, dispatcher: CoroutineDispatcher): List<String> {
+        return getBasePhotos(count,"husky",dispatcher)
     }
 
-    override suspend fun getBeaglePhotos(count: Int): List<String> {
-        return getBasePhotos(count,"beagle")
+    override suspend fun getBeaglePhotos(count: Int, dispatcher: CoroutineDispatcher): List<String> {
+        return getBasePhotos(count,"beagle", dispatcher)
 
     }
 
-    private suspend fun getBasePhotos(count: Int, breed: String) : List<String>{
-        return withContext(Dispatchers.IO){
+    private suspend fun getBasePhotos(count: Int, breed: String, dispatcher: CoroutineDispatcher) : List<String> {
+        return withContext(dispatcher) {
             val list = arrayListOf<String>()
             (1..count).map {
                 async(Dispatchers.IO) {
@@ -50,6 +50,7 @@ class RetrofitRepositoryImpl @Inject constructor(
                 }
             }.awaitAll()
             list
+
         }
     }
 

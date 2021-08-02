@@ -64,18 +64,18 @@
         android:id="@+id/register_page_name_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="@+id/register_page_guideline_right"
         app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/email_subtext">
+        app:layout_constraintTop_toTopOf="@+id/register_page_thirdparty_seperator">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/register_page_name_layout_edit_text"
-            android:inputType="textPersonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_rounded_corner_rad_10"
-            android:hint="@string/full_name_hint" />
+            android:hint="@string/full_name_hint"
+            android:inputType="textPersonName" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -117,15 +117,6 @@
             android:hint="@string/passwordInput" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/email_subtext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/normal_email_suggestion"
-        android:textAppearance="@style/SubtitleText"
-        app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
-        app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
-        app:layout_constraintTop_toTopOf="@+id/register_page_thirdparty_seperator" />
 
     <RadioButton
         android:id="@+id/radioButton"

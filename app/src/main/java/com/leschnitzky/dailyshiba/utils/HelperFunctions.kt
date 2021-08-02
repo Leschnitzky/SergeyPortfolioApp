@@ -1,9 +1,10 @@
 package com.leschnitzky.dailyshiba.utils
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.text.TextUtils
-import android.util.Log
 import android.util.Patterns
+import androidx.core.content.ContextCompat.getSystemService
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -129,4 +130,10 @@ interface UiEffect
 
 fun <K, V> getKey(map: Map<K, V>, target: V): K {
     return map.keys.first { target == map[it] };
+}
+
+fun isConnected(context: Context) :Boolean{
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    val activeNetworkInfo = connectivityManager!!.activeNetworkInfo
+    return activeNetworkInfo != null && activeNetworkInfo.isConnected
 }

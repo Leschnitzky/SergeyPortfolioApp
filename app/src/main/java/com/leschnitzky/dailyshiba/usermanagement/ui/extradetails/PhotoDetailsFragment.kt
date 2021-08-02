@@ -31,6 +31,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.awesomedialog.*
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
@@ -43,6 +45,7 @@ import com.leschnitzky.dailyshiba.utils.OnSwipeTouchListener
 
 import com.leschnitzky.dailyshiba.utils.getKey
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -109,6 +112,7 @@ class PhotoDetailsFragment : Fragment() {
         setupUser()
     }
 
+    @ExperimentalCoroutinesApi
     private fun setupUser() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -117,9 +121,12 @@ class PhotoDetailsFragment : Fragment() {
                         arguments?.getString("uri")!!
                     ))
                 } else {
-                    userViewModel.intentChannel.send(UserIntent.CheckPhotoInFavorites(
-                        userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")!!]!!
-                    ))
+                    userViewModel.getCurrentUserURLMap().collect {
+                        userViewModel.intentChannel.send(UserIntent.CheckPhotoInFavorites(
+                            it[arguments?.getString("uri")!!]!!
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -163,7 +170,10 @@ class PhotoDetailsFragment : Fragment() {
                         var uri = arguments?.getString("uri")
 
                         if(!uri!!.startsWith("http")){
-                            uri = userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+                            userViewModel.getCurrentUserURLMap().collect {
+                                uri = it[arguments?.getString("uri")]
+
+                            }
                         }
                         favoriteButton.isChecked = !favoriteButton.isChecked
                         if(favoriteButton.isChecked) {
@@ -204,7 +214,7 @@ class PhotoDetailsFragment : Fragment() {
                     Timber.d("$uris")
                     val index = uris?.indexOf(arguments?.getString("uri"))
 
-                    if(index!! - 1 > 0){
+                    if(index!! - 1 >= 0){
                         val action = PhotoDetailsFragmentDirections.actionNavDetailsSelfBot(
                             uri = uris?.get(index!! - 1),
                             uris = uris!!
@@ -242,14 +252,16 @@ class PhotoDetailsFragment : Fragment() {
                                 } else {
                                     Timber.d( "setupClicks: ${arguments?.getString("uri")}")
                                     Timber.d( "setupClicks: Current Map: ${userViewModel.getCurrentUserURLMap()}")
-                                    val profilePic =
-                                        userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+                                    userViewModel.getCurrentUserURLMap().collect {
+                                        val profilePic = it[arguments?.getString("uri")]
 
-                                    userViewModel.intentChannel.send(
-                                        UserIntent.SetProfilePicture(
-                                            profilePic!!
+                                        userViewModel.intentChannel.send(
+                                            UserIntent.SetProfilePicture(
+                                                profilePic!!
+                                            )
                                         )
-                                    )
+                                    }
+
                                 }
                             }
                         }
@@ -269,7 +281,9 @@ class PhotoDetailsFragment : Fragment() {
                 var uri = arguments?.getString("uri")
 
                 if(!uri!!.startsWith("http")){
-                    uri = userViewModel.getCurrentUserURLMap()[arguments?.getString("uri")]
+                    userViewModel.getCurrentUserURLMap().collect {
+                        uri = it[arguments?.getString("uri")]
+                    }
                 }
 
                 Timber.d( "setupClicks: $uri")
@@ -317,17 +331,19 @@ class PhotoDetailsFragment : Fragment() {
                         delay(2000)
                     }
                 } else {
-                    photoUri = if(photo!!.startsWith("http")){
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            requireActivity().applicationContext.packageName + ".provider",
-                            File(getKey(userViewModel.getCurrentUserURLMap(),photo)))
-                    } else {
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            requireActivity().applicationContext.packageName + ".provider",
-                            File(photo));
+                    userViewModel.getCurrentUserURLMap().collect {
+                        photoUri = if(photo!!.startsWith("http")){
+                            FileProvider.getUriForFile(
+                                requireContext(),
+                                requireActivity().applicationContext.packageName + ".provider",
+                                File(getKey(it,photo)))
+                        } else {
+                            FileProvider.getUriForFile(
+                                requireContext(),
+                                requireActivity().applicationContext.packageName + ".provider",
+                                File(photo));
 
+                        }
                     }
                 }
                 val sharingIntent = Intent(Intent.ACTION_SEND)
@@ -346,6 +362,7 @@ class PhotoDetailsFragment : Fragment() {
     private lateinit var setupAsProfileButton : Button
     private lateinit var shareButton: Button
     private lateinit var loadingAnimation : LottieAnimationView
+    private lateinit var adView : AdView
 
     private fun initializeViews(root: View?) {
         dogImage = root!!.findViewById(R.id.drawer_profile_pic)
@@ -356,6 +373,10 @@ class PhotoDetailsFragment : Fragment() {
         shareButton = root.findViewById(R.id.details_share_button)
         loadingAnimation = root!!.findViewById(R.id.details_loading_animation)
         loadingAnimation.bringToFront()
+
+        adView = root.findViewById(R.id.details_ad_view)
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
     }
 
 

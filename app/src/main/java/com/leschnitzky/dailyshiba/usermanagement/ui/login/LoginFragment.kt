@@ -39,6 +39,7 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.textfield.TextInputLayout
+import com.leschnitzky.dailyshiba.utils.isConnected
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -55,7 +56,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LoginFragment : Fragment(){
     private val TAG = "LoginFragment"
-    private val userViewModel: UserViewModel by activityViewModels()
+    val userViewModel: UserViewModel by activityViewModels()
 
     private lateinit var loginButton : Button
     @Inject lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -198,7 +199,7 @@ class LoginFragment : Fragment(){
 
                     }
                     is LoginViewState.Error -> {
-
+                        unlockUI()
                         when(it.error_code.value){
                             LoginViewState.LoginErrorCode.EMPTY_EMAIL.value -> {
                                 emailEditLayout.error = it.error
@@ -279,12 +280,19 @@ class LoginFragment : Fragment(){
         })
 
         loginButton.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                userViewModel.intentChannel.send(
-                    UserIntent.Login(
-                    emailEditLayout.editText?.text.toString(),
-                    passwordEditLayout.editText?.text.toString()
-                ))
+            if(isConnected(requireContext())){
+                viewLifecycleOwner.lifecycleScope.launch {
+                    userViewModel.intentChannel.send(
+                        UserIntent.Login(
+                            emailEditLayout.editText?.text.toString(),
+                            passwordEditLayout.editText?.text.toString()
+                        ))
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.no_internet_connection),
+                    Toast.LENGTH_SHORT).show()
             }
         }
         registerButton.setOnClickListener {

@@ -523,10 +523,14 @@ class UserViewModel @Inject constructor(
     }
 
 
-    suspend fun getCurrentUserURLMap(): Map<String,String> {
-            val map = repo.getCurrentUserURLMap()
-            Timber.d( "getCurrentUserURLMap: $map")
-            return map
+    fun getCurrentUserURLMap(): Flow<Map<String,String> > {
+        return flow {
+            viewModelScope.launch(Dispatchers.IO){
+                val map = repo.getCurrentUserURLMap()
+                Timber.d( "getCurrentUserURLMap: $map")
+                map
+            }
+        }
     }
 
 
