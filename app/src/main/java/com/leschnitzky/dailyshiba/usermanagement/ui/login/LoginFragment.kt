@@ -6,7 +6,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -114,18 +113,18 @@ class LoginFragment : Fragment(){
     }
 
     private fun initiateViewFields(root: View) {
-        greetingAnimation = root.findViewById(R.id.greetingAnimation)
+        greetingAnimation = root.findViewById(R.id.login_greeting_animation_lottie)
         guideline = root.findViewById(R.id.loginSectionGuideline)
-        googleButton = root.findViewById(R.id.google_sign_in)
-        facebookButton = root.findViewById(R.id.facebook_sign_in)
-        loginButton = root.findViewById(R.id.button)
-        termsAndConditionsButton = root.findViewById(R.id.terms_and_conds_button)
-        registerButton = root.findViewById(R.id.register)
-        emailEditLayout = root.findViewById(R.id.emailInput)
-        passwordEditLayout = root.findViewById(R.id.passwordInput)
+        googleButton = root.findViewById(R.id.login_google_sign_in_button)
+        facebookButton = root.findViewById(R.id.login_facebook_sign_in_button)
+        loginButton = root.findViewById(R.id.login_login_button)
+        termsAndConditionsButton = root.findViewById(R.id.login_terms_and_conds_button)
+        registerButton = root.findViewById(R.id.login_register_button)
+        emailEditLayout = root.findViewById(R.id.login_email_input_layout)
+        passwordEditLayout = root.findViewById(R.id.login_password_input_layout)
         loadingView = root.findViewById(R.id.animationView)
         loadingView.bringToFront()
-        forgotPassButton = root.findViewById(R.id.login_forgot_password)
+        forgotPassButton = root.findViewById(R.id.login_forgot_password_button)
 
     }
 

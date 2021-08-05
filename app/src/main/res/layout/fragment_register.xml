@@ -49,7 +49,7 @@
         app:layout_constraintGuide_begin="146dp" />
 
     <TextView
-        android:id="@+id/register_greeting"
+        android:id="@+id/register_greeting_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/menu_register"
@@ -119,7 +119,7 @@
 
 
     <RadioButton
-        android:id="@+id/radioButton"
+        android:id="@+id/register_terms_radio_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -132,7 +132,7 @@
         app:layout_constraintTop_toBottomOf="@+id/register_page_password_layout" />
 
     <Button
-        android:id="@+id/register_done"
+        android:id="@+id/register_complete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -140,7 +140,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/register_page_guideline_right"
         app:layout_constraintStart_toStartOf="@+id/register_page_guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/radioButton" />
+        app:layout_constraintTop_toBottomOf="@+id/register_terms_radio_button" />
 
 
 

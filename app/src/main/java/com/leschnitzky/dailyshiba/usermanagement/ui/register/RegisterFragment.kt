@@ -6,9 +6,6 @@ import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
@@ -33,8 +30,6 @@ import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.register.viewstate.RegisterViewState
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -234,10 +229,10 @@ class RegisterFragment : Fragment() {
     }
 
     private fun initiateViewFields(root: View) {
-        radioBox = root.findViewById(R.id.radioButton)
+        radioBox = root.findViewById(R.id.register_terms_radio_button)
         initRadioBox();
-        greetingText = root.findViewById(R.id.register_greeting)
-        registerButton = root.findViewById(R.id.register_done)
+        greetingText = root.findViewById(R.id.register_greeting_text_view)
+        registerButton = root.findViewById(R.id.register_complete_button)
         nameInputLayout = root.findViewById(R.id.register_page_name_layout)
         nameInputLayoutEditText = root.findViewById(R.id.register_page_name_layout_edit_text)
         emailInputLayout = root.findViewById(R.id.register_page_email_layout)

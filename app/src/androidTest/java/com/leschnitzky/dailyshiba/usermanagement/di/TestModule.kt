@@ -16,7 +16,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import dagger.multibindings.IntoMap
-import org.mockito.Mockito.mock
+import io.mockk.mockk
 
 @Module
 @TestInstallIn(
@@ -26,27 +26,22 @@ import org.mockito.Mockito.mock
 internal object TestModule {
     @Provides
     fun provideRepo(): Repository{
-        return FakeRepositoryImpl()
+        return mockk()
     }
 
     @Provides
     fun provideFacebookLoginManager() : LoginManager {
-        return LoginManager.getInstance()
+        return mockk(relaxed = true)
     }
 
     @Provides
     fun provideFacebookCallbackManager() : CallbackManager{
-        return CallbackManager.Factory.create()
+        return mockk(relaxed = true)
     }
 
     @Provides
     fun provideGoogleSigninClient(@ApplicationContext context: Context): GoogleSignInClient{
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        return GoogleSignIn.getClient(context, gso)
+        return mockk(relaxed = true)
 
     }
 

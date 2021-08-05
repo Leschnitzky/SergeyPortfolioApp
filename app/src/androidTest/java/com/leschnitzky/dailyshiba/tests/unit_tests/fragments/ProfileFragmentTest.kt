@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.tests.fragments
+package com.leschnitzky.dailyshiba.tests.unit_tests.fragments
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -6,12 +6,10 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.LargeTest
 import com.leschnitzky.dailyshiba.R
-import com.leschnitzky.dailyshiba.usermanagement.ui.login.LoginFragment
 import com.leschnitzky.dailyshiba.usermanagement.ui.profile.ProfileFragment
 import com.leschnitzky.dailyshiba.util.launchFragmentInHiltContainer
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
