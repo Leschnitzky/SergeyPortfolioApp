@@ -24,9 +24,6 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('/home/sergey/.android/debug.keystore')
-
-
         }
         release {
             storeFile file('/home/sergey/Downloads/sergey_portfolio_keystore.jks')
