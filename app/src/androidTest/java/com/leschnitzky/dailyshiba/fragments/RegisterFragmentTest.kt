@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.tests.unit_tests.fragments
+package com.leschnitzky.dailyshiba.tests.UITest.fragments
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -12,7 +12,6 @@ import app.cash.turbine.test
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
-import com.leschnitzky.dailyshiba.usermanagement.ui.login.viewstate.LoginViewState
 import com.leschnitzky.dailyshiba.usermanagement.ui.register.RegisterFragment
 import com.leschnitzky.dailyshiba.usermanagement.ui.register.viewstate.RegisterViewState
 import com.leschnitzky.dailyshiba.util.hasTextInputLayoutErrorText
@@ -29,7 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.CoreMatchers.not
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

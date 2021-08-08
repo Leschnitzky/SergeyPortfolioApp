@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.tests.unit_tests.fragments
+package com.leschnitzky.dailyshiba.tests.UITest.fragments
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -8,12 +8,9 @@ import androidx.test.filters.LargeTest
 import app.cash.turbine.test
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
-import com.leschnitzky.dailyshiba.mockPrivateFields
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.login.LoginFragment
 import com.leschnitzky.dailyshiba.usermanagement.ui.login.viewstate.LoginViewState
-import com.leschnitzky.dailyshiba.usermanagement.ui.register.viewstate.RegisterViewState
-import com.leschnitzky.dailyshiba.util.MainCoroutineRule
 import com.leschnitzky.dailyshiba.util.hasTextInputLayoutErrorText
 import com.leschnitzky.dailyshiba.util.launchFragmentInHiltContainer
 import dagger.hilt.android.testing.BindValue
@@ -21,12 +18,9 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
