@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.tests.UITest.fragments
+package com.leschnitzky.dailyshiba.fragments
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
