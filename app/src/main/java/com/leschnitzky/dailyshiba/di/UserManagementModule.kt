@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.usermanagement.di
+package com.leschnitzky.dailyshiba.di
 
 import android.content.Context
 import androidx.room.Room
