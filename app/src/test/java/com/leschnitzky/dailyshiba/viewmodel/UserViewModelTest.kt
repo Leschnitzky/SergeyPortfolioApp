@@ -46,6 +46,6 @@ class UserViewModelTest {
 
     @Test
     fun userViewModel_GetDisplayNameWhenLoggedOff_ReturnsUnsigned(){
-        assertEquals("test", "test")
+        assertEquals("tes2t", "tes2t")
     }
 }
