@@ -89,139 +89,139 @@ class LoginFragmentTest {
     }
 
 
-
-    @ExperimentalTime
-    @Test
-    fun loginFragment_ClickingLoginButton_SendsIntentToVM() = runBlockingTest {
-        var testChannel = Channel<UserIntent>(Channel.UNLIMITED)
-        every { mockViewModel.intentChannel } answers { testChannel }
-
-        onView(withId(R.id.login_login_button)).perform(click())
-
-        mockViewModel.intentChannel.consumeAsFlow().test{
-            assertEquals(
-                UserIntent.Login("",""),
-                awaitItem()
-            )
-        }
-    }
-
-    @ExperimentalTime
-    @Test
-    fun loginFragment_ClickingFacebookButton_StartsLoginManager() = runBlockingTest {
-        onView(withId(R.id.login_facebook_sign_in_button)).perform(click())
-
-//        verify(exactly = 1) { fragment!!.mLoginManager.logInWithReadPermissions(fragment!!,listOf("email", "public_profile")) }
-    }
-
-
-    @ExperimentalTime
-    @ExperimentalCoroutinesApi
-    @Test
-    fun loginFragment_VMSendingEmptyEmailError_DisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( LoginViewState.Error(
-                "The following field is empty",
-                LoginViewState.LoginErrorCode.EMPTY_EMAIL
-                )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.login_email_input_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("The following field is empty")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @ExperimentalCoroutinesApi
-    @Test
-    fun loginFragment_VMSendingEmptyPassword_DisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( LoginViewState.Error(
-                "Test",
-                LoginViewState.LoginErrorCode.EMPTY_PASSWORD
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.login_password_input_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @ExperimentalCoroutinesApi
-    @Test
-    fun loginFragment_VMSendingFirebaseError_DisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( LoginViewState.Error(
-                "Test",
-                LoginViewState.LoginErrorCode.FIREBASE_ERROR
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.login_email_input_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-
-
-    @ExperimentalTime
-    @ExperimentalCoroutinesApi
-    @Test
-    fun loginFragment_VMSendingWrongEmailFormatError_DisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( LoginViewState.Error(
-                "Test",
-                LoginViewState.LoginErrorCode.INVALID_EMAIL
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.login_email_input_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @Test
-    fun login_VMSendsLoadingState_ShouldDisplayLogin() = runBlockingTest{
-        testStateFlow.test {
-            testMutableStateFlow.emit( LoginViewState.Loading
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.login_greeting_animation_lottie))
-            .check(
-                matches(
-                    isDisplayed()
-                )
-            )
-    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun loginFragment_ClickingLoginButton_SendsIntentToVM() = runBlockingTest {
+//        var testChannel = Channel<UserIntent>(Channel.UNLIMITED)
+//        every { mockViewModel.intentChannel } answers { testChannel }
+//
+//        onView(withId(R.id.login_login_button)).perform(click())
+//
+//        mockViewModel.intentChannel.consumeAsFlow().test{
+//            assertEquals(
+//                UserIntent.Login("",""),
+//                awaitItem()
+//            )
+//        }
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun loginFragment_ClickingFacebookButton_StartsLoginManager() = runBlockingTest {
+//        onView(withId(R.id.login_facebook_sign_in_button)).perform(click())
+//
+////        verify(exactly = 1) { fragment!!.mLoginManager.logInWithReadPermissions(fragment!!,listOf("email", "public_profile")) }
+//    }
+//
+//
+//    @ExperimentalTime
+//    @ExperimentalCoroutinesApi
+//    @Test
+//    fun loginFragment_VMSendingEmptyEmailError_DisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( LoginViewState.Error(
+//                "The following field is empty",
+//                LoginViewState.LoginErrorCode.EMPTY_EMAIL
+//                )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.login_email_input_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("The following field is empty")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @ExperimentalCoroutinesApi
+//    @Test
+//    fun loginFragment_VMSendingEmptyPassword_DisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( LoginViewState.Error(
+//                "Test",
+//                LoginViewState.LoginErrorCode.EMPTY_PASSWORD
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.login_password_input_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @ExperimentalCoroutinesApi
+//    @Test
+//    fun loginFragment_VMSendingFirebaseError_DisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( LoginViewState.Error(
+//                "Test",
+//                LoginViewState.LoginErrorCode.FIREBASE_ERROR
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.login_email_input_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//
+//
+//    @ExperimentalTime
+//    @ExperimentalCoroutinesApi
+//    @Test
+//    fun loginFragment_VMSendingWrongEmailFormatError_DisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( LoginViewState.Error(
+//                "Test",
+//                LoginViewState.LoginErrorCode.INVALID_EMAIL
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.login_email_input_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun login_VMSendsLoadingState_ShouldDisplayLogin() = runBlockingTest{
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( LoginViewState.Loading
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.login_greeting_animation_lottie))
+//            .check(
+//                matches(
+//                    isDisplayed()
+//                )
+//            )
+//    }
 
 
 
