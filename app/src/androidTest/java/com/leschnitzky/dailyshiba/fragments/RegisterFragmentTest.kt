@@ -84,167 +84,167 @@ class RegisterFragmentTest {
     fun register_PasswordHint_ShouldBeDisplayed() {
         onView(withId(R.id.register_page_password_layout_edit_text)).check(matches(ViewMatchers.withHint("Password")));
     }
-
-    @ExperimentalTime
-    @Test
-    fun registerFragment_registerButtonSendsIntent_ShouldSend() = runBlockingTest {
-        var testChannel = Channel<UserIntent>(Channel.UNLIMITED)
-        every { mockViewModel.intentChannel } answers { testChannel }
-
-        onView(withId(R.id.register_complete_button)).perform(click())
-
-        mockViewModel.intentChannel.consumeAsFlow().test {
-            assertEquals(
-                UserIntent.Register("","","",false),
-                awaitItem()
-            )
-        }
-    }
-
-    @ExperimentalTime
-    @Test
-    fun registerFragment_VMSendsInvalidEmail_ShouldDisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( RegisterViewState.Error(
-                "Test",
-                RegisterViewState.RegisterErrorCode.INVALID_EMAIL
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.register_page_email_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-
-    @ExperimentalTime
-    @Test
-    fun registerFragment_VMSendsFirebaseError_ShouldDisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( RegisterViewState.Error(
-                "Test",
-                RegisterViewState.RegisterErrorCode.FIREBASE_ERROR
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.register_page_name_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @Test
-    fun registerFragment_VMSendsEmptyEmailError_ShouldDisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( RegisterViewState.Error(
-                "Test",
-                RegisterViewState.RegisterErrorCode.EMPTY_EMAIL
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.register_page_email_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @Test
-    fun registerFragment_VMSendsEmptyPasswordError_ShouldDisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( RegisterViewState.Error(
-                "Test",
-                RegisterViewState.RegisterErrorCode.EMPTY_PASSWORD
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.register_page_password_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @Test
-    fun registerFragment_VMSendsEmptyNameError_ShouldDisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( RegisterViewState.Error(
-                "Test",
-                RegisterViewState.RegisterErrorCode.EMPTY_NAME
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.register_page_name_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @Test
-    fun registerFragment_VMSendsNotAcceptTermsError_ShouldDisplayError() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( RegisterViewState.Error(
-                "Test",
-                RegisterViewState.RegisterErrorCode.DIDNT_ACCEPT_TERMS
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.register_page_name_layout))
-            .check(
-                matches(
-                    hasTextInputLayoutErrorText("Test")
-                )
-            )
-    }
-
-    @ExperimentalTime
-    @Test
-    fun register_VMEmitsLoading_ShouldDisplayLoadingAnimation() = runBlockingTest {
-        testStateFlow.test {
-            testMutableStateFlow.emit( RegisterViewState.Loading
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-
-
-        onView(withId(R.id.register_page_loading_animation))
-            .check(
-                matches(
-                   isDisplayed()
-                )
-            )
-    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun registerFragment_registerButtonSendsIntent_ShouldSend() = runBlockingTest {
+//        var testChannel = Channel<UserIntent>(Channel.UNLIMITED)
+//        every { mockViewModel.intentChannel } answers { testChannel }
+//
+//        onView(withId(R.id.register_complete_button)).perform(click())
+//
+//        mockViewModel.intentChannel.consumeAsFlow().test {
+//            assertEquals(
+//                UserIntent.Register("","","",false),
+//                awaitItem()
+//            )
+//        }
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun registerFragment_VMSendsInvalidEmail_ShouldDisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( RegisterViewState.Error(
+//                "Test",
+//                RegisterViewState.RegisterErrorCode.INVALID_EMAIL
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.register_page_email_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//
+//    @ExperimentalTime
+//    @Test
+//    fun registerFragment_VMSendsFirebaseError_ShouldDisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( RegisterViewState.Error(
+//                "Test",
+//                RegisterViewState.RegisterErrorCode.FIREBASE_ERROR
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.register_page_name_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun registerFragment_VMSendsEmptyEmailError_ShouldDisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( RegisterViewState.Error(
+//                "Test",
+//                RegisterViewState.RegisterErrorCode.EMPTY_EMAIL
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.register_page_email_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun registerFragment_VMSendsEmptyPasswordError_ShouldDisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( RegisterViewState.Error(
+//                "Test",
+//                RegisterViewState.RegisterErrorCode.EMPTY_PASSWORD
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.register_page_password_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun registerFragment_VMSendsEmptyNameError_ShouldDisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( RegisterViewState.Error(
+//                "Test",
+//                RegisterViewState.RegisterErrorCode.EMPTY_NAME
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.register_page_name_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun registerFragment_VMSendsNotAcceptTermsError_ShouldDisplayError() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( RegisterViewState.Error(
+//                "Test",
+//                RegisterViewState.RegisterErrorCode.DIDNT_ACCEPT_TERMS
+//            )
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.register_page_name_layout))
+//            .check(
+//                matches(
+//                    hasTextInputLayoutErrorText("Test")
+//                )
+//            )
+//    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun register_VMEmitsLoading_ShouldDisplayLoadingAnimation() = runBlockingTest {
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( RegisterViewState.Loading
+//            )
+//            cancelAndConsumeRemainingEvents()
+//        }
+//
+//
+//        onView(withId(R.id.register_page_loading_animation))
+//            .check(
+//                matches(
+//                   isDisplayed()
+//                )
+//            )
+//    }
 
 
 
