@@ -255,23 +255,23 @@ class RegisterFragmentTest {
             )
     }
 
-//    @ExperimentalTime
-//    @Test
-//    fun register_VMEmitsLoading_ShouldDisplayLoadingAnimation() = runBlockingTest {
-//        testStateFlow.test {
-//            testMutableStateFlow.emit( RegisterViewState.Loading
-//            )
-//            cancelAndConsumeRemainingEvents()
-//        }
-//
-//
-//        onView(withId(R.id.register_page_loading_animation))
-//            .check(
-//                matches(
-//                   isDisplayed()
-//                )
-//            )
-//    }
+    @ExperimentalTime
+    @Test
+    fun register_VMEmitsLoading_ShouldDisplayLoadingAnimation() = runBlockingTest {
+        testStateFlow.test {
+            testMutableStateFlow.emit( RegisterViewState.Loading
+            )
+            cancelAndConsumeRemainingEvents()
+        }
+
+
+        onView(withId(R.id.register_page_loading_animation))
+            .check(
+                matches(
+                   isDisplayed()
+                )
+            )
+    }
 
 
 
