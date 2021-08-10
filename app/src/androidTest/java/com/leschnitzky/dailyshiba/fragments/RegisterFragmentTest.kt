@@ -168,29 +168,29 @@ class RegisterFragmentTest {
         }
     }
 
-//    @ExperimentalTime
-//    @Test
-//    fun registerFragment_VMSendsEmptyEmailError_ShouldDisplayError() = testRule.testDispatcher.runBlockingTest {
-//        withContext(Dispatchers.Main) {
-//            testStateFlow.test {
-//                testMutableStateFlow.emit(
-//                    RegisterViewState.Error(
-//                        "Test",
-//                        RegisterViewState.RegisterErrorCode.EMPTY_EMAIL
-//                    )
-//                )
-//                cancelAndConsumeRemainingEvents()
-//
-//
-//                onView(withId(R.id.register_page_email_layout))
-//                    .check(
-//                        matches(
-//                            hasTextInputLayoutErrorText("Test")
-//                        )
-//                    )
-//            }
-//        }
-//    }
+    @ExperimentalTime
+    @Test
+    fun registerFragment_VMSendsEmptyEmailError_ShouldDisplayError() = testRule.testDispatcher.runBlockingTest {
+        withContext(Dispatchers.Main) {
+            testStateFlow.test {
+                testMutableStateFlow.emit(
+                    RegisterViewState.Error(
+                        "Test",
+                        RegisterViewState.RegisterErrorCode.EMPTY_EMAIL
+                    )
+                )
+                cancelAndConsumeRemainingEvents()
+
+
+                onView(withId(R.id.register_page_email_layout))
+                    .check(
+                        matches(
+                            hasTextInputLayoutErrorText("Test")
+                        )
+                    )
+            }
+        }
+    }
 
     @ExperimentalTime
     @Test
@@ -255,23 +255,23 @@ class RegisterFragmentTest {
             )
     }
 
-//    @ExperimentalTime
-//    @Test
-//    fun register_VMEmitsLoading_ShouldDisplayLoadingAnimation() = runBlockingTest {
-//        testStateFlow.test {
-//            testMutableStateFlow.emit( RegisterViewState.Loading
-//            )
-//            cancelAndConsumeRemainingEvents()
-//        }
-//
-//
-//        onView(withId(R.id.register_page_loading_animation))
-//            .check(
-//                matches(
-//                   isDisplayed()
-//                )
-//            )
-//    }
+    @ExperimentalTime
+    @Test
+    fun register_VMEmitsLoading_ShouldDisplayLoadingAnimation() = runBlockingTest {
+        testStateFlow.test {
+            testMutableStateFlow.emit( RegisterViewState.Loading
+            )
+            cancelAndConsumeRemainingEvents()
+        }
+
+
+        onView(withId(R.id.register_page_loading_animation))
+            .check(
+                matches(
+                   isDisplayed()
+                )
+            )
+    }
 
 
 
