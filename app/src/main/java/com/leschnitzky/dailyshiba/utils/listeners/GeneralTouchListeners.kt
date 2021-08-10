@@ -1,8 +1,7 @@
-package com.leschnitzky.dailyshiba.utils
+package com.leschnitzky.dailyshiba.utils.listeners
 
 import android.view.MotionEvent
 import android.view.View
-import java.util.*
 
 class GeneralTouchListener(
     val onDoubleClickListener: OnDoubleClickListener,

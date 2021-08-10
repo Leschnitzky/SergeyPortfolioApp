@@ -2,6 +2,7 @@ package com.leschnitzky.dailyshiba.usermanagement.ui
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.viewModelScope
 import com.leschnitzky.dailyshiba.MainContract
 import com.leschnitzky.dailyshiba.UserIntent
@@ -17,6 +18,8 @@ import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuthException
+import com.leschnitzky.dailyshiba.utils.CoroutineContextProvider
+import com.leschnitzky.dailyshiba.utils.CoroutineScopeProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -24,13 +27,19 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.lang.Error
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
 class UserViewModel @Inject constructor(
-    var repo: Repository
+    var repo: Repository,
+    var dispatcherProvider : CoroutineContextProvider,
+    var coroutineScopeProvider : CoroutineScopeProvider
 ): ViewModel() {
+    private val coroutineScope = getcoroutineScope()
+
 
     var currentPositionFavorites: Int = 0
     var currentPosition: Int = 0
@@ -44,6 +53,25 @@ class UserViewModel @Inject constructor(
 
 
 
+    /**
+     * Configure CoroutineScope injection for production and testing.
+     *
+     * @receiver ViewModel provides coroutineScope for production
+     * @param coroutineScope null for production, injects TestCoroutineScope for unit tests
+     * @return CoroutineScope to launch coroutines on
+     */
+    private fun ViewModel.getcoroutineScope() : CoroutineScope {
+        return if (coroutineScopeProvider.coroutineScope == null){
+            Timber.d("corouotineScope is null")
+            viewModelScope
+        } else {
+            Timber.d("corouotineScope not null")
+            coroutineScopeProvider.coroutineScope!!
+        }
+    }
+
+    
+    
     private val _stateFavoritePage = MutableStateFlow<ShibaFavoritesStateView>(ShibaFavoritesStateView.InitState)
     private val _stateLoginPage = MutableStateFlow<LoginViewState>(LoginViewState.Idle)
     private val _stateRegisterPage = MutableStateFlow<RegisterViewState>(RegisterViewState.Idle)
@@ -75,7 +103,7 @@ class UserViewModel @Inject constructor(
 
 
 
-    private fun handleIntent() = viewModelScope.launch {
+    private fun handleIntent() = coroutineScope.launch(dispatcherProvider.ui) {
 
             intentChannel.consumeAsFlow().collect {
                 Timber.d( "handleIntent: Got Intent $it")
@@ -108,16 +136,16 @@ class UserViewModel @Inject constructor(
 
     private fun updateUserSettings(setting: String, field: String, value: String) {
         Timber.d("Updating user settings")
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateProfilePage.value = ProfileViewState.Loading
             repo.updateCurrentUserSettings(setting,field,value).also {
 
                 if(it.isEmpty()) {
-                    withContext(Dispatchers.Main) {
+                    withContext(dispatcherProvider.ui) {
                         _stateProfilePage.value = ProfileViewState.Idle
                     }
                 } else {
-                    withContext(Dispatchers.Main){
+                    withContext(dispatcherProvider.ui){
                         _stateProfilePage.value = ProfileViewState.Error(it)
                     }
                 }
@@ -127,12 +155,12 @@ class UserViewModel @Inject constructor(
 
     private fun startPasswordReset(email: String) {
         Timber.d("Starting password reset")
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateLoginPage.value = LoginViewState.Loading
             if(email.isNotEmpty()){
                 if(isValidEmail(email)){
                     repo.sendResetEmail(email).also {
-                        withContext(Dispatchers.Main){
+                        withContext(dispatcherProvider.ui){
                             _stateLoginPage.value = LoginViewState.ResetEmailSent
                         }
                     }
@@ -148,13 +176,13 @@ class UserViewModel @Inject constructor(
 
     private fun updateDisplayNameForUser(displayName: String) {
         Timber.d( "updateDisplayNameForUser: ")
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateProfilePage.value = ProfileViewState.Loading
             repo.updateCurrentUserDisplayName(displayName).also {
                 repo.getCurrentUserData().also {
                     _stateProfilePage.value = ProfileViewState.LoadedData(it)
                 }.also {
-                    withContext(Dispatchers.Main){
+                    withContext(dispatcherProvider.ui){
                         _mainActivityUIState.value =
                             MainContract.State(
                                 MainContract.UserTitleState.MemberNoNavigate(it.displayName),
@@ -168,10 +196,10 @@ class UserViewModel @Inject constructor(
 
     private fun broadcastUserProfile() {
         Timber.d( "broadcastUserProfile: ")
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateProfilePage.value = ProfileViewState.Loading
             repo.getCurrentUserData().also {
-                withContext(Dispatchers.Main){
+                withContext(dispatcherProvider.ui){
                     _stateProfilePage.value = ProfileViewState.LoadedData(it)
 
                 }
@@ -181,7 +209,7 @@ class UserViewModel @Inject constructor(
 
     private fun logUserWithFacebook(token: AccessToken?) {
         Timber.d( "logUserWithFacebook: ")
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateLoginPage.value = LoginViewState.Loading
             repo.signInAccountWithFacebook(token).also {
                 if(!repo.doesUserExistInFirestore(
@@ -195,7 +223,7 @@ class UserViewModel @Inject constructor(
                             if(repo.getDBUserData() == null){
                                 repo.createUserInDB(getCurrentUserEmail()!!,it.first)
                             }
-                            withContext(Dispatchers.Main){
+                            withContext(dispatcherProvider.ui){
                                 _mainActivityUIState.value =
                                     MainContract.State(
                                         MainContract.UserTitleState.Member(it.first),
@@ -209,7 +237,7 @@ class UserViewModel @Inject constructor(
                         if(repo.getDBUserData() == null){
                             repo.createUserInDB(getCurrentUserEmail()!!,it.first)
                         }
-                        withContext(Dispatchers.Main){
+                        withContext(dispatcherProvider.ui){
                             _mainActivityUIState.value =
                                 MainContract.State(
                                     MainContract.UserTitleState.Member(it.first),
@@ -224,7 +252,7 @@ class UserViewModel @Inject constructor(
 
     private fun logUserWithGoogle(signedInAccountFromIntent: Task<GoogleSignInAccount>?) {
         Timber.d( "logUserWithGoogle: ")
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateLoginPage.value = LoginViewState.Loading
             repo.signInAccountWithGoogle(signedInAccountFromIntent).also {
                 if(!repo.doesUserExistInFirestore(
@@ -238,7 +266,7 @@ class UserViewModel @Inject constructor(
                                 repo.createUserInDB(getCurrentUserEmail()!!,it.first)
                             }
 
-                            withContext(Dispatchers.Main){
+                            withContext(dispatcherProvider.ui){
                                 _mainActivityUIState.value =
                                     MainContract.State(
                                         MainContract.UserTitleState.Member(it.first),
@@ -252,7 +280,7 @@ class UserViewModel @Inject constructor(
                         if(repo.getDBUserData() == null){
                             repo.createUserInDB(getCurrentUserEmail()!!,it.first)
                         }
-                        withContext(Dispatchers.Main){
+                        withContext(dispatcherProvider.ui){
                             _mainActivityUIState.value =
                                 MainContract.State(
                                     MainContract.UserTitleState.Member(it.first),
@@ -269,10 +297,10 @@ class UserViewModel @Inject constructor(
     }
 
     private fun updateFavoritesPage() {
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateFavoritePage.value = ShibaFavoritesStateView.Loading
                 repo.getCurrentUserFavorites().also {
-                    withContext(Dispatchers.Main){
+                    withContext(dispatcherProvider.ui){
                         _stateFavoritePage.value = ShibaFavoritesStateView.PhotosLoaded(it)
 
                     }
@@ -282,9 +310,9 @@ class UserViewModel @Inject constructor(
 
     private fun checkPhotoInFavorites(picture: String) {
         _stateDetailsPage.value = PhotoDetailsViewState.Loading
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             repo.isPhotoInCurrentUserFavorites(picture).also {
-                withContext(Dispatchers.Main){
+                withContext(dispatcherProvider.ui){
                     if(it){
                         _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
                     } else {
@@ -296,10 +324,10 @@ class UserViewModel @Inject constructor(
     }
 
     private fun removePictureFromFavorites(picture: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateDetailsPage.value = PhotoDetailsViewState.Loading
             repo.removePictureFromFavorites(picture).also {
-                withContext(Dispatchers.Main){
+                withContext(dispatcherProvider.ui){
                     _stateDetailsPage.value = PhotoDetailsViewState.Idle
                 }
             }
@@ -307,10 +335,10 @@ class UserViewModel @Inject constructor(
     }
 
     private fun addPictureToFavorite(picture: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateDetailsPage.value = PhotoDetailsViewState.Loading
             repo.addPictureToFavorites(picture).also {
-                withContext(Dispatchers.Main){
+                withContext(dispatcherProvider.ui){
                     _stateDetailsPage.value = PhotoDetailsViewState.PictureIsFavorite
                 }
             }
@@ -318,7 +346,7 @@ class UserViewModel @Inject constructor(
     }
 
 
-    private suspend fun checkUserStatus() = withContext(viewModelScope.coroutineContext) {
+    private suspend fun checkUserStatus() = withContext(coroutineScope.coroutineContext) {
             val email = getCurrentUserEmail()
             Timber.d( "checkUserStatus: $email")
             if(email == "Unsigned"){
@@ -339,7 +367,7 @@ class UserViewModel @Inject constructor(
 
 
     private suspend fun emitGuestUser(){
-        withContext(viewModelScope.coroutineContext){
+        withContext(coroutineScope.coroutineContext){
             _mainActivityUIState.value = (
                 MainContract.State(
                     MainContract.UserTitleState.Guest,
@@ -351,11 +379,11 @@ class UserViewModel @Inject constructor(
     }
 
     private fun getMorePhotosForCurrentUser() {
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
             _stateShibaPage.value = ShibaViewState.Loading
             repo.getNewPhotosFromServer().let {
                 Timber.d( "getPhotosForCurrentUser: updating $it")
-                withContext(Dispatchers.Main){
+                withContext(dispatcherProvider.ui){
                     _stateShibaPage.value = ShibaViewState.GotPhotos(it)
                 }
             }
@@ -364,11 +392,11 @@ class UserViewModel @Inject constructor(
 
     private fun getPhotosForCurrentUser() {
         Timber.d( "getPhotosForCurrentUser: ")
-        viewModelScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(dispatcherProvider.io) {
         _stateShibaPage.value = ShibaViewState.Loading
             repo.getCurrentUserPhotos().let {
                 Timber.d( "getPhotosForCurrentUser: updating $it")
-                withContext(Dispatchers.Main){
+                withContext(dispatcherProvider.ui){
                     _stateShibaPage.value = ShibaViewState.GotPhotos(it)
                 }
             }
@@ -377,21 +405,20 @@ class UserViewModel @Inject constructor(
 
     private fun logUser(email: String, password: String) {
         Timber.d( "logUser: ")
-        viewModelScope.launch  {
+        coroutineScope.launch(dispatcherProvider.io)  {
             _stateLoginPage.value = LoginViewState.Loading
             Timber.d( "logUser: HERE 1")
             _stateLoginPage.value = try {
                 if(!email.isEmpty() && !password.isEmpty()){
                     if(isValidEmail(email)){
                         LoginViewState.LoggedIn(
-                            withContext(Dispatchers.IO){
                                 repo.loginUserAndReturnName(email,password).also {
                                     Timber.d( "logUser: HERE 2")
                                 }.also {
                                     repo.getCurrentUserTitleState().also {
                                             state ->
                                         Timber.d( "logUser: HERE 3")
-                                        withContext(Dispatchers.Main){
+                                        withContext(dispatcherProvider.ui){
                                             _mainActivityUIState.value =
                                                 MainContract.State(
                                                     MainContract.UserTitleState.Member(state.first),
@@ -400,7 +427,6 @@ class UserViewModel @Inject constructor(
                                         }
                                     }
                                 }
-                            }
                         )
                     } else {
                         LoginViewState.Error("Email is invalid", LoginViewState.LoginErrorCode.INVALID_EMAIL)
@@ -421,20 +447,20 @@ class UserViewModel @Inject constructor(
     }
     private fun registerUser(name: String, email: String, password: String, selected: Boolean){
         Timber.d( "registerUser: $name , $email, $password, $selected")
-        viewModelScope.launch  {
+        coroutineScope.launch(dispatcherProvider.io)  {
             _stateRegisterPage.value = RegisterViewState.Loading
             _stateRegisterPage.value = try {
                 if(email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()){
                     if(isValidEmail(email)){
                         if(selected){
                             RegisterViewState.Registered(
-                                withContext(Dispatchers.IO){
+                                withContext(dispatcherProvider.io){
                                     repo.createUser(email,password,name).also {
                                         repo.getCurrentUserTitleState().also {
                                                 title ->
                                             Timber.d( "logUser: HERE 3")
 
-                                            withContext(Dispatchers.Main){
+                                            withContext(dispatcherProvider.ui){
                                                 _mainActivityUIState.value =
                                                     MainContract.State(
                                                         MainContract.UserTitleState.Member(title.first),
@@ -469,7 +495,7 @@ class UserViewModel @Inject constructor(
 
     private fun logoutUser() {
         Timber.d( "logoutUser: ")
-        viewModelScope.launch {
+        coroutineScope.launch(dispatcherProvider.io) {
                 _stateShibaPage.value = ShibaViewState.Loading
             Timber.d( "logoutUser: Sending Guest")
                 repo.logoutUser().also {
@@ -491,13 +517,13 @@ class UserViewModel @Inject constructor(
 
     fun updatePhotosToCurrentUserDB(list: ArrayList<String>, originalUrlList: List<String>) {
         Timber.d( "updatePhotosToCurrentUserDB: $list \n\n\n $originalUrlList")
-        viewModelScope.launch(Dispatchers.IO)  {
-            withContext(Dispatchers.Main){
+        coroutineScope.launch(dispatcherProvider.io)  {
+            withContext(dispatcherProvider.ui){
                 _stateShibaPage.value = ShibaViewState.Loading
             }
-            withContext(Dispatchers.IO){
+            withContext(dispatcherProvider.io){
                 repo.updateCurrentUserPhotos(list,originalUrlList).also {
-                    withContext(Dispatchers.Main){
+                    withContext(dispatcherProvider.ui){
                         _stateShibaPage.value = ShibaViewState.Idle
                     }
                 }
@@ -505,12 +531,12 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateUserProfilePicture(picture : String) = withContext(Dispatchers.IO){
+    private suspend fun updateUserProfilePicture(picture : String) = withContext(dispatcherProvider.io){
         _stateDetailsPage.value = PhotoDetailsViewState.Loading
             repo.updateCurrentUserProfilePicture(picture).also {
 
                 val state = repo.getCurrentUserTitleState()
-                withContext(Dispatchers.Main){
+                withContext(dispatcherProvider.ui){
                     _stateDetailsPage.value = PhotoDetailsViewState.Idle
                     _mainActivityUIState.value =
                         MainContract.State(
@@ -525,7 +551,7 @@ class UserViewModel @Inject constructor(
 
     fun getCurrentUserURLMap(): Flow<Map<String,String> > {
         return flow {
-            viewModelScope.launch(Dispatchers.IO){
+            coroutineScope.launch(dispatcherProvider.io){
                 val map = repo.getCurrentUserURLMap()
                 Timber.d( "getCurrentUserURLMap: $map")
                 map

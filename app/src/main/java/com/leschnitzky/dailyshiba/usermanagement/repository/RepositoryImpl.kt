@@ -16,18 +16,23 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.kiwimob.firestore.coroutines.await
+import com.leschnitzky.dailyshiba.utils.CoroutineContextProvider
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class RepositoryImpl @Inject constructor(
-    var defaultDispatcher: CoroutineDispatcher,
+    var dispatcherProvider: CoroutineContextProvider,
     var userDao: UserDao,
     var authRepository: AuthRepository,
     var firestoreRepo : FirestoreRepository,
     val retrofitRepository: RetrofitRepository,
 ) : Repository {
+
+    val defaultDispatcher : CoroutineContext = dispatcherProvider.io
+
     private val TAG = "RepositoryImpl"
     override suspend fun loginUserAndReturnName(email: String, password: String): String {
         val user = UserForFirebase(email,password)
