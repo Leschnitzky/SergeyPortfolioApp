@@ -230,23 +230,23 @@ class LoginFragmentTest {
                 )
         }
     }
-
-    @ExperimentalTime
-    @Test
-    fun login_VMSendsLoadingState_ShouldDisplayLogin() = testRule.testDispatcher.runBlockingTest{
-        testStateFlow.test {
-            testMutableStateFlow.emit( LoginViewState.Loading
-            )
-        }
-
-
-        onView(withId(R.id.login_greeting_animation_lottie))
-            .check(
-                matches(
-                    isDisplayed()
-                )
-            )
-    }
+//
+//    @ExperimentalTime
+//    @Test
+//    fun login_VMSendsLoadingState_ShouldDisplayLogin() = testRule.testDispatcher.runBlockingTest{
+//        testStateFlow.test {
+//            testMutableStateFlow.emit( LoginViewState.Loading
+//            )
+//        }
+//
+//
+//        onView(withId(R.id.login_greeting_animation_lottie))
+//            .check(
+//                matches(
+//                    isDisplayed()
+//                )
+//            )
+//    }
 
 
 
