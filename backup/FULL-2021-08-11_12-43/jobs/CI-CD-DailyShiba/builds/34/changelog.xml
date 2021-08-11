@@ -1,0 +1,10 @@
+commit 6d11096ddb6d0c8659a62214ea05a63e01ba7715
+tree 64ae9bc56e677fbf09ba1f2c7aafef864732d565
+parent 744a1d194eea29f992c4a57f515fbadbc6f4f824
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 17:01:22 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 17:01:22 +0300
+
+    Sanity commit
+
+
+:100644 100644 b4953b56a37ad8cc7b897976b7431244d66f77fd b91a2661a552084606cd989f4e3123211123be74 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt

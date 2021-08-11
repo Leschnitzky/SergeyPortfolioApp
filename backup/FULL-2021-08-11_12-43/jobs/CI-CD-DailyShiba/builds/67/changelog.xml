@@ -1,0 +1,10 @@
+commit 0fc7d91deb4b3151a9cc03fc2c0e8406fc071734
+tree 439530c73dd0e8a5ed2014326fc2e4a0ee15b70c
+parent 23fc2f90817b07a1ba4179ba0e0ff3964a34b7ef
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 14:47:26 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 14:47:26 +0300
+
+    increased version, test for automated apk upload
+
+
+:100644 100644 55abcef4b1aead28cfbf50320f6775164e24c637 aacc97d94504c2ae77fdebd2cc241473810fdca7 M	app/build.gradle

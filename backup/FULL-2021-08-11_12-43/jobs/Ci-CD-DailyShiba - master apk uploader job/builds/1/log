@@ -1,0 +1,49 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+Cloning the remote Git repository
+Cloning repository https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git init /var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision c66ba114c04e36d8c0a3f0ca1247a7ebeef0d519 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c66ba114c04e36d8c0a3f0ca1247a7ebeef0d519 # timeout=10
+Commit message: "Removed jenkins:"
+First time build. Skipping changelog.
+[Gradle] - Launching build.
+[Ci-CD-DailyShiba - master apk uploader job] $ "/var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job/gradlew"
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :app
+app: 'annotationProcessor' dependencies won't be recognized as kapt annotation processors. Please change the configuration name to 'kapt' for these artifacts: 'com.github.bumptech.glide:compiler:4.12.0'.
+
+[8mha:////4CZoNmpjoMBwHPeSDwKL7l15SLcfLja0pAd6U0nHaAczAAAAYB+LCAAAAAAAAP9b85aBtbiIQSWjNKU4P0+vIKc0PTOvWC+9KDElJ1XPHUyFJBZn++WXpCqzh62PfDo/h4mBoaKIQQqqJTk/rzgfqNYZQoMUMkAAI0hhAQASWqbMYgAAAA==[0m> Task :help
+
+Welcome to Gradle 6.7.1.
+
+To run a build, run gradlew <task> ...
+
+To see a list of available tasks, run gradlew tasks
+
+To see a list of command-line options, run gradlew --help
+
+To see more detail about a task, run gradlew help --task <task>
+
+For troubleshooting, visit https://help.gradle.org
+
+[8mha:////4DHh0G8Nsaq6PA1AprQ8IFzmOaOhomGIeHvHAHKit6nVAAAAYx+LCAAAAAAAAP9b85aBtbiIQT2jNKU4P0+vIKc0PTOvWC+9KDElJ1XPHUz5l5Yk5+em+uWXpNbNmqZ4mHPZIiYGhooiBimoruT8vOJ8oHJnCA1SyAABjCCFBQBI197DZQAAAA==[0mBUILD SUCCESSFUL in 15s
+1 actionable task: 1 executed
+Build step 'Invoke Gradle script' changed build result to SUCCESS
+No AAB or APK files matching the pattern '**/build/outputs/**/*.aab **/build/outputs/apk/release/*.apk' could be found
+ERROR: Step ‘Upload Android AAB/APKs to Google Play’ failed: Upload to Google Play failed
+Finished: FAILURE

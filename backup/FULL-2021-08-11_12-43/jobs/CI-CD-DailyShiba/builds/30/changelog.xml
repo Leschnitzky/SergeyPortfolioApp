@@ -1,0 +1,12 @@
+commit 744a1d194eea29f992c4a57f515fbadbc6f4f824
+tree 3dc2b7fd282d7b90e616b91952042ce887fa2db1
+parent 873d704f1eccc03c07c0570b89bc5b92b4ffca98
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 16:42:01 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 16:42:01 +0300
+
+    Still working on Jenkins
+
+
+:100644 100644 3b58a170211793f95ccb1fc3ccb2f38588a65908 b4953b56a37ad8cc7b897976b7431244d66f77fd M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:000000 100644 0000000000000000000000000000000000000000 54608565e106810f808955116ccf73426775318d A	app/src/androidTest/resources/jacoco-agent.properties
+:000000 100644 0000000000000000000000000000000000000000 9da99e58e4986f72a93f6ae34e75657c59ae7d2e A	docker-compose.yml

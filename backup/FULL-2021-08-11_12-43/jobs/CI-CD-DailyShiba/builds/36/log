@@ -1,0 +1,33 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/CI-CD-DailyShiba
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/CI-CD-DailyShiba/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/development^{commit} # timeout=10
+Checking out Revision 00d66901bd60e59c9032beb6c868423de0193864 (refs/remotes/origin/development)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 00d66901bd60e59c9032beb6c868423de0193864 # timeout=10
+Commit message: "Sanity commit 2"
+ > git rev-list --no-walk 00d66901bd60e59c9032beb6c868423de0193864 # timeout=10
+$ /opt/android-sdk-linux/tools/bin/avdmanager list target
+[android] Using Android SDK: /opt/android-sdk-linux
+[android] Waiting 5 seconds before starting emulator...
+$ /opt/android-sdk-linux/platform-tools/adb start-server
+* daemon not running; starting now at tcp:5863
+* daemon started successfully
+$ /opt/android-sdk-linux/platform-tools/adb start-server
+[android] Starting Android emulator
+$ /opt/android-sdk-linux/emulator/emulator -ports 5722,5723 -report-console tcp:5810,max=180 -avd pixel_9.0 -no-window -noaudio
+handleCpuAcceleration: feature check for hvf
+cannot add library /opt/android-sdk-linux/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so: failed
+added library /opt/android-sdk-linux/emulator/lib64/vulkan/libvulkan.so
+ioctl(KVM_CREATE_VM) failed: 16 Device or resource busy
+qemu-system-x86_64-headless: failed to initialize KVM: Device or resource busy

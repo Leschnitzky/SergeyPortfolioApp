@@ -1,0 +1,33 @@
+commit 11bf834ec1f60e8dd2fc8568493c53c30f428ba5
+tree 6361af8315a141f83793f6a3a8a76974ef6d8d82
+parent 00d66901bd60e59c9032beb6c868423de0193864
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 15:17:50 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 15:17:50 +0300
+
+    Sanity commit 2
+
+
+:100644 100644 5fac13725a255e4be44707f78828c68e910d67ae 55abcef4b1aead28cfbf50320f6775164e24c637 M	app/build.gradle
+:000000 100644 0000000000000000000000000000000000000000 52bc08b4cef131dabd9a570833e7e0aa48531261 A	app/src/androidTest/java/com/leschnitzky/dailyshiba/di/TestModule.kt
+:100644 100644 b91a2661a552084606cd989f4e3123211123be74 93a12b953e0c928e90daf3f18cf5440b5587f11e M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 1ab66f5adc73d0ec0a667b3f30edf8bf4381bc7e 1f784dc626e5418b8952b44b1ff894d929e98482 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+:000000 100644 0000000000000000000000000000000000000000 bb11b68c1d336f4cb2718aa89e045408bf94cf68 A	app/src/androidTest/java/com/leschnitzky/dailyshiba/util/TestCoroutineContextProvider.kt
+:100644 100644 822ecf7bca2cb10194103f0e95553133df578dc1 ffbe4cd45a02dcb4e9ccb231a40fe625b9ae0248 R063	app/src/androidTest/java/com/leschnitzky/dailyshiba/util/MainCoroutineRule.kt	app/src/androidTest/java/com/leschnitzky/dailyshiba/util/TestingCoroutineRule.kt
+:100644 100644 f6a2b068ac9acd9a3a4f7c1450d932e97b66e8bb d5060cec5d0feb1b740d86ffa71f73c7b4da7679 M	app/src/main/java/com/leschnitzky/dailyshiba/di/UserManagementModule.kt
+:100644 100644 d3e54a357cd60f4aa198543aa9f506a4fa4d9bed 39fe1c9196dca1756c7f6345f6eae3f7942065d3 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/repository/RepositoryImpl.kt
+:100644 100644 5fca0e8f3fc621036c02bd5ebba027d69e1ffd63 7ba6ccaeb6ad9cf0498e098dd2e3d0a232e7423e M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/repository/retrofit/RetrofitRepository.kt
+:100644 100644 273f4f1d6cb6020f8689643810ae788222003233 e05612d0764c8aca5bf2697dae0e9bf4c2e7b0a9 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/repository/retrofit/RetrofitRepositoryImpl.kt
+:100644 100644 7745c324616bc8d2a0dd29e643b01dbd2ea9c2bf 38befc112ea0b71c6f12e5c412349f21c6184f98 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/ui/UserViewModel.kt
+:100644 100644 a60584f2ecd8bd0a6c3a224ae14d2aa2767e27d9 ad4ef1cdcdf61aa57eef72c4b5e1545b9f683151 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/ui/extradetails/PhotoDetailsFragment.kt
+:000000 100644 0000000000000000000000000000000000000000 bcd2f1a0a305989aea09dd2a8956cbbe7ea337aa A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineContextProvider.kt
+:000000 100644 0000000000000000000000000000000000000000 e9160ba5a84059cc898aa4628a38098cd6f632f1 A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineContextProviderImpl.kt
+:000000 100644 0000000000000000000000000000000000000000 4f091e02a7f1c72a525fdd20f79499307a1c6c57 A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineScopeProvider.kt
+:000000 100644 0000000000000000000000000000000000000000 c29b281a6c87c5887deae25046b62023229795ab A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineScopeProviderImpl.kt
+:100644 000000 4fd29431eafab2cb1f32a4ffc9a4ef0e57f1453d 0000000000000000000000000000000000000000 D	app/src/main/java/com/leschnitzky/dailyshiba/utils/GlobalTags.kt
+:100644 100644 1e2b3e014c19e427452bc1c8ccfaf65730e9286a c7cb14a6d6d4b18d9dd7d4d8a8e3ee55e885c56c R090	app/src/main/java/com/leschnitzky/dailyshiba/utils/GeneralTouchListeners.kt	app/src/main/java/com/leschnitzky/dailyshiba/utils/listeners/GeneralTouchListeners.kt
+:100644 100644 34c3a543171e3003fa9c5fdfd7aea39c7fb71121 6ebe18bcb7c2ed1a797a7458804fb248d6995a9e R096	app/src/main/java/com/leschnitzky/dailyshiba/utils/OnDoubleClickListener.kt	app/src/main/java/com/leschnitzky/dailyshiba/utils/listeners/OnDoubleClickListener.kt
+:100644 100644 ccbe59be3e7ee1387aff8b96af588ccd8e851f93 bb37a855eef60be72de37495828b4f20b8a6bd04 R097	app/src/main/java/com/leschnitzky/dailyshiba/utils/OnSwipeListener.kt	app/src/main/java/com/leschnitzky/dailyshiba/utils/listeners/OnSwipeListener.kt
+:100644 100644 034d52bb1a06450197a090c77398a2ce6413bf68 b08744f9986f45339dff8ea0099178245c76dc58 R062	app/src/test/java/com/leschnitzky/dailyshiba/MainCoroutineRule.kt	app/src/test/java/com/leschnitzky/dailyshiba/TestCoroutineRule.kt
+:000000 100644 0000000000000000000000000000000000000000 d82865a9f02684d2c3a13b53e8466e6d66aff003 A	app/src/test/java/com/leschnitzky/dailyshiba/di/TestCoroutineContextProvider.kt
+:100644 000000 ee31285147d9735eeb1b813eec075fb1de6a54b1 0000000000000000000000000000000000000000 D	app/src/test/java/com/leschnitzky/dailyshiba/di/TestModule.kt
+:100644 100644 eed0a56fa65b6b8fdb000a93cb28918ccbdf7e10 ecfe5cd9a97d36f4fc4fe908db5717f54e6c312c M	app/src/test/java/com/leschnitzky/dailyshiba/viewmodel/UserViewModelTest.kt
