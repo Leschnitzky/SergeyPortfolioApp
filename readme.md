@@ -40,7 +40,12 @@ setup the jenkins environment and restore backup folder via Jenkin's ThinBackup 
 
 
 After you've restored your job configuration, run your container's server by invoking:
-	docker exec -it -u root <container ID> bash (You can find your container ID by using docker ps)
+	
+	docker exec -it -u root <container ID> bash 
+
+You can find your container ID by running:
+
+	docker ps
 
 
 On it, configure the following dependencies:
@@ -52,6 +57,7 @@ On it, configure the following dependencies:
 
 In order to trigger the Github WebHooks, an Ngrok server needs to be live,
 you can set it up by using the ngrok folder and run:
+
 	./ngrok http 8080
 
 Then take the HTTP url and update the webhook to that url.
