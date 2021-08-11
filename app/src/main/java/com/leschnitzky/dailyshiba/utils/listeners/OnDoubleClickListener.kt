@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.utils
+package com.leschnitzky.dailyshiba.utils.listeners
 
 import android.view.View
 import android.view.ViewConfiguration

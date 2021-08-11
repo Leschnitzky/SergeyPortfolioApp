@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.utils
+package com.leschnitzky.dailyshiba.utils.listeners
 
 import android.content.Context
 import android.view.GestureDetector

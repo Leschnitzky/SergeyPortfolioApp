@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.usermanagement.di
+package com.leschnitzky.dailyshiba.di
 
 import com.leschnitzky.dailyshiba.usermanagement.repository.Repository
 import com.leschnitzky.dailyshiba.usermanagement.repository.firestore.model.UserForFirestore

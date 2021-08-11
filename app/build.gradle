@@ -7,14 +7,13 @@ plugins {
 
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.firebase.crashlytics'
-    id 'de.mannodermaus.android-junit5'
+    id 'jacoco'
 
 }
 
 
 
 android {
-
     packagingOptions {
         exclude "**/attach_hotspot_windows.dll"
         exclude "META-INF/licenses/**"
@@ -24,9 +23,6 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('/home/sergey/.android/debug.keystore')
-
-
         }
         release {
             storeFile file('/home/sergey/Downloads/sergey_portfolio_keystore.jks')
@@ -42,8 +38,8 @@ android {
         applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 16
-        versionName "1.22"
+        versionCode 17
+        versionName "1.23"
 
 
 
@@ -54,16 +50,14 @@ android {
     buildTypes {
         release {
             multiDexEnabled true
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+            testCoverageEnabled true
+            debuggable true
             multiDexEnabled true
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -74,6 +68,24 @@ android {
             force 'androidx.test:monitor:1.4.0'
         }
     }
+
+    hilt {
+        enableTransformForLocalTests = true
+    }
+
+
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
+
+
+}
+jacoco {
+    toolVersion "0.7.1.201405082137"
 }
 
 
@@ -129,11 +141,17 @@ dependencies {
     androidTestImplementation 'app.cash.turbine:turbine:0.6.0'
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.7.2"
+    testImplementation 'androidx.test.ext:junit:1.1.3'
+    testImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     testImplementation "io.mockk:mockk:1.12.0"
-    testImplementation "org.assertj:assertj-core:3.20"
+    testImplementation("androidx.navigation:navigation-testing:$nav_version")
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0'
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation 'app.cash.turbine:turbine:0.6.0'
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+
 
 
 
@@ -191,9 +209,110 @@ dependencies {
     //App Intro
     implementation 'com.github.AppIntro:AppIntro:6.1.0'
 
-
-
-
-
-
 }
+
+project.afterEvaluate {
+    // Grab all build types and product flavors
+    def buildTypes = android.buildTypes.collect { type ->
+        type.name
+    }
+
+    def productFlavors = android.productFlavors.collect { flavor ->
+        flavor.name
+    }
+    // When no product flavors defined, use empty
+    if (!productFlavors) productFlavors.add('')
+
+    //iterate over the flavors
+
+    productFlavors.each {
+
+        productFlavorName ->
+//iterate over build types like debug,release,prod etc.
+            buildTypes.each {
+
+                buildTypeName ->
+                    //sourceNameâ€Šâ€” e.g. freeDebug ,sourcePathâ€Šâ€”â€Še.g. free/debug
+                    def sourceName, sourcePath
+                    if (!productFlavorName) {
+                        sourceName = sourcePath = "${buildTypeName}"
+                    } else {
+                        sourceName = "${productFlavorName}${buildTypeName.capitalize()}"
+                        sourcePath = "${productFlavorName}/${buildTypeName}"
+                    }
+                    // testTaskNameâ€Šâ€”â€Š e.g. testFreeDebugtest task that the coverage task depends on,
+                    def testTaskName = "test${sourceName.capitalize()}UnitTest"
+                    // Create coverage task of form 'testFlavorTypeCoverage' depending on 'testFlavorTypeUnitTest'
+                    task "${testTaskName}Coverage"(type: JacocoReport, dependsOn: "$testTaskName") {
+                        group = "Reporting"
+                        description = "Generate Jacoco coverage reports on the ${sourceName.capitalize()} build."
+                        classDirectories.setFrom(fileTree(
+                                dir: "${project.buildDir}/intermediates/classes/${sourcePath}",
+                                excludes: [
+                                        '**/R.class',
+                                        '**/R$*.class',
+                                        '**/*$ViewInjector*.*',
+                                        '**/*$ViewBinder*.*',
+                                        '**/BuildConfig.*',
+                                        '**/Manifest*.*',
+                                        'android/**/*.*',
+                                        '**/Lambda$*.class', //Retrolambda
+                                        '**/Lambda.class',
+                                        '**/ * Lambda.class',
+                                        '**/*Lambda*.class',
+                                        '**/*Lambda*.*',
+                                        '**/*Builder.*',
+                                        '**/*_MembersInjector.class', //Dagger2 generated code
+                                        '**/*_MembersInjector*.*', //Dagger2 generated code
+                                        '**/ *_ * Factory*. * ', //Dagger2 generated code
+                                        '**/*Component*.*', //Dagger2 generated code
+                                        '**/*Module*.*', //Dagger2 generated code
+                                        'io/**/*.*'
+                                ],
+                                // include: []
+                        ) + fileTree(
+                                dir:"${project.buildDir}/tmp/kotlin-classes/${sourcePath}",
+                                excludes: [
+                                        '**/R.class',
+                                        '**/R$*.class',
+                                        '**/*$ViewInjector*.*',
+                                        '**/*$ViewBinder*.*',
+                                        '**/BuildConfig.*',
+                                        '**/Manifest*.*',
+                                        'android/**/*.*',
+                                        '**/Lambda$*.class', //Retrolambda
+                                        '**/Lambda.class',
+                                        '**/ * Lambda.class',
+                                        '**/*Lambda*.class',
+                                        '**/*Lambda*.*',
+                                        '**/*Builder.*',
+                                        '**/*_MembersInjector.class', //Dagger2 generated code
+                                        '**/*_MembersInjector*.*', //Dagger2 generated code
+                                        '**/ *_ * Factory*. * ', //Dagger2 generated code
+                                        '**/*Component*.*', //Dagger2 generated code
+                                        '**/*Module*.*', //Dagger2 generated code
+                                        'io/**/*.*'
+                                ],
+                                // include: []
+                        )
+                        )
+
+
+                        def coverageSourceDirs = [
+                                "src/main/java",
+                                "src/$productFlavorName/java",
+                                "src/$buildTypeName/java"
+                        ]
+                        additionalSourceDirs.setFrom(files(coverageSourceDirs))
+                        sourceDirectories.setFrom(files(coverageSourceDirs))
+                        executionData.setFrom(files("${project.buildDir}/jacoco/${testTaskName}.exec"))
+                        reports {
+                            //enables and disable the type of file you need
+                            xml.enabled = false
+                            html.enabled = true
+                        }
+                    }
+            }
+    }
+}
+

@@ -1,4 +1,4 @@
-package com.leschnitzky.dailyshiba.usermanagement.di
+package com.leschnitzky.dailyshiba.di
 
 import android.content.Context
 import androidx.room.Room
@@ -25,15 +25,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.leschnitzky.dailyshiba.usermanagement.repository.retrofit.BreedsRetrofit
+import com.leschnitzky.dailyshiba.utils.CoroutineContextProvider
+import com.leschnitzky.dailyshiba.utils.CoroutineContextProviderImpl
+import com.leschnitzky.dailyshiba.utils.CoroutineScopeProvider
+import com.leschnitzky.dailyshiba.utils.CoroutineScopeProviderImpl
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -43,8 +45,13 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 internal object UserManagementModule{
 
     @Provides
-    fun provideDefaultDispatcher() : CoroutineDispatcher{
-        return Dispatchers.IO
+    fun provideViewModelScope() : CoroutineScopeProvider {
+        return CoroutineScopeProviderImpl(null)
+    }
+
+    @Provides
+    fun provideCoroutineContextProvider() : CoroutineContextProvider {
+        return CoroutineContextProviderImpl()
     }
 
     @Provides
@@ -97,7 +104,7 @@ internal object UserManagementModule{
     @Provides
     fun provideRepository(@ApplicationContext context: Context) : Repository{
         return RepositoryImpl(
-            provideDefaultDispatcher(),
+            provideCoroutineContextProvider(),
             provideUserDao(context),
             provideFirebaseRepository(),
             provideFirestoreRepository(),
