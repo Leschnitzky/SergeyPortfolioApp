@@ -30,9 +30,9 @@ android {
         }
         release {
             storeFile file('/home/sergey/Downloads/sergey_portfolio_keystore.jks')
-            storePassword 'xrdhh748159263'
-            keyAlias 'shiba'
-            keyPassword 'xrdhh748159263'
+            storePassword "xrdhh748159263"
+            keyAlias "shiba"
+            keyPassword "xrdhh748159263"
         }
     }
     compileSdkVersion 30
