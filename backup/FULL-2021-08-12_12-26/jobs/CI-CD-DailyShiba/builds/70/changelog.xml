@@ -1,0 +1,10 @@
+commit 93834637a9ca9e237bd2366b8a827d54757544b9
+tree bbe7efdddd68ba999be705d5cc596632acebe235
+parent e8444fd1b2d0d50fce74148dc3bdee1ec19796af
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 16:17:33 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 16:17:33 +0300
+
+    little bit flavor for readme.md
+
+
+:100644 100644 507310aec350a2a06ec55ed7f32801e1583559d9 63b559b3fc823a811f534721bbed21b429f83e27 M	readme.md

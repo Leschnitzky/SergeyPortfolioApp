@@ -1,0 +1,23 @@
+commit 146b612c0d558d2b4e92854cfe21ce0f2566aa80
+tree c5095f259be93c620cebf63c1b628dfb32b68242
+parent cb4bd587b35d94eef23970791b5647b883eaff36
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-12 13:12:47 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-12 13:12:47 +0300
+
+    key problems
+
+
+:100644 100644 6094eaf3bd8ad1e0cf201bee1cb1be7412fff5ae b7bedfba0bc386141d0d703b9b95195653ed5702 M	app/build.gradle
+:000000 100644 0000000000000000000000000000000000000000 4fe0c127301c9dc53d5ef7cefe1d5f2680bf9bcb A	app/release/app-release.aab
+commit cb4bd587b35d94eef23970791b5647b883eaff36
+tree da21be8736404784c9573881e4da00c4ee973a6b
+parent ed956372c8ab63b8f813f0b2765d4e7a211f2def
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-12 12:59:11 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-12 12:59:11 +0300
+
+    testing jenkins
+
+
+:100644 000000 f77ef3c6918f9261226ddffaf96ea52ad619b8d8 0000000000000000000000000000000000000000 D	app/release/app-release.aab
+:100644 000000 d601c9b06186c54092c79d413e0272b69f01f25d 0000000000000000000000000000000000000000 D	app/release/app-release.apk
+:100644 000000 39c815432329c3bbfbdf8c0c1ae0bf542337f113 0000000000000000000000000000000000000000 D	app/release/output-metadata.json

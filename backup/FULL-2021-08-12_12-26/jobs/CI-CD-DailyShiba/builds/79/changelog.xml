@@ -1,0 +1,10 @@
+commit 0dfe98a929a37d560e6a87efe665cef9860203ed
+tree 4efbf5353e9c27c28b9f2428968db3ce5ca92433
+parent 4fc4fc079da62c28f6eaed4870ea3b497716c428
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:47:37 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:47:37 +0300
+
+    Failed build
+
+
+:100644 100644 65d32d1a8c22cb5c4ccf268e544562384239cbf5 9bd647fa5f9196c0bd7ab2425629fe1950af109f M	app/build.gradle

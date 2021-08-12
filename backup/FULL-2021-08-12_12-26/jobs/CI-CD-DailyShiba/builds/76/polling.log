@@ -1,0 +1,14 @@
+Started on Aug 11, 2021 2:24:55 PM
+Started by event from 140.82.115.251 ⇒ http://5474345068ea.ngrok.io:8080/github-webhook/ on Wed Aug 11 14:24:55 UTC 2021
+Using strategy: Default
+[poll] Last Built Revision: Revision 2104036cb20cd7b312fe1e28e591e9766b6f9ec7 (origin/development)
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git ls-remote -h -- https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Found 3 remote heads on https://github.com/Leschnitzky/SergeyPortfolioApp
+[poll] Latest remote head revision on refs/heads/development is: 87fdcf50f862754b26cdb7ee011e62b752796467
+Done. Took 0.43 sec
+Changes found

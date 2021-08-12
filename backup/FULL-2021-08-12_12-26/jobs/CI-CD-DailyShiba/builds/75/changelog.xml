@@ -1,0 +1,30 @@
+commit 2104036cb20cd7b312fe1e28e591e9766b6f9ec7
+tree b7e6e8bd6c62dd77fcb7ce23b10e3ceee36662d6
+parent eeafa5053e8fdd34dc99a56d93c793f6131f5e8c
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:11:30 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:11:30 +0300
+
+    Failed build
+
+
+:100644 100644 cf174c3759d80a564f71451879e2ae0869d8da28 ade9b4f00b95e724daf8b1705bfce3fc332b1692 M	app/build.gradle
+commit eeafa5053e8fdd34dc99a56d93c793f6131f5e8c
+tree afc020cd2a35410cc1c0808407240e74732a0de9
+parent 4ef597a36f6d03c89b6acf9411f122d4f00ef064
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:04:36 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:04:36 +0300
+
+    Failed build
+
+
+:100644 100644 db04c9f5c977712528ecd649caa58f629e715e5b cf174c3759d80a564f71451879e2ae0869d8da28 M	app/build.gradle
+commit 4ef597a36f6d03c89b6acf9411f122d4f00ef064
+tree c253b0bd9ed154695fead7d454494ef1894912ec
+parent 9623de592777707c170123d2a61904e9d5a78ee5
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:03:37 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 17:03:37 +0300
+
+    Failed build
+
+
+:100644 100644 aacc97d94504c2ae77fdebd2cc241473810fdca7 db04c9f5c977712528ecd649caa58f629e715e5b M	app/build.gradle

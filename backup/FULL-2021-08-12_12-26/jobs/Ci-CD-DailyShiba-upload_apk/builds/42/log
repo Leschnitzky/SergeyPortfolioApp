@@ -1,0 +1,33 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+[EnvInject] - Loading node environment variables.
+Building in workspace /var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision 51f877143171973c7733f7f46dc262c5cfb292ac (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 51f877143171973c7733f7f46dc262c5cfb292ac # timeout=10
+Commit message: "Created automated upload from file as changelog"
+ > git rev-list --no-walk 51f877143171973c7733f7f46dc262c5cfb292ac # timeout=10
+[EnvInject] - Executing scripts and injecting environment variables after the SCM step.
+[EnvInject] - Executing and processing the following script content: 
+CHANGELOG_TEXT="`cat ./change_log.txt`"
+
+[Ci-CD-DailyShiba - master apk uploader job] $ /bin/sh -xe /tmp/jenkins5684470343042748974.sh
++ cat ./change_log.txt
+cat: ./change_log.txt: No such file or directory
++ CHANGELOG_TEXT=
+[EnvInject] - Script executed. The exit code is 1.
+[EnvInject] - Fail the build.
+Skipping upload to Google Play due to build result
+Sending e-mails to: leschinskysergey@gmail.com
+Finished: FAILURE

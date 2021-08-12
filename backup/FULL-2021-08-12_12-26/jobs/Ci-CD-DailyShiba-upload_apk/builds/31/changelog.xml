@@ -1,0 +1,10 @@
+commit f5b973b56a2b23873f375cea6a4864bee8b3fa3c
+tree a3ea1127c07230976076edfc23ac6ca42eacdc87
+parent 2d7caaca62d305cfca6a52e8ece914e23a17a752
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-12 13:59:22 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-12 13:59:22 +0300
+
+    key problems
+
+
+:100644 100644 3c3c856dc74b05db8a3d0e067a022ec548d65c86 bba7a6934474fe82976f4b70613e4e0820e4da8f M	app/build.gradle
