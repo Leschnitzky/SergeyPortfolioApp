@@ -1,0 +1,57 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/CI-CD-DailyShiba
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/CI-CD-DailyShiba/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/development^{commit} # timeout=10
+Checking out Revision 873d704f1eccc03c07c0570b89bc5b92b4ffca98 (refs/remotes/origin/development)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+Commit message: "Test"
+ > git rev-list --no-walk 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+$ /opt/android-sdk-linux/tools/bin/avdmanager list target
+[android] Using Android SDK: /opt/android-sdk-linux
+[android] Waiting 5 seconds before starting emulator...
+$ /opt/android-sdk-linux/platform-tools/adb start-server
+* daemon not running; starting now at tcp:5832
+* daemon started successfully
+$ /opt/android-sdk-linux/platform-tools/adb start-server
+[android] Starting Android emulator
+$ /opt/android-sdk-linux/emulator/emulator -ports 5684,5685 -report-console tcp:5815,max=60 -avd pixel_9.0 -no-window -noaudio
+handleCpuAcceleration: feature check for hvf
+cannot add library /opt/android-sdk-linux/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so: failed
+added library /opt/android-sdk-linux/emulator/lib64/vulkan/libvulkan.so
+[android] Emulator reported that the console is available on port 5,684
+[android] Waiting for emulator to finish booting...
+$ /opt/android-sdk-linux/platform-tools/adb -s emulator-5684 wait-for-device shell getprop dev.bootcomplete
+emulator: feeding guest with passive gps data, in headless mode
+emulator: WARNING: Requested adb port (5685) is outside the recommended range [5555,5586]. ADB may not function properly for the emulator. See -help-port for details.
+Your emulator is out of date, please update by launching Android Studio:
+ - Start Android Studio
+ - Select menu "Tools > Android > SDK Manager"
+ - Click "SDK Tools" tab
+ - Check "Android Emulator" checkbox
+ - Click "OK"
+
+ERROR: Timeout after 625 milliseconds
+$ /opt/android-sdk-linux/platform-tools/adb -s emulator-5684 wait-for-device shell getprop dev.bootcomplete
+ERROR: Timeout after 625 milliseconds
+$ /opt/android-sdk-linux/platform-tools/adb -s emulator-5684 wait-for-device shell getprop dev.bootcomplete
+[android] Emulator reported that the startup process is ''
+[android] Timed-out after waiting 5 seconds for emulator
+[android] Stopping Android emulator
+emulator: Saving state on exit with session uptime 5039 ms
+$ /opt/android-sdk-linux/platform-tools/adb kill-server
+Archiving artifacts
+[htmlpublisher] Archiving HTML reports...
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/jacoco/testDebugUnitTestCoverage/html to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Debug_20Unit_20Test_20Coverage_20Report
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/tests/testDebugUnitTest to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Unit_20Test_20Results_20Report
+Finished: NOT_BUILT

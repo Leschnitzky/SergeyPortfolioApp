@@ -1,0 +1,47 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/CI-CD-DailyShiba
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/CI-CD-DailyShiba/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/development^{commit} # timeout=10
+Checking out Revision 873d704f1eccc03c07c0570b89bc5b92b4ffca98 (refs/remotes/origin/development)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+Commit message: "Test"
+ > git rev-list --no-walk 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+FATAL: /var/jenkins_home/.android/avd/generic_9.0.ini (No such file or directory)
+java.io.FileNotFoundException: /var/jenkins_home/.android/avd/generic_9.0.ini (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at org.apache.commons.io.FileUtils.openInputStream(FileUtils.java:2388)
+	at org.apache.commons.io.FileUtils.readLines(FileUtils.java:2561)
+	at org.apache.commons.io.FileUtils.readLines(FileUtils.java:2544)
+	at hudson.plugins.android_emulator.util.ConfigFileUtils.parseSimpleINIFormatFile(ConfigFileUtils.java:74)
+	at hudson.plugins.android_emulator.util.ConfigFileUtils.parseConfigFile(ConfigFileUtils.java:37)
+	at hudson.plugins.android_emulator.SdkInstaller$EmulatorPlatformCallable.call(SdkInstaller.java:576)
+	at hudson.plugins.android_emulator.SdkInstaller$EmulatorPlatformCallable.call(SdkInstaller.java:567)
+	at hudson.remoting.LocalChannel.call(LocalChannel.java:46)
+	at hudson.plugins.android_emulator.SdkInstaller.getPlatformFromExistingEmulator(SdkInstaller.java:419)
+	at hudson.plugins.android_emulator.SdkInstaller.getPlatformForEmulator(SdkInstaller.java:399)
+	at hudson.plugins.android_emulator.SdkInstaller.installDependencies(SdkInstaller.java:260)
+	at hudson.plugins.android_emulator.AndroidEmulator.setUp(AndroidEmulator.java:292)
+	at hudson.model.Build$BuildExecution.doRun(Build.java:158)
+	at hudson.model.AbstractBuild$AbstractBuildExecution.run(AbstractBuild.java:516)
+	at hudson.model.Run.execute(Run.java:1889)
+	at hudson.model.FreeStyleBuild.run(FreeStyleBuild.java:43)
+	at hudson.model.ResourceController.execute(ResourceController.java:100)
+	at hudson.model.Executor.run(Executor.java:433)
+Archiving artifacts
+[htmlpublisher] Archiving HTML reports...
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/jacoco/testDebugUnitTestCoverage/html to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Debug_20Unit_20Test_20Coverage_20Report
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/tests/testDebugUnitTest to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Unit_20Test_20Results_20Report
+Finished: FAILURE

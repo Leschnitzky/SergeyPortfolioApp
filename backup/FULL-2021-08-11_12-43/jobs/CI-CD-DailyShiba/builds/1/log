@@ -1,0 +1,72 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/CI-CD-DailyShiba
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+Cloning the remote Git repository
+Cloning repository https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git init /var/jenkins_home/workspace/CI-CD-DailyShiba # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/development^{commit} # timeout=10
+Checking out Revision 873d704f1eccc03c07c0570b89bc5b92b4ffca98 (refs/remotes/origin/development)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+Commit message: "Test"
+First time build. Skipping changelog.
+[Gradle] - Launching build.
+[CI-CD-DailyShiba] $ /var/jenkins_home/workspace/CI-CD-DailyShiba/gradlew clean testDebugUnitTestCoverage assembleDebug
+Downloading https://services.gradle.org/distributions/gradle-6.7.1-bin.zip
+..................................................................................................
+Unzipping /var/jenkins_home/.gradle/wrapper/dists/gradle-6.7.1-bin/bwlcbys1h7rz3272sye1xwiv6/gradle-6.7.1-bin.zip to /var/jenkins_home/.gradle/wrapper/dists/gradle-6.7.1-bin/bwlcbys1h7rz3272sye1xwiv6
+Set executable permissions for: /var/jenkins_home/.gradle/wrapper/dists/gradle-6.7.1-bin/bwlcbys1h7rz3272sye1xwiv6/gradle-6.7.1/bin/gradle
+
+Welcome to Gradle 6.7.1!
+
+Here are the highlights of this release:
+ - File system watching is ready for production use
+ - Declare the version of Java your build requires
+ - Java 15 support
+
+For more details see https://docs.gradle.org/6.7.1/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :app
+app: 'annotationProcessor' dependencies won't be recognized as kapt annotation processors. Please change the configuration name to 'kapt' for these artifacts: 'com.github.bumptech.glide:compiler:4.12.0'.
+File /var/jenkins_home/.android/repositories.cfg could not be loaded.
+Checking the license for package Android SDK Build-Tools 30.0.3 in /opt/android-sdk-linux/licenses
+Warning: License for package Android SDK Build-Tools 30.0.3 not accepted.
+Checking the license for package Android SDK Platform 30 in /opt/android-sdk-linux/licenses
+Warning: License for package Android SDK Platform 30 not accepted.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Could not determine the dependencies of task ':app:testDebugUnitTest'.
+> Failed to install the following Android SDK packages as some licences have not been accepted.
+     platforms;android-30 Android SDK Platform 30
+     build-tools;30.0.3 Android SDK Build-Tools 30.0.3
+  To build this project, accept the SDK license agreements and install the missing components using the Android Studio SDK Manager.
+  Alternatively, to transfer the license agreements from one workstation to another, see http://d.android.com/r/studio-ui/export-licenses.html
+  
+  Using Android SDK: /opt/android-sdk-linux
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+[8mha:////4DHh0G8Nsaq6PA1AprQ8IFzmOaOhomGIeHvHAHKit6nVAAAAYx+LCAAAAAAAAP9b85aBtbiIQT2jNKU4P0+vIKc0PTOvWC+9KDElJ1XPHUz5l5Yk5+em+uWXpNbNmqZ4mHPZIiYGhooiBimoruT8vOJ8oHJnCA1SyAABjCCFBQBI197DZQAAAA==[0mBUILD FAILED in 1m 12s
+Build step 'Invoke Gradle script' changed build result to FAILURE
+Build step 'Invoke Gradle script' marked build as failure
+ERROR: Step ‘Archive the artifacts’ failed: No artifacts are configured for archiving.
+You probably forgot to set the file pattern, so please go back to the configuration and specify it.
+If you really did mean to archive all the files in the workspace, please specify "**"
+Finished: FAILURE

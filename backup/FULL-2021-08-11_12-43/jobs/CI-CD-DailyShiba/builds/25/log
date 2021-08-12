@@ -1,0 +1,28 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/CI-CD-DailyShiba
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/CI-CD-DailyShiba/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/development^{commit} # timeout=10
+Checking out Revision 873d704f1eccc03c07c0570b89bc5b92b4ffca98 (refs/remotes/origin/development)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+Commit message: "Test"
+ > git rev-list --no-walk 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+$ /opt/android-sdk-linux/tools/bin/avdmanager list target
+[android] Using Android SDK: /opt/android-sdk-linux
+$ /opt/android-sdk-linux/platform-tools/adb start-server
+* daemon not running; starting now at tcp:5859
+* daemon started successfully
+$ /opt/android-sdk-linux/platform-tools/adb start-server
+[android] Starting Android emulator
+$ /opt/android-sdk-linux/emulator/emulator -ports 5724,5725 -report-console tcp:5831,max=60 -avd pixel_9.0 -noaudio
+/opt/android-sdk-linux/emulator/qemu/linux-x86_64/qemu-system-x86_64: error while loading shared libraries: libnss3.so: cannot open shared object file: No such file or directory

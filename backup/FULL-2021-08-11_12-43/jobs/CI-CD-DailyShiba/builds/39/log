@@ -1,0 +1,115 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/CI-CD-DailyShiba
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/CI-CD-DailyShiba/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/development^{commit} # timeout=10
+Checking out Revision 11bf834ec1f60e8dd2fc8568493c53c30f428ba5 (refs/remotes/origin/development)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 11bf834ec1f60e8dd2fc8568493c53c30f428ba5 # timeout=10
+Commit message: "Sanity commit 2"
+ > git rev-list --no-walk 11bf834ec1f60e8dd2fc8568493c53c30f428ba5 # timeout=10
+$ /opt/android-sdk-linux/tools/bin/avdmanager list target
+[android] The configured Android platform needs to be installed: android-9
+$ /opt/android-sdk-linux/tools/bin/avdmanager list target
+$ /opt/android-sdk-linux/tools/bin/avdmanager list target
+[android] Installing the 'platform-tools,android-9' SDK component(s)...
+$ /opt/android-sdk-linux/tools/bin/sdkmanager --sdk_root=/opt/android-sdk-linux platform-tools platforms;android-9
+Loading package information...                                                  
+Loading local repository...                                                     
+[                                       ] 3% Loading local repository...        
+[                                       ] 3% Fetch remote repository...         
+[=                                      ] 3% Fetch remote repository...         
+[=                                      ] 4% Fetch remote repository...         
+[=                                      ] 5% Fetch remote repository...         
+[==                                     ] 5% Fetch remote repository...         
+[==                                     ] 6% Fetch remote repository...         
+[==                                     ] 7% Fetch remote repository...         
+[==                                     ] 7% Computing updates...               
+[===                                    ] 8% Computing updates...               
+[===                                    ] 10% Computing updates...              
+[===                                    ] 10% Installing Android SDK Platform 9 
+[===                                    ] 10% Downloading android-2.3.1_r02.zip.
+[====                                   ] 10% Downloading android-2.3.1_r02.zip.
+[====                                   ] 11% Downloading android-2.3.1_r02.zip.
+[====                                   ] 12% Downloading android-2.3.1_r02.zip.
+[=====                                  ] 13% Downloading android-2.3.1_r02.zip.
+[=====                                  ] 14% Downloading android-2.3.1_r02.zip.
+[=====                                  ] 15% Downloading android-2.3.1_r02.zip.
+[======                                 ] 15% Downloading android-2.3.1_r02.zip.
+[======                                 ] 16% Downloading android-2.3.1_r02.zip.
+[======                                 ] 17% Downloading android-2.3.1_r02.zip.
+[=======                                ] 18% Downloading android-2.3.1_r02.zip.
+[=======                                ] 19% Downloading android-2.3.1_r02.zip.
+[=======                                ] 20% Downloading android-2.3.1_r02.zip.
+[========                               ] 20% Downloading android-2.3.1_r02.zip.
+[========                               ] 21% Downloading android-2.3.1_r02.zip.
+[========                               ] 22% Downloading android-2.3.1_r02.zip.
+[=========                              ] 23% Downloading android-2.3.1_r02.zip.
+[=========                              ] 24% Downloading android-2.3.1_r02.zip.
+[=========                              ] 25% Downloading android-2.3.1_r02.zip.
+[==========                             ] 25% Downloading android-2.3.1_r02.zip.
+[==========                             ] 26% Downloading android-2.3.1_r02.zip.
+[==========                             ] 27% Downloading android-2.3.1_r02.zip.
+[===========                            ] 28% Downloading android-2.3.1_r02.zip.
+[===========                            ] 29% Downloading android-2.3.1_r02.zip.
+[===========                            ] 30% Downloading android-2.3.1_r02.zip.
+[============                           ] 30% Downloading android-2.3.1_r02.zip.
+[============                           ] 31% Downloading android-2.3.1_r02.zip.
+[============                           ] 32% Downloading android-2.3.1_r02.zip.
+[============                           ] 33% Downloading android-2.3.1_r02.zip.
+[============                           ] 33% Unzipping...                      
+[============                           ] 33% Unzipping... android-2.3.1_r02-lin
+[=============                          ] 33% Unzipping... android-2.3.1_r02-lin
+[=============                          ] 34% Unzipping... android-2.3.1_r02-lin
+[=============                          ] 35% Unzipping... android-2.3.1_r02-lin
+[==============                         ] 35% Unzipping... android-2.3.1_r02-lin
+[==============                         ] 36% Unzipping... android-2.3.1_r02-lin
+[==============                         ] 37% Unzipping... android-2.3.1_r02-lin
+[===============                        ] 38% Unzipping... android-2.3.1_r02-lin
+[===============                        ] 39% Unzipping... android-2.3.1_r02-lin
+[===============                        ] 40% Unzipping... android-2.3.1_r02-lin
+[================                       ] 40% Unzipping... android-2.3.1_r02-lin
+[================                       ] 41% Unzipping... android-2.3.1_r02-lin
+[================                       ] 42% Unzipping... android-2.3.1_r02-lin
+[=================                      ] 43% Unzipping... android-2.3.1_r02-lin
+[=================                      ] 44% Unzipping... android-2.3.1_r02-lin
+[=================                      ] 45% Unzipping... android-2.3.1_r02-lin
+[==================                     ] 45% Unzipping... android-2.3.1_r02-lin
+[==================                     ] 46% Unzipping... android-2.3.1_r02-lin
+[==================                     ] 47% Unzipping... android-2.3.1_r02-lin
+[===================                    ] 48% Unzipping... android-2.3.1_r02-lin
+[===================                    ] 49% Unzipping... android-2.3.1_r02-lin
+[===================                    ] 50% Unzipping... android-2.3.1_r02-lin
+[====================                   ] 50% Unzipping... android-2.3.1_r02-lin
+[====================                   ] 51% Unzipping... android-2.3.1_r02-lin
+[====================                   ] 52% Unzipping... android-2.3.1_r02-lin
+[=====================                  ] 53% Unzipping... android-2.3.1_r02-lin
+[=====================                  ] 54% Unzipping... android-2.3.1_r02-lin
+[=====================                  ] 55% Unzipping... android-2.3.1_r02-lin
+[=======================================] 100% Unzipping... android-2.3.1_r02-li
+[android] Using Android SDK: /opt/android-sdk-linux
+[android] Creating Android AVD: /var/jenkins_home/.android/avd/hudson_en-US_213_WQVGA_android-9.avd
+[android] /opt/android-sdk-linux/tools/bin/avdmanager create avd -f -n hudson_en-US_213_WQVGA_android-9 -k platforms;android-9
+	Loading local repository...                                                     
+	[=========                              ] 25% Loading local repository...       
+	[=========                              ] 25% Fetch remote repository...        
+	[=======================================] 100% Fetch remote repository...       
+	com.android.sdklib.repository.generated.repository.v1.PlatformDetailsType cannot be cast to com.android.sdklib.repository.meta.DetailsTypes$SysImgDetailsType
+	
+[android] Failed to run AVD creation command
+[android] Could not create Android emulator: Failed to run AVD creation command
+Archiving artifacts
+[htmlpublisher] Archiving HTML reports...
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/jacoco/testDebugUnitTestCoverage/html to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Debug_20Unit_20Test_20Coverage_20Report
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/tests/testDebugUnitTest to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Unit_20Test_20Results_20Report
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/androidTests/connected to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Android_20UI_20Test_20Report
+Finished: NOT_BUILT

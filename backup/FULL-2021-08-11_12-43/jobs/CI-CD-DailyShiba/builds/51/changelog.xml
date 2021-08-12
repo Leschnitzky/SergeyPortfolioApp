@@ -1,0 +1,10 @@
+commit 23fc2f90817b07a1ba4179ba0e0ff3964a34b7ef
+tree c815774e07bd34c175e269d33a8f312dcbac57a5
+parent 3a26f0893a1b433507cc33adbfff240082052b96
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:33:24 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:33:24 +0300
+
+    Testing a failing webhook
+
+
+:100644 100644 045dbba9dbef2dce231ce53c6fbdd3b9b8ea0f13 78fb6854c035ac0afc7618a973fa9518ee32e179 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt

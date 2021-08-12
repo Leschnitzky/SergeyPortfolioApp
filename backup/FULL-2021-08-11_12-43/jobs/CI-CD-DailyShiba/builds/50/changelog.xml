@@ -1,0 +1,11 @@
+commit 3a26f0893a1b433507cc33adbfff240082052b96
+tree 5c8cf96ca3525d7cf7dea79e91586d9078d5fb47
+parent 4ec05bf61d6aa7f7d591c9b519c1f73ed470eb92
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:24:33 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:24:33 +0300
+
+    First Jenkins UI Based commit, from now on work on features and merge to development
+
+
+:100644 100644 da11e8baddec8f05d881429da1ac8bce7047bb68 7c4f309ddbb4beca77b2de2b2afe2f427db4e72f M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 78fb6854c035ac0afc7618a973fa9518ee32e179 045dbba9dbef2dce231ce53c6fbdd3b9b8ea0f13 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt

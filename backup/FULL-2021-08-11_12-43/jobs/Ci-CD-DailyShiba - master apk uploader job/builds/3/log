@@ -1,0 +1,45 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision c66ba114c04e36d8c0a3f0ca1247a7ebeef0d519 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c66ba114c04e36d8c0a3f0ca1247a7ebeef0d519 # timeout=10
+Commit message: "Removed jenkins:"
+ > git rev-list --no-walk c66ba114c04e36d8c0a3f0ca1247a7ebeef0d519 # timeout=10
+[Gradle] - Launching build.
+[Ci-CD-DailyShiba - master apk uploader job] $ "/var/jenkins_home/workspace/Ci-CD-DailyShiba - master apk uploader job/gradlew" clean assembleRelease
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :app
+app: 'annotationProcessor' dependencies won't be recognized as kapt annotation processors. Please change the configuration name to 'kapt' for these artifacts: 'com.github.bumptech.glide:compiler:4.12.0'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Could not determine the dependencies of task ':app:lintVitalRelease'.
+> Could not resolve all artifacts for configuration ':app:debugUnitTestCompileClasspath'.
+   > Could not find org.assertj:assertj-core:3.20.
+     Required by:
+         project :app
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+[8mha:////4DHh0G8Nsaq6PA1AprQ8IFzmOaOhomGIeHvHAHKit6nVAAAAYx+LCAAAAAAAAP9b85aBtbiIQT2jNKU4P0+vIKc0PTOvWC+9KDElJ1XPHUz5l5Yk5+em+uWXpNbNmqZ4mHPZIiYGhooiBimoruT8vOJ8oHJnCA1SyAABjCCFBQBI197DZQAAAA==[0mBUILD FAILED in 17s
+Build step 'Invoke Gradle script' changed build result to FAILURE
+Build step 'Invoke Gradle script' marked build as failure
+Skipping upload to Google Play due to build result
+Finished: FAILURE

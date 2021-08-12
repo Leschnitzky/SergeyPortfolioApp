@@ -1,0 +1,57 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<build>
+  <actions>
+    <hudson.model.CauseAction>
+      <causeBag class="linked-hash-map">
+        <entry>
+          <hudson.model.Cause_-UserIdCause>
+            <userId>leschinsky</userId>
+          </hudson.model.Cause_-UserIdCause>
+          <int>1</int>
+        </entry>
+      </causeBag>
+    </hudson.model.CauseAction>
+    <hudson.plugins.git.util.BuildData plugin="git@4.8.1">
+      <buildsByBranchName>
+        <entry>
+          <string>refs/remotes/origin/development</string>
+          <hudson.plugins.git.util.Build>
+            <marked plugin="git-client@3.9.0">
+              <sha1>873d704f1eccc03c07c0570b89bc5b92b4ffca98</sha1>
+              <branches class="list">
+                <hudson.plugins.git.Branch>
+                  <sha1 reference="../../../sha1"/>
+                  <name>refs/remotes/origin/development</name>
+                </hudson.plugins.git.Branch>
+              </branches>
+            </marked>
+            <revision reference="../marked"/>
+            <hudsonBuildNumber>2</hudsonBuildNumber>
+          </hudson.plugins.git.util.Build>
+        </entry>
+      </buildsByBranchName>
+      <lastBuild reference="../buildsByBranchName/entry/hudson.plugins.git.util.Build"/>
+      <remoteUrls>
+        <string>https://github.com/Leschnitzky/SergeyPortfolioApp</string>
+      </remoteUrls>
+    </hudson.plugins.git.util.BuildData>
+    <hudson.scm.SCMRevisionState_-None/>
+  </actions>
+  <queueId>2</queueId>
+  <timestamp>1628509191954</timestamp>
+  <startTime>1628509191957</startTime>
+  <result>FAILURE</result>
+  <duration>158066</duration>
+  <charset>UTF-8</charset>
+  <keepLog>false</keepLog>
+  <builtOn></builtOn>
+  <workspace>/var/jenkins_home/workspace/CI-CD-DailyShiba</workspace>
+  <hudsonVersion>2.305</hudsonVersion>
+  <scm class="hudson.plugins.git.GitChangeLogParser" plugin="git@4.8.1">
+    <authorOrCommitter>false</authorOrCommitter>
+    <showEntireCommitSummaryInChanges>true</showEntireCommitSummaryInChanges>
+  </scm>
+  <culprits class="java.util.Collections$UnmodifiableSet">
+    <c class="sorted-set"/>
+  </culprits>
+</build>

@@ -1,0 +1,15 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<hudson.tasks.Mailer_-DescriptorImpl plugin="mailer@1.34">
+  <defaultSuffix></defaultSuffix>
+  <hudsonUrl>http://localhost:8080/</hudsonUrl>
+  <authentication>
+    <username>leschinskysergey@gmail.com</username>
+    <password>{AQAAABAAAAAguGUO4I+0dQpLYFkkyA5GuzUYU52degQd4CKyAMkqZCaoiENcrEevwmBGXhhZjYPh}</password>
+  </authentication>
+  <replyToAddress>noreply@wanttolearn.com</replyToAddress>
+  <smtpHost>smtp.gmail.com</smtpHost>
+  <useSsl>true</useSsl>
+  <useTls>false</useTls>
+  <smtpPort>465</smtpPort>
+  <charset>UTF-8</charset>
+</hudson.tasks.Mailer_-DescriptorImpl>
