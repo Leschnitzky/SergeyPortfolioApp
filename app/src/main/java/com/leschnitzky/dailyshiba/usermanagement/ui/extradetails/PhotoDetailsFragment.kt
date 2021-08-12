@@ -3,7 +3,6 @@ package com.leschnitzky.dailyshiba.usermanagement.ui.extradetails
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.media.AudioRecord.MetricsConstants.SOURCE
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,10 +10,8 @@ import android.transition.TransitionInflater
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -23,7 +20,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
@@ -33,15 +29,13 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.awesomedialog.*
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.leschnitzky.dailyshiba.R
 import com.leschnitzky.dailyshiba.UserIntent
 import com.leschnitzky.dailyshiba.usermanagement.ui.UserViewModel
 import com.leschnitzky.dailyshiba.usermanagement.ui.extradetails.state.PhotoDetailsViewState
-import com.leschnitzky.dailyshiba.usermanagement.ui.favorites.ShibaFavoritesFragmentDirections
-import com.leschnitzky.dailyshiba.utils.GeneralTouchListener
-import com.leschnitzky.dailyshiba.utils.OnDoubleClickListener
-import com.leschnitzky.dailyshiba.utils.OnSwipeTouchListener
+import com.leschnitzky.dailyshiba.utils.listeners.GeneralTouchListener
+import com.leschnitzky.dailyshiba.utils.listeners.OnDoubleClickListener
+import com.leschnitzky.dailyshiba.utils.listeners.OnSwipeTouchListener
 
 import com.leschnitzky.dailyshiba.utils.getKey
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,9 +45,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.InputStream
-import java.net.URI
 
 
 @AndroidEntryPoint
@@ -158,7 +149,8 @@ class PhotoDetailsFragment : Fragment() {
     }
 
     private fun setupClicks() {
-        dogImage.setOnTouchListener(GeneralTouchListener(
+        dogImage.setOnTouchListener(
+            GeneralTouchListener(
             object : OnDoubleClickListener() {
                 override fun onSingleClick(v: View?) {
 

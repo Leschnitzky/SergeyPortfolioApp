@@ -1,0 +1,266 @@
+commit 0fc7d91deb4b3151a9cc03fc2c0e8406fc071734
+tree 439530c73dd0e8a5ed2014326fc2e4a0ee15b70c
+parent 23fc2f90817b07a1ba4179ba0e0ff3964a34b7ef
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 14:47:26 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-11 14:47:26 +0300
+
+    increased version, test for automated apk upload
+
+
+:100644 100644 55abcef4b1aead28cfbf50320f6775164e24c637 aacc97d94504c2ae77fdebd2cc241473810fdca7 M	app/build.gradle
+commit 23fc2f90817b07a1ba4179ba0e0ff3964a34b7ef
+tree c815774e07bd34c175e269d33a8f312dcbac57a5
+parent 3a26f0893a1b433507cc33adbfff240082052b96
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:33:24 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:33:24 +0300
+
+    Testing a failing webhook
+
+
+:100644 100644 045dbba9dbef2dce231ce53c6fbdd3b9b8ea0f13 78fb6854c035ac0afc7618a973fa9518ee32e179 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+commit 3a26f0893a1b433507cc33adbfff240082052b96
+tree 5c8cf96ca3525d7cf7dea79e91586d9078d5fb47
+parent 4ec05bf61d6aa7f7d591c9b519c1f73ed470eb92
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:24:33 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:24:33 +0300
+
+    First Jenkins UI Based commit, from now on work on features and merge to development
+
+
+:100644 100644 da11e8baddec8f05d881429da1ac8bce7047bb68 7c4f309ddbb4beca77b2de2b2afe2f427db4e72f M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 78fb6854c035ac0afc7618a973fa9518ee32e179 045dbba9dbef2dce231ce53c6fbdd3b9b8ea0f13 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+commit 4ec05bf61d6aa7f7d591c9b519c1f73ed470eb92
+tree d4bbda3b4535107f2adca142c5b3d5730bd75a37
+parent 11bf834ec1f60e8dd2fc8568493c53c30f428ba5
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:09:22 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 17:09:22 +0300
+
+    Sanity commit 3
+
+
+:100644 100644 93a12b953e0c928e90daf3f18cf5440b5587f11e da11e8baddec8f05d881429da1ac8bce7047bb68 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 1f784dc626e5418b8952b44b1ff894d929e98482 78fb6854c035ac0afc7618a973fa9518ee32e179 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+commit 11bf834ec1f60e8dd2fc8568493c53c30f428ba5
+tree 6361af8315a141f83793f6a3a8a76974ef6d8d82
+parent 00d66901bd60e59c9032beb6c868423de0193864
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 15:17:50 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-10 15:17:50 +0300
+
+    Sanity commit 2
+
+
+:100644 100644 5fac13725a255e4be44707f78828c68e910d67ae 55abcef4b1aead28cfbf50320f6775164e24c637 M	app/build.gradle
+:000000 100644 0000000000000000000000000000000000000000 52bc08b4cef131dabd9a570833e7e0aa48531261 A	app/src/androidTest/java/com/leschnitzky/dailyshiba/di/TestModule.kt
+:100644 100644 b91a2661a552084606cd989f4e3123211123be74 93a12b953e0c928e90daf3f18cf5440b5587f11e M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 1ab66f5adc73d0ec0a667b3f30edf8bf4381bc7e 1f784dc626e5418b8952b44b1ff894d929e98482 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+:000000 100644 0000000000000000000000000000000000000000 bb11b68c1d336f4cb2718aa89e045408bf94cf68 A	app/src/androidTest/java/com/leschnitzky/dailyshiba/util/TestCoroutineContextProvider.kt
+:100644 100644 822ecf7bca2cb10194103f0e95553133df578dc1 ffbe4cd45a02dcb4e9ccb231a40fe625b9ae0248 R063	app/src/androidTest/java/com/leschnitzky/dailyshiba/util/MainCoroutineRule.kt	app/src/androidTest/java/com/leschnitzky/dailyshiba/util/TestingCoroutineRule.kt
+:100644 100644 f6a2b068ac9acd9a3a4f7c1450d932e97b66e8bb d5060cec5d0feb1b740d86ffa71f73c7b4da7679 M	app/src/main/java/com/leschnitzky/dailyshiba/di/UserManagementModule.kt
+:100644 100644 d3e54a357cd60f4aa198543aa9f506a4fa4d9bed 39fe1c9196dca1756c7f6345f6eae3f7942065d3 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/repository/RepositoryImpl.kt
+:100644 100644 5fca0e8f3fc621036c02bd5ebba027d69e1ffd63 7ba6ccaeb6ad9cf0498e098dd2e3d0a232e7423e M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/repository/retrofit/RetrofitRepository.kt
+:100644 100644 273f4f1d6cb6020f8689643810ae788222003233 e05612d0764c8aca5bf2697dae0e9bf4c2e7b0a9 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/repository/retrofit/RetrofitRepositoryImpl.kt
+:100644 100644 7745c324616bc8d2a0dd29e643b01dbd2ea9c2bf 38befc112ea0b71c6f12e5c412349f21c6184f98 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/ui/UserViewModel.kt
+:100644 100644 a60584f2ecd8bd0a6c3a224ae14d2aa2767e27d9 ad4ef1cdcdf61aa57eef72c4b5e1545b9f683151 M	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/ui/extradetails/PhotoDetailsFragment.kt
+:000000 100644 0000000000000000000000000000000000000000 bcd2f1a0a305989aea09dd2a8956cbbe7ea337aa A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineContextProvider.kt
+:000000 100644 0000000000000000000000000000000000000000 e9160ba5a84059cc898aa4628a38098cd6f632f1 A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineContextProviderImpl.kt
+:000000 100644 0000000000000000000000000000000000000000 4f091e02a7f1c72a525fdd20f79499307a1c6c57 A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineScopeProvider.kt
+:000000 100644 0000000000000000000000000000000000000000 c29b281a6c87c5887deae25046b62023229795ab A	app/src/main/java/com/leschnitzky/dailyshiba/utils/CoroutineScopeProviderImpl.kt
+:100644 000000 4fd29431eafab2cb1f32a4ffc9a4ef0e57f1453d 0000000000000000000000000000000000000000 D	app/src/main/java/com/leschnitzky/dailyshiba/utils/GlobalTags.kt
+:100644 100644 1e2b3e014c19e427452bc1c8ccfaf65730e9286a c7cb14a6d6d4b18d9dd7d4d8a8e3ee55e885c56c R090	app/src/main/java/com/leschnitzky/dailyshiba/utils/GeneralTouchListeners.kt	app/src/main/java/com/leschnitzky/dailyshiba/utils/listeners/GeneralTouchListeners.kt
+:100644 100644 34c3a543171e3003fa9c5fdfd7aea39c7fb71121 6ebe18bcb7c2ed1a797a7458804fb248d6995a9e R096	app/src/main/java/com/leschnitzky/dailyshiba/utils/OnDoubleClickListener.kt	app/src/main/java/com/leschnitzky/dailyshiba/utils/listeners/OnDoubleClickListener.kt
+:100644 100644 ccbe59be3e7ee1387aff8b96af588ccd8e851f93 bb37a855eef60be72de37495828b4f20b8a6bd04 R097	app/src/main/java/com/leschnitzky/dailyshiba/utils/OnSwipeListener.kt	app/src/main/java/com/leschnitzky/dailyshiba/utils/listeners/OnSwipeListener.kt
+:100644 100644 034d52bb1a06450197a090c77398a2ce6413bf68 b08744f9986f45339dff8ea0099178245c76dc58 R062	app/src/test/java/com/leschnitzky/dailyshiba/MainCoroutineRule.kt	app/src/test/java/com/leschnitzky/dailyshiba/TestCoroutineRule.kt
+:000000 100644 0000000000000000000000000000000000000000 d82865a9f02684d2c3a13b53e8466e6d66aff003 A	app/src/test/java/com/leschnitzky/dailyshiba/di/TestCoroutineContextProvider.kt
+:100644 000000 ee31285147d9735eeb1b813eec075fb1de6a54b1 0000000000000000000000000000000000000000 D	app/src/test/java/com/leschnitzky/dailyshiba/di/TestModule.kt
+:100644 100644 eed0a56fa65b6b8fdb000a93cb28918ccbdf7e10 ecfe5cd9a97d36f4fc4fe908db5717f54e6c312c M	app/src/test/java/com/leschnitzky/dailyshiba/viewmodel/UserViewModelTest.kt
+commit 00d66901bd60e59c9032beb6c868423de0193864
+tree 22598b36e71e67aeba648f2a728795fb0ee626f0
+parent 6d11096ddb6d0c8659a62214ea05a63e01ba7715
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 17:04:16 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 17:04:16 +0300
+
+    Sanity commit 2
+
+
+:100644 100644 a5be391c966276ebf105e800c52efe24ed602705 1ab66f5adc73d0ec0a667b3f30edf8bf4381bc7e M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+commit 6d11096ddb6d0c8659a62214ea05a63e01ba7715
+tree 64ae9bc56e677fbf09ba1f2c7aafef864732d565
+parent 744a1d194eea29f992c4a57f515fbadbc6f4f824
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 17:01:22 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 17:01:22 +0300
+
+    Sanity commit
+
+
+:100644 100644 b4953b56a37ad8cc7b897976b7431244d66f77fd b91a2661a552084606cd989f4e3123211123be74 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+commit 744a1d194eea29f992c4a57f515fbadbc6f4f824
+tree 3dc2b7fd282d7b90e616b91952042ce887fa2db1
+parent 873d704f1eccc03c07c0570b89bc5b92b4ffca98
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 16:42:01 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 16:42:01 +0300
+
+    Still working on Jenkins
+
+
+:100644 100644 3b58a170211793f95ccb1fc3ccb2f38588a65908 b4953b56a37ad8cc7b897976b7431244d66f77fd M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:000000 100644 0000000000000000000000000000000000000000 54608565e106810f808955116ccf73426775318d A	app/src/androidTest/resources/jacoco-agent.properties
+:000000 100644 0000000000000000000000000000000000000000 9da99e58e4986f72a93f6ae34e75657c59ae7d2e A	docker-compose.yml
+commit 873d704f1eccc03c07c0570b89bc5b92b4ffca98
+tree acc39c7f16fdf6e56e7faa7c98fc7d58806486af
+parent 2dc444507e95fcff9283abb12a1867bcc33270b8
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 11:48:15 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 11:48:15 +0300
+
+    Test
+
+
+:100644 100644 b713c8a0ee40cd7dde331722272c05cdcc934793 5fac13725a255e4be44707f78828c68e910d67ae M	app/build.gradle
+commit 2dc444507e95fcff9283abb12a1867bcc33270b8
+tree 2b0a2f26daf88d369bc9ba5910e725da77c30a15
+parent b47c14144c46670aaef4e156416d6706f7f71c9f
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 11:08:33 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 11:08:33 +0300
+
+    Test
+
+
+:100644 100644 024dd1b9fafe728256a7797c763274ee20779f54 eed0a56fa65b6b8fdb000a93cb28918ccbdf7e10 M	app/src/test/java/com/leschnitzky/dailyshiba/viewmodel/UserViewModelTest.kt
+commit b47c14144c46670aaef4e156416d6706f7f71c9f
+tree 30e7eb63b9fd8cb169b410ce7282105316c0f681
+parent fecc9cac35fd335e2a0064e5bd85152c467dec3c
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 11:02:41 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 11:02:41 +0300
+
+    Test again
+
+
+:100644 100644 82516d0dffb3ec465abdfc61424f3c8bc1b81227 024dd1b9fafe728256a7797c763274ee20779f54 M	app/src/test/java/com/leschnitzky/dailyshiba/viewmodel/UserViewModelTest.kt
+commit d45b91327e2cbb3a70bcd3b93dfe00884fcc0ed2
+tree d030fdcf32d7a5e2c30a9dac0962f35946357935
+parent 24f20ae532256b82829acbf94f92dfe9a40ae061
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 10:56:27 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-09 10:56:27 +0300
+
+    Testing git hook
+
+
+:100644 100644 b9fb4dff0363fda5ed783a98714ccb3144c4ecc4 b713c8a0ee40cd7dde331722272c05cdcc934793 M	app/build.gradle
+:100644 100644 8cb4c5a5b4f858fcb0e2f03c12069d61a0b6046f f6a2b068ac9acd9a3a4f7c1450d932e97b66e8bb R099	app/src/main/java/com/leschnitzky/dailyshiba/usermanagement/di/UserManagementModule.kt	app/src/main/java/com/leschnitzky/dailyshiba/di/UserManagementModule.kt
+:100644 000000 a3813bed7459adfebeec35a28f1426c33d58e173 0000000000000000000000000000000000000000 D	app/src/test/java/com/leschnitzky/dailyshiba/ExampleUnitTest.kt
+:000000 100644 0000000000000000000000000000000000000000 9694d4abb70841f080238f801fa689ae2c60befb A	app/src/test/java/com/leschnitzky/dailyshiba/HelperFunctions.kt
+:000000 100644 0000000000000000000000000000000000000000 034d52bb1a06450197a090c77398a2ce6413bf68 A	app/src/test/java/com/leschnitzky/dailyshiba/MainCoroutineRule.kt
+:100644 100644 9a554fcb9e2eed0697b6226f96fe3600a679e33d e62f0028a49b94015a19579c9cdbf8ff68cfa669 R099	app/src/androidTest/java/com/leschnitzky/dailyshiba/usermanagement/di/FakeRepositoryImpl.kt	app/src/test/java/com/leschnitzky/dailyshiba/di/FakeRepositoryImpl.kt
+:100644 100644 0124218eb8a96351f5ed986755eb1559cbe656d3 ee31285147d9735eeb1b813eec075fb1de6a54b1 R075	app/src/androidTest/java/com/leschnitzky/dailyshiba/usermanagement/di/TestModule.kt	app/src/test/java/com/leschnitzky/dailyshiba/di/TestModule.kt
+:000000 100644 0000000000000000000000000000000000000000 82516d0dffb3ec465abdfc61424f3c8bc1b81227 A	app/src/test/java/com/leschnitzky/dailyshiba/viewmodel/UserViewModelTest.kt
+commit 24f20ae532256b82829acbf94f92dfe9a40ae061
+tree ffd4bb8b8af9af139ed3a9feb5d064f9f38f0083
+parent ad414d2c868adf477b05151a6a1a74d50f8780ad
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 13:22:38 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:47:26 +0300
+
+    first branch to a CI/CD env
+    
+    Removed debug keystore file for jenkins
+    
+    Some minor changes to make unit tests work in jenkins
+    
+    more jenkins changes
+    
+    ignore -0
+    
+    ignore -1
+    
+    ignore -2
+
+
+:100644 100644 3164488286d5200ddf185d75017ee54d21ffe672 b9fb4dff0363fda5ed783a98714ccb3144c4ecc4 M	app/build.gradle
+:100644 100644 2fa47521d96b8719f557109dfcf770421d26d3ab 3b58a170211793f95ccb1fc3ccb2f38588a65908 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 1285fc3b8144bbbf0d194e1ce89bec12933d8881 a5be391c966276ebf105e800c52efe24ed602705 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+:100644 100644 facc66f9db99d145f6acf9aff4ef90039984c83a a3813bed7459adfebeec35a28f1426c33d58e173 M	app/src/test/java/com/leschnitzky/dailyshiba/ExampleUnitTest.kt
+commit 82ac5316099c239792bc88ab1d725267d98a0c27
+tree ffd4bb8b8af9af139ed3a9feb5d064f9f38f0083
+parent d240144028a476bd0430ebd29d8c27f1c3aed09d
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:40:52 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:40:52 +0300
+
+    ignore -2
+
+
+:100644 100644 15d0da6b2772fa6a4cf82681a4c15b82e5436a65 b9fb4dff0363fda5ed783a98714ccb3144c4ecc4 M	app/build.gradle
+commit d240144028a476bd0430ebd29d8c27f1c3aed09d
+tree 4f06435480ec1d08b0b047ab898101509c961bed
+parent 8c77f56a788bcd5d8f417e0e71326f2065aca6e7
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:36:16 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:36:16 +0300
+
+    ignore -1
+
+
+:100644 100644 a7a1c89a287d71653528c7988d20d14b4b6a66bf 15d0da6b2772fa6a4cf82681a4c15b82e5436a65 M	app/build.gradle
+commit 8c77f56a788bcd5d8f417e0e71326f2065aca6e7
+tree 813719e56898e70997d003859403adbb3e52d584
+parent ee7026518936e531c870bda79b27076991e300b1
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:32:41 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:32:41 +0300
+
+    ignore -0
+
+
+:100644 100644 b0cb0fbcaeb4aa56cf63634dba25c311537884f1 a3813bed7459adfebeec35a28f1426c33d58e173 M	app/src/test/java/com/leschnitzky/dailyshiba/ExampleUnitTest.kt
+commit ee7026518936e531c870bda79b27076991e300b1
+tree d113678633180eb82769887cb226c809f96a4302
+parent cf3e2f14654f941cfaf1efddb8b5268025007346
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:22:13 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:22:13 +0300
+
+    more jenkins changes
+
+
+:100644 100644 c6247f92f2822415ba6706f7634ca6b9068b3f9d a7a1c89a287d71653528c7988d20d14b4b6a66bf M	app/build.gradle
+:100644 100644 facc66f9db99d145f6acf9aff4ef90039984c83a b0cb0fbcaeb4aa56cf63634dba25c311537884f1 M	app/src/test/java/com/leschnitzky/dailyshiba/ExampleUnitTest.kt
+commit cf3e2f14654f941cfaf1efddb8b5268025007346
+tree 0feb8767e7c1a8ee2beeae650177c3370938b129
+parent ed53e5c3af6475bf676e3c640e10e5063fb8907a
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:05:21 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:05:21 +0300
+
+    Some minor changes to make unit tests work in jenkins
+
+
+:100644 100644 d90807497ac406c5f260d3c96a72d508671f63ea c6247f92f2822415ba6706f7634ca6b9068b3f9d M	app/build.gradle
+commit ed53e5c3af6475bf676e3c640e10e5063fb8907a
+tree 3c31caeb0f4fc9a3f5c7f717215862291a26d3e2
+parent ed956372c8ab63b8f813f0b2765d4e7a211f2def
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:00:23 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 14:00:23 +0300
+
+    Removed debug keystore file for jenkins
+
+
+:100644 100644 6094eaf3bd8ad1e0cf201bee1cb1be7412fff5ae d90807497ac406c5f260d3c96a72d508671f63ea M	app/build.gradle
+commit ed956372c8ab63b8f813f0b2765d4e7a211f2def
+tree a210ec697ca5ff5926bda0f9d8b5cb5a7dfa771d
+parent ad414d2c868adf477b05151a6a1a74d50f8780ad
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 13:22:38 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 13:22:38 +0300
+
+    first branch to a CI/CD env
+
+
+:100644 100644 3164488286d5200ddf185d75017ee54d21ffe672 6094eaf3bd8ad1e0cf201bee1cb1be7412fff5ae M	app/build.gradle
+:100644 100644 2fa47521d96b8719f557109dfcf770421d26d3ab 3b58a170211793f95ccb1fc3ccb2f38588a65908 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 1285fc3b8144bbbf0d194e1ce89bec12933d8881 a5be391c966276ebf105e800c52efe24ed602705 M	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+commit ad414d2c868adf477b05151a6a1a74d50f8780ad
+tree 948610dadb6b9355615db141a4b394bcacd738ba
+parent c66ba114c04e36d8c0a3f0ca1247a7ebeef0d519
+author Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 11:28:33 +0300
+committer Sergey Leschinsky <leschinskysergey@gmail.com> 2021-08-08 11:28:33 +0300
+
+    Test hook
+
+
+:100644 100644 67e1c2334ae49d195d9f6d2d985629da66970cc9 2fa47521d96b8719f557109dfcf770421d26d3ab R095	app/src/androidTest/java/com/leschnitzky/dailyshiba/tests/unit_tests/fragments/LoginFragmentTest.kt	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/LoginFragmentTest.kt
+:100644 100644 21903ec90dc41ccaf1e0da6a8a8406b45d07ecd4 1285fc3b8144bbbf0d194e1ce89bec12933d8881 R097	app/src/androidTest/java/com/leschnitzky/dailyshiba/tests/unit_tests/fragments/RegisterFragmentTest.kt	app/src/androidTest/java/com/leschnitzky/dailyshiba/fragments/RegisterFragmentTest.kt
+:100644 000000 e5cde6c2eac13973a7be5d28e4d51d7f5c3eb722 0000000000000000000000000000000000000000 D	app/src/androidTest/java/com/leschnitzky/dailyshiba/tests/unit_tests/fragments/ProfileFragmentTest.kt
+:100644 000000 0f9fa1cf902bf15d53c55a886405abe4a651ae22 0000000000000000000000000000000000000000 D	app/src/androidTest/java/com/leschnitzky/dailyshiba/tests/unit_tests/viewmodel/UserViewModelTest.kt
+:100644 100644 ed77edd9490631001fb93fe517eef8f26030840c bbc3700a7d815814072b628692d706f146e41ab7 M	app/src/main/java/com/leschnitzky/dailyshiba/MainContract.kt

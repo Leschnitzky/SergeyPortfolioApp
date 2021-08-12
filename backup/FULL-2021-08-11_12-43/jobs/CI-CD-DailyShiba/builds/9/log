@@ -1,0 +1,44 @@
+Started by user [8mha:////4EFCrZlXM0+7WV3QCMJM/N6BhivS3nNQnezWKeIHJNu4AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgYB/dLi1CL9nNTi5IzMvOLsSgAWQLGXxQAAAA==[0mSergey Leschinsky
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/CI-CD-DailyShiba
+The recommended git tool is: NONE
+using credential fc51b632-51c1-4bd9-a00c-54689bcba68d
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/CI-CD-DailyShiba/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Leschnitzky/SergeyPortfolioApp # timeout=10
+Fetching upstream changes from https://github.com/Leschnitzky/SergeyPortfolioApp
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Leschnitzky/SergeyPortfolioApp +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/development^{commit} # timeout=10
+Checking out Revision 873d704f1eccc03c07c0570b89bc5b92b4ffca98 (refs/remotes/origin/development)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+Commit message: "Test"
+ > git rev-list --no-walk 873d704f1eccc03c07c0570b89bc5b92b4ffca98 # timeout=10
+[Gradle] - Launching build.
+[CI-CD-DailyShiba] $ /var/jenkins_home/workspace/CI-CD-DailyShiba/gradlew clean testDebugUnitTestCoverage connectedAndroidDebugTest assembleDebug
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :app
+app: 'annotationProcessor' dependencies won't be recognized as kapt annotation processors. Please change the configuration name to 'kapt' for these artifacts: 'com.github.bumptech.glide:compiler:4.12.0'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Task 'connectedAndroidDebugTest' not found in root project 'SergeyPortfolioApp'.
+
+* Try:
+Run gradlew tasks to get a list of available tasks. Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+[8mha:////4DHh0G8Nsaq6PA1AprQ8IFzmOaOhomGIeHvHAHKit6nVAAAAYx+LCAAAAAAAAP9b85aBtbiIQT2jNKU4P0+vIKc0PTOvWC+9KDElJ1XPHUz5l5Yk5+em+uWXpNbNmqZ4mHPZIiYGhooiBimoruT8vOJ8oHJnCA1SyAABjCCFBQBI197DZQAAAA==[0mBUILD FAILED in 14s
+Build step 'Invoke Gradle script' changed build result to FAILURE
+Build step 'Invoke Gradle script' marked build as failure
+Archiving artifacts
+[htmlpublisher] Archiving HTML reports...
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/jacoco/testDebugUnitTestCoverage/html to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Debug_20Unit_20Test_20Coverage_20Report
+[htmlpublisher] Archiving at PROJECT level /var/jenkins_home/workspace/CI-CD-DailyShiba/app/build/reports/tests/testDebugUnitTest to /var/jenkins_home/jobs/CI-CD-DailyShiba/htmlreports/Unit_20Test_20Results_20Report
+Finished: FAILURE
