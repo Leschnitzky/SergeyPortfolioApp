@@ -26,9 +26,9 @@ android {
         }
         release {
             storeFile file('/home/sergey/Downloads/sergey_portfolio_keystore.jks')
-            storePassword 'xrdhh748159263'
-            keyAlias 'shiba'
-            keyPassword 'xrdhh748159263'
+            storePassword=RELEASE_STORE_PASSWORD
+            keyAlias=RELEASE_KEY_ALIAS
+            keyPassword=RELEASE_KEY_PASSWORD
         }
     }
     compileSdkVersion 30
@@ -38,8 +38,8 @@ android {
         applicationId "com.leschnitzky.dailyshiba"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 17
-        versionName "1.23"
+        versionCode 19
+        versionName "1.25"
 
 
 
@@ -51,6 +51,8 @@ android {
         release {
             multiDexEnabled true
             minifyEnabled true
+            signingConfig signingConfigs.release
+            debuggable = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
