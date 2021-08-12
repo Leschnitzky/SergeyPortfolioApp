@@ -207,29 +207,6 @@ class LoginFragmentTest {
 
 
 
-    @ExperimentalTime
-    @ExperimentalCoroutinesApi
-    @Test
-    fun loginFragment_VMSendingWrongEmailFormatError_DisplayError() = testRule.testDispatcher.runBlockingTest {
-        withContext(Dispatchers.Main){
-        testStateFlow.test {
-            testMutableStateFlow.emit( LoginViewState.Error(
-                "Test",
-                LoginViewState.LoginErrorCode.INVALID_EMAIL
-            )
-            )
-            cancelAndConsumeRemainingEvents()
-
-        }
-
-            onView(withId(R.id.login_email_input_layout))
-                .check(
-                    matches(
-                        hasTextInputLayoutErrorText("Test")
-                    )
-                )
-        }
-    }
 //
 //    @ExperimentalTime
 //    @Test
