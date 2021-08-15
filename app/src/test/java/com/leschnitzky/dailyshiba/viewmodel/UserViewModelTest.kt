@@ -1047,6 +1047,7 @@ class UserViewModelTest {
             spyMock.updateCurrentUserSettings(any(),any(),any())
         }
 
+        
         sutViewModel.stateProfilePage.test {
             assertEquals(
                 awaitItem(),
