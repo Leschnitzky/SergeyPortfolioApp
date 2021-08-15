@@ -60,5 +60,13 @@ you can set it up by using the ngrok folder and run:
 
 	./ngrok http 8080
 
+
 Then take the HTTP url and update the webhook to that url.
+
+
+QnA:
+Q: ProbeKVM: This user doesn't have permissions to use KVM
+A: run the following command under root
+
+    chown jenkins -R /dev/kvm
 
