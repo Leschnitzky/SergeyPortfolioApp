@@ -87,7 +87,7 @@ android {
 
 }
 jacoco {
-    toolVersion "0.8.6"
+    toolVersion "0.8.3"
     tasks.withType(Test) {
         jacoco.includeNoLocationClasses = true
         jacoco.excludes = ['jdk.internal.*']
