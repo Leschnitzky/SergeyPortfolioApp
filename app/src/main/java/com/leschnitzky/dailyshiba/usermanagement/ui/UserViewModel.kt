@@ -103,7 +103,7 @@ class UserViewModel @Inject constructor(
 
 
 
-    private fun handleIntent() = coroutineScope.launch(dispatcherProvider.ui) {
+    fun handleIntent() = coroutineScope.launch(dispatcherProvider.ui) {
 
             intentChannel.consumeAsFlow().collect {
                 Timber.d( "handleIntent: Got Intent $it")
@@ -216,7 +216,6 @@ class UserViewModel @Inject constructor(
                         getCurrentUserEmail()
                     )
                 ) {
-                    repo.createUserInDB(getCurrentUserEmail(), repo.getAuthDisplayName())
                     repo.createUserInFirestore(getCurrentUserEmail(), repo.getAuthDisplayName()).also {
                         _stateLoginPage.value = LoginViewState.Idle
                         repo.getCurrentUserTitleState().also {
@@ -346,7 +345,7 @@ class UserViewModel @Inject constructor(
     }
 
 
-    private suspend fun checkUserStatus() = withContext(coroutineScope.coroutineContext) {
+    private suspend fun checkUserStatus() = coroutineScope.launch(dispatcherProvider.ui) {
             val email = getCurrentUserEmail()
             Timber.d( "checkUserStatus: $email")
             if(email == "Unsigned"){
@@ -367,7 +366,7 @@ class UserViewModel @Inject constructor(
 
 
     private suspend fun emitGuestUser(){
-        withContext(coroutineScope.coroutineContext){
+        withContext(dispatcherProvider.ui){
             _mainActivityUIState.value = (
                 MainContract.State(
                     MainContract.UserTitleState.Guest,
@@ -413,8 +412,6 @@ class UserViewModel @Inject constructor(
                     if(isValidEmail(email)){
                         LoginViewState.LoggedIn(
                                 repo.loginUserAndReturnName(email,password).also {
-                                    Timber.d( "logUser: HERE 2")
-                                }.also {
                                     repo.getCurrentUserTitleState().also {
                                             state ->
                                         Timber.d( "logUser: HERE 3")
@@ -427,7 +424,9 @@ class UserViewModel @Inject constructor(
                                         }
                                     }
                                 }
-                        )
+                        ).also {
+
+                        }
                     } else {
                         LoginViewState.Error("Email is invalid", LoginViewState.LoginErrorCode.INVALID_EMAIL)
                     }
