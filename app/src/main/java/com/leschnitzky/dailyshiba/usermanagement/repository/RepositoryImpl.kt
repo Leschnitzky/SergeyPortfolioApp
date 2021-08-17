@@ -41,8 +41,8 @@ class RepositoryImpl @Inject constructor(
             return logWithANewUserAndGetName(user);
         } catch (e: FirebaseAuthException){
 
-            Timber.e(TAG, "loginUserAndReturnName: caughtError: ${e.errorCode}")
-            Timber.e(TAG, "loginUserAndReturnName: caughtError: ${e.message}")
+            Timber.d(TAG, "loginUserAndReturnName: caughtError: ${e.errorCode}")
+            Timber.d(TAG, "loginUserAndReturnName: caughtError: ${e.message}")
             throw e
 
         }
