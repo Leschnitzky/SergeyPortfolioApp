@@ -50,6 +50,7 @@ class RepositoryTests {
 
     @Before
     fun setup(){
+
         sutRepository = RepositoryImpl(
             testCoroutineContextProvider,
             spyDB,
